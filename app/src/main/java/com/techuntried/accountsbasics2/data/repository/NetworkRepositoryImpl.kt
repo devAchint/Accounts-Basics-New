@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.data.repository
 
+import android.content.Context
 import com.techuntried.accountsbasics2.domain.model.BaseApiResponse
 import com.techuntried.accountsbasics2.domain.model.UserFcmTokenRequest
 import com.techuntried.accountsbasics2.domain.model.account.CreateGuestAccountRequest
@@ -10,6 +11,8 @@ import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResp
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
 import com.techuntried.accountsbasics2.domain.model.category.FetchCategoriesResponse
 import com.techuntried.accountsbasics2.domain.model.category.FetchCategoryResponse
+import com.techuntried.accountsbasics2.domain.model.course.CourseResponse
+import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
@@ -17,6 +20,7 @@ import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsRespo
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
 import com.techuntried.accountsbasics2.utils.getApiResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -24,12 +28,16 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
 class NetworkRepositoryImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val client: HttpClient
 ) : NetworkRepository {
+
+    private val json = Json {}
 
     override suspend fun createGuestAccount(createGuestAccountRequest: CreateGuestAccountRequest): ApiResult<CreateGuestResponse> {
         return getApiResponse {
@@ -56,6 +64,16 @@ class NetworkRepositoryImpl @Inject constructor(
                 setBody(userAppVersionRequest)
             }.body<BaseApiResponse>()
         }
+    }
+
+    override suspend fun fetchCourses(): ApiResult<FetchCoursesResponse> {
+        val text = context.assets
+            .open("courses.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val courses = json.decodeFromString<List<CourseResponse>>(text)
+        val response = FetchCoursesResponse(data = courses, status = true, message = "")
+        return ApiResult.Success(response)
     }
 
     override suspend fun fetchCategories(): ApiResult<FetchCategoriesResponse> {

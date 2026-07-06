@@ -10,6 +10,7 @@ import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResp
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
 import com.techuntried.accountsbasics2.domain.model.category.FetchCategoriesResponse
 import com.techuntried.accountsbasics2.domain.model.category.FetchCategoryResponse
+import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
@@ -21,6 +22,7 @@ interface NetworkRepository {
     suspend fun createGuestAccount(createGuestAccountRequest: CreateGuestAccountRequest): ApiResult<CreateGuestResponse>
     suspend fun updateFcmToken(userFcmTokenRequest: UserFcmTokenRequest): ApiResult<BaseApiResponse>
     suspend fun updateAppVersion(userAppVersionRequest: UserAppVersionRequest): ApiResult<BaseApiResponse>
+    suspend fun fetchCourses(): ApiResult<FetchCoursesResponse>
     suspend fun fetchCategories(): ApiResult<FetchCategoriesResponse>
     suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchCategoryResponse>
     suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchCategoriesResponse>

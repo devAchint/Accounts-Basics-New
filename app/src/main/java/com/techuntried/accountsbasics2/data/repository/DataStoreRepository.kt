@@ -91,26 +91,26 @@ class DataStoreRepository @Inject constructor(private val dataStore: DataStore<P
             }
     }
 
-    //userGrade
-    suspend fun saveUserGrade(value: Int) {
+    //userCourse
+    suspend fun saveUserCourse(value: Int) {
         try {
             dataStore.edit { preferences ->
-                preferences[PreferenceKey.KEY_USER_GRADE] = value
+                preferences[PreferenceKey.KEY_USER_COURSE] = value
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
         }
     }
 
-    suspend fun getUserGrade(): Int? {
+    suspend fun getUserCourse(): Int? {
         val preferences = dataStore.data.first()
-        return preferences[PreferenceKey.KEY_USER_GRADE]
+        return preferences[PreferenceKey.KEY_USER_COURSE]
     }
 
-    fun getUserGradeFlow(): Flow<Int?> {
+    fun getUserCourseFlow(): Flow<Int?> {
         return dataStore.data
             .map { preferences ->
-                preferences[PreferenceKey.KEY_USER_GRADE]
+                preferences[PreferenceKey.KEY_USER_COURSE]
             }.catch { e ->
                 if (e is CancellationException) throw e
                 emit(null)
@@ -599,7 +599,7 @@ class DataStoreRepository @Inject constructor(private val dataStore: DataStore<P
                     haptic = preferences[PreferenceKey.KEY_APP_HAPTICS] ?: true,
                     showCorrect = preferences[PreferenceKey.KEY_SHOW_CORRECT] ?: true,
                     timer = preferences[PreferenceKey.KEY_APP_TIMER] ?: true,
-                    grade = preferences[PreferenceKey.KEY_USER_GRADE],
+                    grade = preferences[PreferenceKey.KEY_USER_COURSE],
                     username = preferences[PreferenceKey.KEY_USERNAME]
                 )
             }
@@ -703,7 +703,7 @@ object PreferenceKey {
     val KEY_USERNAME = stringPreferencesKey("KEY_USERNAME")
     val KEY_STREAK = intPreferencesKey("KEY_STREAK")
     val KEY_IS_FIRST_TIME = booleanPreferencesKey("KEY_IS_FIRST_TIME")
-    val KEY_USER_GRADE = intPreferencesKey("KEY_USER_GRADE")
+    val KEY_USER_COURSE = intPreferencesKey("KEY_USER_COURSE")
 
     val KEY_APP_TIMER = booleanPreferencesKey("KEY_APP_TIMER")
     val KEY_APP_SOUNDS = booleanPreferencesKey("KEY_APP_SOUNDS")

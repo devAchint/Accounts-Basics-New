@@ -102,7 +102,7 @@ class HomeViewModel @Inject constructor(
 
     private var cachedLastPlayed: CategoryWithProgressModel? = null
 
-    val gradeFlow = dataStoreRepository.getUserGradeFlow()
+    val gradeFlow = dataStoreRepository.getUserCourseFlow()
         .filterNotNull()
         .distinctUntilChanged()
 

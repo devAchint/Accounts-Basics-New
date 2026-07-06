@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "CA",
+    "description": "Chartered Accountant Foundation Course",
+    "image": "ca.png"
+  },
+  {
+    "id": 2,
+    "name": "CMA",
+    "description": "Cost and Management Accounting",
+    "image": "cma.png"
+  },
+  {
+    "id": 3,
+    "name": "US Accounting",
+    "description": "US GAAP Fundamentals",
+    "image": "us_accounting.png"
+  },
+  {
+    "id": 4,
+    "name": "Tally Prime",
+    "description": "Learn Tally from Beginner to Advanced",
+    "image": "tally.png"
+  }
+]

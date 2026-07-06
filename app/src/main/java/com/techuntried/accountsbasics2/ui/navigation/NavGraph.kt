@@ -1,9 +1,5 @@
 package com.techuntried.accountsbasics2.ui.navigation
 
-import com.techuntried.accountsbasics2.ui.sectionCategories.SectionCategoriesScreenRoot
-import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
-import com.techuntried.accountsbasics2.ui.searchData.SearchDataScreenRoot
-import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -11,14 +7,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
-import com.techuntried.accountsbasics2.ui.chooseGrade.ChooseGradeScreenRoot
+import com.techuntried.accountsbasics2.ui.chooseCourse.ChooseCourseScreenRoot
+import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import com.techuntried.accountsbasics2.ui.feedback.FeedbackScreenRoot
 import com.techuntried.accountsbasics2.ui.game.GameScreenRoot
 import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
 import com.techuntried.accountsbasics2.ui.level.LevelScreenRoot
+import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
 import com.techuntried.accountsbasics2.ui.progress.ProgressScreenRoot
 import com.techuntried.accountsbasics2.ui.rules.RulesScreenRoot
 import com.techuntried.accountsbasics2.ui.score.ScoreScreenRoot
+import com.techuntried.accountsbasics2.ui.searchData.SearchDataScreenRoot
+import com.techuntried.accountsbasics2.ui.sectionCategories.SectionCategoriesScreenRoot
 import com.techuntried.accountsbasics2.ui.settings.SettingsScreenRoot
 import com.techuntried.accountsbasics2.ui.start.StartScreenRoot
 import com.techuntried.accountsbasics2.utils.enterTransition
@@ -88,7 +88,7 @@ fun NavGraph(
         }
 
         composable<Routes.ChooseGradeScreenRoute> {
-            ChooseGradeScreenRoot(
+            ChooseCourseScreenRoot(
                 isFirstTime = isFirstTime,
                 openNotificationRequest = {
                     navController.navigate(Routes.NotificationPermissionScreenRoute)

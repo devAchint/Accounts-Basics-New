@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.chooseGrade
+package com.techuntried.accountsbasics2.ui.chooseCourse
 
 import android.os.Build
 import android.widget.Toast
@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
+import com.techuntried.accountsbasics2.domain.model.course.CourseResponse
 import com.techuntried.accountsbasics2.ui.commons.CommonButton
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
@@ -46,11 +47,10 @@ import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.utils.AppIcons
-import com.techuntried.accountsbasics2.utils.Grade
 import com.techuntried.accountsbasics2.utils.Spacer
 
 @Composable
-fun ChooseGradeScreenRoot(
+fun ChooseCourseScreenRoot(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     openNotificationRequest: () -> Unit,
@@ -58,22 +58,23 @@ fun ChooseGradeScreenRoot(
     isFirstTime: Boolean = false
 ) {
     val context = LocalContext.current
-    val viewModel: ChooseGradeViewModel = hiltViewModel()
-    val chooseGradeUiState = viewModel.chooseGradeUiState.collectAsStateWithLifecycle().value
+    val viewModel: ChooseCourseViewModel = hiltViewModel()
+    val chooseCourseUiState = viewModel.chooseCourseUiState.collectAsStateWithLifecycle().value
+    val coursesUiState = viewModel.coursesList.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
-        viewModel.logEvent(LogEventType.ScreenVisit("Choose Grade"))
+        viewModel.logEvent(LogEventType.ScreenVisit("Choose Course"))
     }
 
-    LaunchedEffect(chooseGradeUiState.message) {
-        chooseGradeUiState.message?.let { message ->
+    LaunchedEffect(chooseCourseUiState.message) {
+        chooseCourseUiState.message?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             viewModel.clearMsg()
         }
     }
 
-    LaunchedEffect(chooseGradeUiState.gradeSaved) {
-        if (chooseGradeUiState.gradeSaved) {
+    LaunchedEffect(chooseCourseUiState.courseSaved) {
+        if (chooseCourseUiState.courseSaved) {
             if (isFirstTime) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                     openNotificationRequest()
@@ -87,9 +88,10 @@ fun ChooseGradeScreenRoot(
         }
     }
 
-    ChooseGradeScreen(
-        chooseGradeUiState = chooseGradeUiState,
-        saveGrade = viewModel::saveUserGrade,
+    ChooseCourseScreen(
+        chooseCourseUiState = chooseCourseUiState,
+        coursesListUiState = coursesUiState,
+        saveCourse = viewModel::saveUserCourse,
         isFirstTime = isFirstTime,
         onBack = {
             navigateBack()
@@ -99,15 +101,16 @@ fun ChooseGradeScreenRoot(
 
 
 @Composable
-private fun ChooseGradeScreen(
-    chooseGradeUiState: ChooseGradeUiState,
-    saveGrade: (Grade) -> Unit = {},
+private fun ChooseCourseScreen(
+    chooseCourseUiState: ChooseCourseUiState,
+    coursesListUiState: CoursesListUiState,
+    saveCourse: (Int) -> Unit = {},
     isFirstTime: Boolean = false,
     onBack: () -> Unit
 ) {
-    var selectedGrade by remember(chooseGradeUiState.currentGrade) {
+    var selectedCourse by remember(chooseCourseUiState.currentCourse) {
         mutableStateOf(
-            chooseGradeUiState.currentGrade
+            chooseCourseUiState.currentCourse
         )
     }
 
@@ -117,7 +120,7 @@ private fun ChooseGradeScreen(
             .background(BackgroundColor)
     ) {
         CommonToolbar(
-            title = "Choose Your Grade",
+            title = "Choose Your Course",
             isNavigationIcon = true,
             navigationIcon = AppIcons.Back,
             onNavigationClick = onBack
@@ -127,46 +130,52 @@ private fun ChooseGradeScreen(
                 .weight(1f)
                 .padding(16.dp)
         ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = "Select your current grade to get personalized content",
-                    color = MainText,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(16.dp)
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(Grade.entries) { grade ->
-                        GradeChooserItem(
-                            grade = grade,
-                            selected = grade == selectedGrade,
-                            onClick = {
-                                selectedGrade = grade
-                            }
+            when(coursesListUiState){
+                CoursesListUiState.Loading -> TODO()
+                is CoursesListUiState.Success -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = "Select your current course to get personalized content",
+                            color = MainText,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
-                    }
-                }
+                        Spacer(16.dp)
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(coursesListUiState.courses) { course ->
+                                CourseChooserItem(
+                                    course = course,
+                                    selected = course.id == selectedCourse,
+                                    onClick = {
+                                        selectedCourse = course.id
+                                    }
+                                )
+                            }
+                        }
 
-                CommonButton(text = "Continue", enabled = selectedGrade != null) {
-                    selectedGrade?.let {
-                        saveGrade(it)
+                        CommonButton(text = "Continue", enabled = selectedCourse != null) {
+                            selectedCourse?.let {
+                                saveCourse(it)
+                            }
+                        }
                     }
                 }
             }
 
-            if (chooseGradeUiState.isLoading) {
+
+
+            if (chooseCourseUiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(40.dp)
@@ -180,9 +189,9 @@ private fun ChooseGradeScreen(
 }
 
 @Composable
-private fun GradeChooserItem(
+private fun CourseChooserItem(
     modifier: Modifier = Modifier,
-    grade: Grade,
+    course: CourseResponse,
     selected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -200,7 +209,7 @@ private fun GradeChooserItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = grade.gradeName,
+            text = course.name,
             color = textColor,
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.labelLarge
