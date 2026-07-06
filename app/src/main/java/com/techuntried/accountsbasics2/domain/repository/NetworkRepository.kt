@@ -1,0 +1,51 @@
+package com.techuntried.accountsbasics2.domain.repository
+
+import com.techuntried.accountsbasics2.domain.model.BaseApiResponse
+import com.techuntried.accountsbasics2.domain.model.UserFcmTokenRequest
+import com.techuntried.accountsbasics2.domain.model.account.CreateGuestAccountRequest
+import com.techuntried.accountsbasics2.domain.model.account.CreateGuestResponse
+import com.techuntried.accountsbasics2.domain.model.account.UserAppVersionRequest
+import com.techuntried.accountsbasics2.domain.model.analytics.LogEventRequest
+import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResponse
+import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
+import com.techuntried.accountsbasics2.domain.model.category.FetchCategoriesResponse
+import com.techuntried.accountsbasics2.domain.model.category.FetchCategoryResponse
+import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
+import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
+import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
+import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsResponse
+import com.techuntried.accountsbasics2.utils.ApiResult
+
+interface NetworkRepository {
+
+    suspend fun createGuestAccount(createGuestAccountRequest: CreateGuestAccountRequest): ApiResult<CreateGuestResponse>
+    suspend fun updateFcmToken(userFcmTokenRequest: UserFcmTokenRequest): ApiResult<BaseApiResponse>
+    suspend fun updateAppVersion(userAppVersionRequest: UserAppVersionRequest): ApiResult<BaseApiResponse>
+    suspend fun fetchCategories(): ApiResult<FetchCategoriesResponse>
+    suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchCategoryResponse>
+    suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchCategoriesResponse>
+
+    suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchLevelsResponse>
+    suspend fun fetchLevelsDetails(categoryId: Int, levelId:Int): ApiResult<FetchLevelResponse>
+
+    suspend fun fetchQuestionsByLevel(
+        categoryId: Int,
+        levelId: Int
+    ): ApiResult<FetchQuestionsResponse>
+
+    suspend fun fetchCategoryLastUpdatedDate(): ApiResult<BaseApiResponse>
+    suspend fun fetchLevelLastUpdatedDate(): ApiResult<BaseApiResponse>
+    suspend fun fetchQuestionLastUpdatedDate(): ApiResult<BaseApiResponse>
+
+    suspend fun uploadFeedback(feedbackRequest: UploadFeedbackRequest): ApiResult<BaseApiResponse>
+
+    suspend fun logEvent(logEventRequest: LogEventRequest): ApiResult<BaseApiResponse>
+
+    suspend fun fetchAppConfig(): ApiResult<FetchAppConfigResponse>
+    suspend fun fetchAppUpdateInfo(): ApiResult<FetchAppUpdateInfoResponse>
+//    suspend fun fetchAds(): ApiResult<FetchAdsResponse>
+//    suspend fun adClick(id:Int): ApiResult<BaseApiResponse>
+
+}
+
+
