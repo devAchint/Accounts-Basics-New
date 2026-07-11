@@ -16,7 +16,7 @@ data class FetchChapterResponse(
     val status: Boolean,
     val message: String,
     @SerialName("data")
-    val level: ChapterApiResponse
+    val chapter: ChapterApiResponse
 )
 
 @Serializable

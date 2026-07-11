@@ -8,8 +8,8 @@ import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.ui.navigation.Routes
-import com.techuntried.accountsbasics2.usecases.GetCategoryDetailsUseCase
-import com.techuntried.accountsbasics2.usecases.GetLevelDetailsUseCase
+import com.techuntried.accountsbasics2.usecases.GetSubjectDetailsUseCase
+import com.techuntried.accountsbasics2.usecases.GetChapterDetailsUseCase
 import com.techuntried.accountsbasics2.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +26,8 @@ data class RuleModel(
 
 @HiltViewModel
 class RulesViewModel @Inject constructor(
-    private val getLevelDetailsUseCase: GetLevelDetailsUseCase,
-    private val getCategoryDetailsUseCase: GetCategoryDetailsUseCase,
+    private val getChapterDetailsUseCase: GetChapterDetailsUseCase,
+    private val getSubjectDetailsUseCase: GetSubjectDetailsUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val dataStoreRepository: DataStoreRepository
 ) :
@@ -73,11 +73,11 @@ class RulesViewModel @Inject constructor(
 
                 _rulesScreenUiState.value = RulesScreenUiState.Loading
 
-                val categoryResult = getCategoryDetailsUseCase(categoryId)
-                val levelResult = getLevelDetailsUseCase(categoryId, levelId)
+                val subjectResult = getSubjectDetailsUseCase(categoryId)
+                val chapterResult = getChapterDetailsUseCase(categoryId, levelId)
 
-                if (categoryResult is ApiResult.Success && levelResult is ApiResult.Success) {
-                    val totalQuestions = levelResult.data.questions
+                if (subjectResult is ApiResult.Success && chapterResult is ApiResult.Success) {
+                    val totalQuestions = chapterResult.data.questions
                     val minimumScore = (60 * totalQuestions) / 100
 
                     val ruleList = listOf(
@@ -109,16 +109,16 @@ class RulesViewModel @Inject constructor(
                     )
                     _rulesScreenUiState.value = RulesScreenUiState.Success(
                         rules = ruleList,
-                        title = categoryResult.data.categoryName,
-                        iconUrl = categoryResult.data.imageUrl,
-                        bgColor = categoryResult.data.bgColor,
+                        title = subjectResult.data.categoryName,
+                        iconUrl = subjectResult.data.imageUrl,
+                        bgColor = subjectResult.data.bgColor,
                         timerCount = if (isTimer) 15 else null,
                         isRuleFirstTime = isFirstTime
                     )
                 } else {
                     val errorMsg = when {
-                        categoryResult is ApiResult.Error -> categoryResult.errorMessage
-                        levelResult is ApiResult.Error -> levelResult.errorMessage
+                        subjectResult is ApiResult.Error -> subjectResult.errorMessage
+                        chapterResult is ApiResult.Error -> chapterResult.errorMessage
                         else -> "An unknown error occurred"
                     }
 

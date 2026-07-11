@@ -12,8 +12,8 @@ import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewMode
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.ui.navigation.Routes
 import com.techuntried.accountsbasics2.ui.navigation.serializableType
-import com.techuntried.accountsbasics2.usecases.GetCategoryDetailsUseCase
-import com.techuntried.accountsbasics2.usecases.GetLevelDetailsUseCase
+import com.techuntried.accountsbasics2.usecases.GetSubjectDetailsUseCase
+import com.techuntried.accountsbasics2.usecases.GetChapterDetailsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadFeedbackUseCase
@@ -51,8 +51,8 @@ class ScoreViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     savedStateHandle: SavedStateHandle,
     private val logEventUseCase: LogEventUseCase,
-    private val getLevelDetailsUseCase: GetLevelDetailsUseCase,
-    private val getCategoryDetailsUseCase: GetCategoryDetailsUseCase,
+    private val getChapterDetailsUseCase: GetChapterDetailsUseCase,
+    private val getSubjectDetailsUseCase: GetSubjectDetailsUseCase,
     private val uploadFeedbackUseCase: UploadFeedbackUseCase,
     private val globalConfigController: GlobalConfigController,
     private val dataStoreRepository: DataStoreRepository
@@ -117,8 +117,8 @@ class ScoreViewModel @Inject constructor(
         viewModelScope.launch {
             _scoreScreenUiState.value = ScoreScreenUiState.Loading
             try {
-                val categoryDeferred = async { getCategoryDetailsUseCase(categoryId) }
-                val levelDeferred = async { getLevelDetailsUseCase(categoryId, levelId) }
+                val categoryDeferred = async { getSubjectDetailsUseCase(categoryId) }
+                val levelDeferred = async { getChapterDetailsUseCase(categoryId, levelId) }
 
                 val categoryResult = categoryDeferred.await()
                 val levelResult = levelDeferred.await()

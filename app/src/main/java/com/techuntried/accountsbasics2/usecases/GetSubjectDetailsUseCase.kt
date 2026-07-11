@@ -9,14 +9,14 @@ import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
 import javax.inject.Inject
 
-class GetCategoryDetailsUseCase @Inject constructor(
+class GetSubjectDetailsUseCase @Inject constructor(
     private val roomRepository: RoomRepository,
     private val networkRepository: NetworkRepository,
     private val networkMonitor: NetworkMonitor // Better than passing 'context'
 ) {
     suspend operator fun invoke(categoryId: Int): ApiResult<SubjectModel> {
         // 1. Check Local Source first
-        val localResult = roomRepository.fetchCategoryById(categoryId)
+        val localResult = roomRepository.fetchSubjectById(categoryId)
         if (localResult is ApiResult.Success) {
             return ApiResult.Success(localResult.data.asSubjectModel())
         }
@@ -27,15 +27,15 @@ class GetCategoryDetailsUseCase @Inject constructor(
         }
 
         // 3. Fetch from Remote
-        return fetchCategoryRemote(categoryId)
+        return fetchSubjectRemote(categoryId)
     }
 
-    private suspend fun fetchCategoryRemote(categoryId: Int): ApiResult<SubjectModel> {
+    private suspend fun fetchSubjectRemote(categoryId: Int): ApiResult<SubjectModel> {
         return try {
-            when (val response = networkRepository.fetchCategoryDetails(categoryId)) {
+            when (val response = networkRepository.fetchSubjectDetails(categoryId)) {
                 is ApiResult.Success -> {
                     if (response.data.status) {
-                        val model = response.data.category.asCategoryEntity().asSubjectModel()
+                        val model = response.data.subject.asCategoryEntity().asSubjectModel()
                         ApiResult.Success(model)
                     } else {
                         ApiResult.Error(response.data.message)

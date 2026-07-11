@@ -21,6 +21,6 @@ import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryProgressDao(): CategoryProgressDao
     abstract fun subjectDao(): SubjectDao
-    abstract fun levelDao(): LevelDao
+    abstract fun levelDao(): ChaptersDao
     abstract fun questionDao(): QuestionDao
 }

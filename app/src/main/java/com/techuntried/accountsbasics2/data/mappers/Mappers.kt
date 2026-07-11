@@ -11,8 +11,8 @@ import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
-import com.techuntried.accountsbasics2.domain.model.question.Option
-import com.techuntried.accountsbasics2.domain.model.question.QuestionApiResponse
+import com.techuntried.accountsbasics2.domain.model.content.Option
+import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
@@ -128,7 +128,7 @@ fun SubjectEntity.asSubjectModel(): SubjectModel {
 }
 
 
-fun ChapterApiResponse.asLevelEntity(): ChapterEntity {
+fun ChapterApiResponse.asChapterEntity(): ChapterEntity {
     return ChapterEntity(
         subjectId = subjectId,
         chapterId = chapterId,
@@ -139,7 +139,7 @@ fun ChapterApiResponse.asLevelEntity(): ChapterEntity {
     )
 }
 
-fun ChapterEntity.asLevelModel(): ChapterModel {
+fun ChapterEntity.asChapterModel(): ChapterModel {
     return ChapterModel(
         subjectId = subjectId,
         chapterId = chapterId,
@@ -156,8 +156,8 @@ fun QuestionApiResponse.asQuestionEntity(): QuestionEntity {
         questionText = questionText,
         options = options,
         correctOptionId = correctOptionId,
-        levelId = levelId,
-        categoryId = categoryId
+        levelId = chapterId,
+        categoryId = subjectId
     )
 }
 
@@ -174,8 +174,8 @@ fun QuestionEntity.asQuestionModel(): QuestionModel {
 
 fun Option.asGameOption(): GameOption {
     return GameOption(
-        optionId = optionId,
-        optionText = optionText,
+        optionId = id,
+        optionText = text,
         optionType = OptionType.Unselected
     )
 }

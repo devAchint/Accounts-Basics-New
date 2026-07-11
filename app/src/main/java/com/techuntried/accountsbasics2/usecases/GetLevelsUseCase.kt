@@ -1,7 +1,7 @@
 package com.techuntried.accountsbasics2.usecases
 
-import com.techuntried.accountsbasics2.data.mappers.asLevelEntity
-import com.techuntried.accountsbasics2.data.mappers.asLevelModel
+import com.techuntried.accountsbasics2.data.mappers.asChapterEntity
+import com.techuntried.accountsbasics2.data.mappers.asChapterModel
 import com.techuntried.accountsbasics2.data.repository.QuizRepository
 import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.repository.NetworkMonitor
@@ -32,10 +32,10 @@ class GetLevelsUseCase @Inject constructor(
                     val remoteResponse = repository.fetchRemoteLevels(categoryId)
 
                     if (remoteResponse is ApiResult.Success && remoteResponse.data.status) {
-                        val entities = remoteResponse.data.levels.map { it.asLevelEntity() }
+                        val entities = remoteResponse.data.levels.map { it.asChapterEntity() }
                         repository.saveLevels(categoryId, entities)
                         repository.markLevelsUpdatedForCategory(categoryId)
-                        return ApiResult.Success(entities.map { it.asLevelModel() })
+                        return ApiResult.Success(entities.map { it.asChapterModel() })
                     }
                 } else {
                     repository.markLevelsUpdatedForCategory(categoryId)
@@ -46,7 +46,7 @@ class GetLevelsUseCase @Inject constructor(
         }
 
         return if (hasLocalData) {
-            ApiResult.Success(localResult.data.map { it.asLevelModel() })
+            ApiResult.Success(localResult.data.map { it.asChapterModel() })
         } else {
             ApiResult.Error("Failed to fetch categories.")
         }

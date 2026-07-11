@@ -3,7 +3,7 @@ package com.techuntried.accountsbasics2.data.repository
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.CategoryProgressDao
-import com.techuntried.accountsbasics2.data.database.LevelDao
+import com.techuntried.accountsbasics2.data.database.ChaptersDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
@@ -18,13 +18,13 @@ import kotlin.coroutines.cancellation.CancellationException
 @Singleton
 class RoomRepository @Inject constructor(
     private val subjectDao: SubjectDao,
-    private val levelDao: LevelDao,
+    private val chaptersDao: ChaptersDao,
     private val categoryProgressDao: CategoryProgressDao
 ) {
 
-    suspend fun fetchCategoryById(categoryId: Int): ApiResult<SubjectEntity> {
+    suspend fun fetchSubjectById(categoryId: Int): ApiResult<SubjectEntity> {
         return try {
-            ApiResult.Success(subjectDao.getCategoryById(categoryId))
+            ApiResult.Success(subjectDao.getSubjectById(categoryId))
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.d("MYDEBUG", "${e.message}")
@@ -41,9 +41,9 @@ class RoomRepository @Inject constructor(
             }
     }
 
-    suspend fun fetchLevelDetailsByCategory(categoryId: Int, levelId: Int): ApiResult<ChapterEntity> {
+    suspend fun fetchChapterDetailsBySubject(subjectId: Int, chapterId: Int): ApiResult<ChapterEntity> {
         return try {
-            ApiResult.Success(levelDao.getLevelDetailByCategory(categoryId, levelId))
+            ApiResult.Success(chaptersDao.getChapterDetailBySubject(subjectId, chapterId))
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.d("MYDEBUG", "${e.message}")

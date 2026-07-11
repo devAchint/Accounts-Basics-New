@@ -2,7 +2,7 @@ package com.techuntried.accountsbasics2.domain.model.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.techuntried.accountsbasics2.domain.model.question.Option
+import com.techuntried.accountsbasics2.domain.model.content.Option
 
 @Entity(
     tableName = "questions",

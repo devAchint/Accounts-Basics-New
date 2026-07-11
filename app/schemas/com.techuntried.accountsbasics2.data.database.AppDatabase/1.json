@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9e25df1864820f4f485e21ae4ed85f04",
+    "identityHash": "e1061ddf15e9a909d3900976c179c96e",
     "entities": [
       {
         "tableName": "subjects",
@@ -98,24 +98,24 @@
         }
       },
       {
-        "tableName": "levels",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`levelId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, `levelName` TEXT NOT NULL, `questions` INTEGER NOT NULL, `module` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`categoryId`, `levelId`))",
+        "tableName": "chapters",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chapterId` INTEGER NOT NULL, `subjectId` INTEGER NOT NULL, `name` TEXT NOT NULL, `questions` INTEGER NOT NULL, `module` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`chapterId`, `subjectId`))",
         "fields": [
           {
             "fieldPath": "chapterId",
-            "columnName": "levelId",
+            "columnName": "chapterId",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "subjectId",
-            "columnName": "categoryId",
+            "columnName": "subjectId",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "name",
-            "columnName": "levelName",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -141,8 +141,8 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "categoryId",
-            "levelId"
+            "chapterId",
+            "subjectId"
           ]
         }
       },
@@ -241,7 +241,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9e25df1864820f4f485e21ae4ed85f04')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1061ddf15e9a909d3900976c179c96e')"
     ]
   }
 }

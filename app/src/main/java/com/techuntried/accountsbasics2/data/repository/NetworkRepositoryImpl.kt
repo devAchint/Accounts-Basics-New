@@ -18,7 +18,8 @@ import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackReque
 import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
-import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsResponse
+import com.techuntried.accountsbasics2.domain.model.content.FetchQuestionsResponse
+import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
@@ -95,7 +96,18 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchSubjectResponse> {
+    override suspend fun fetchSubjectDetails(categoryId: Int): ApiResult<FetchSubjectResponse> {
+
+        val text = context.assets
+            .open("subjects.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val subjects = json.decodeFromString<List<SubjectApiResponse>>(text)
+        Log.d("MYDEBUG", "courses $subjects")
+
+        val response = FetchSubjectResponse(subject= subjects.first(), status = true, message = "fsdfss")
+        return ApiResult.Success(response)
+
         return getApiResponse {
             client.get("api/categories/$categoryId").body<FetchSubjectResponse>()
         }
@@ -123,12 +135,23 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchLevelsDetails(
-        categoryId: Int,
-        levelId: Int
+    override suspend fun fetchChapterDetails(
+        subjectId: Int,
+        chapterId: Int
     ): ApiResult<FetchChapterResponse> {
+
+        val text = context.assets
+            .open("chapters.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val chapters = json.decodeFromString<List<ChapterApiResponse>>(text)
+        Log.d("MYDEBUG", "courses $chapters")
+
+        val response = FetchChapterResponse(chapter = chapters.first(), status = true, message = "fsdfss")
+        return ApiResult.Success(response)
+
         return getApiResponse {
-            client.get("api/levelDetails/$categoryId/$levelId").body<FetchChapterResponse>()
+            client.get("api/levelDetails/$subjectId/$chapterId").body<FetchChapterResponse>()
         }
     }
 
@@ -136,6 +159,17 @@ class NetworkRepositoryImpl @Inject constructor(
         categoryId: Int,
         levelId: Int
     ): ApiResult<FetchQuestionsResponse> {
+
+        val text = context.assets
+            .open("questions.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val courses = json.decodeFromString<List<QuestionApiResponse>>(text)
+        Log.d("MYDEBUG", "courses $courses")
+
+        val response = FetchQuestionsResponse(questions = courses, status = true, message = "fsdfss")
+        return ApiResult.Success(response)
+
         return getApiResponse {
             client.get("api/questionsByLevel/category/$categoryId/level/$levelId")
                 .body<FetchQuestionsResponse>()

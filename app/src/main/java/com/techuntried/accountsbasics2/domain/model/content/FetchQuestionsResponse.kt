@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.domain.model.question
+package com.techuntried.accountsbasics2.domain.model.content
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,16 +13,17 @@ data class FetchQuestionsResponse(
 
 @Serializable
 data class QuestionApiResponse(
-    val categoryId: Int,
-    val levelId: Int,
+    val subjectId: Int,
+    val chapterId: Int,
     val correctOptionId: Int,
     val options: List<Option>,
     val questionId: Int,
-    val questionText: String
+    val questionText: String,
+    val explanation:String,
 )
 
 @Serializable
 data class Option(
-    val optionId: Int,
-    val optionText: String
+    val id: Int,
+    val text: String
 )

@@ -1,0 +1,54 @@
+[
+  {
+    "questionId": 1,
+    "subjectId": 101,
+    "chapterId": 1002,
+    "questionText": "Accounting is known as the language of ________.",
+    "correctOptionId": 2,
+    "options": [
+      {
+        "id": 1,
+        "text": "Science"
+      },
+      {
+        "id": 2,
+        "text": "Business"
+      },
+      {
+        "id": 3,
+        "text": "Law"
+      },
+      {
+        "id": 4,
+        "text": "Economics"
+      }
+    ],
+    "explanation": "Accounting communicates financial information to various stakeholders, so it is known as the language of business."
+  },
+  {
+    "questionId": 2,
+    "subjectId": 101,
+    "chapterId": 1002,
+    "questionText": "Which of the following is NOT an objective of accounting?",
+    "correctOptionId": 4,
+    "options": [
+      {
+        "id": 1,
+        "text": "Recording transactions"
+      },
+      {
+        "id": 2,
+        "text": "Determining profit"
+      },
+      {
+        "id": 3,
+        "text": "Providing financial information"
+      },
+      {
+        "id": 4,
+        "text": "Manufacturing products"
+      }
+    ],
+    "explanation": "Accounting records and reports financial information but does not manufacture products."
+  }
+]

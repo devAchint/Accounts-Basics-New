@@ -8,22 +8,19 @@ import androidx.room.Transaction
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 
 @Dao
-interface LevelDao {
+interface ChaptersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLevels(levels: List<ChapterEntity>)
 
-    @Query("Delete FROM levels WHERE categoryId=:categoryId")
+    @Query("Delete FROM chapters WHERE subjectId=:categoryId")
     suspend fun deleteLevels(categoryId: Int)
 
-    @Query("SELECT * FROM levels WHERE categoryId=:categoryId")
-    suspend fun getLevelsByCategory(categoryId: Int): List<ChapterEntity>
+    @Query("SELECT * FROM chapters WHERE subjectId=:subjectId")
+    suspend fun getChaptersBySubject(subjectId: Int): List<ChapterEntity>
 
-    @Query("SELECT * FROM levels WHERE categoryId=:categoryId AND levelId=:levelId")
-    suspend fun getLevelDetailByCategory(categoryId: Int, levelId: Int): ChapterEntity
-
-    @Query("SELECT * FROM levels WHERE categoryId=:categoryId AND  levelId=:levelId")
-    suspend fun getLevel(categoryId: Int, levelId: Int): ChapterEntity
+    @Query("SELECT * FROM chapters WHERE subjectId=:subjectId AND chapterId=:chapterId")
+    suspend fun getChapterDetailBySubject(subjectId: Int, chapterId: Int): ChapterEntity
 
     @Transaction
     suspend fun clearAndInsertLevels(categoryId: Int, levels: List<ChapterEntity>) {

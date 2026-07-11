@@ -2,7 +2,7 @@ package com.techuntried.accountsbasics2.data.repository
 
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
-import com.techuntried.accountsbasics2.data.database.LevelDao
+import com.techuntried.accountsbasics2.data.database.ChaptersDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
@@ -21,7 +21,7 @@ class QuizRepository @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val subjectDao: SubjectDao,
-    private val levelDao: LevelDao,
+    private val chaptersDao: ChaptersDao,
     private val questionDao: QuestionDao,
 ) {
 
@@ -78,7 +78,7 @@ class QuizRepository @Inject constructor(
     //levels
     suspend fun getLocalLevels(categoryId: Int): ApiResult<List<ChapterEntity>> {
         return try {
-            ApiResult.Success(levelDao.getLevelsByCategory(categoryId))
+            ApiResult.Success(chaptersDao.getChaptersBySubject(categoryId))
         } catch (e: Exception) {
             Log.d("MYDEBUG", "${e.message}")
             ApiResult.Error("Oops! Something went wrong while fetching levels. Please try again.")
@@ -86,7 +86,7 @@ class QuizRepository @Inject constructor(
     }
 
     suspend fun saveLevels(categoryId: Int, levels: List<ChapterEntity>) {
-        levelDao.clearAndInsertLevels(categoryId, levels)
+        chaptersDao.clearAndInsertLevels(categoryId, levels)
         dataStoreRepository.saveLevelLastUpdatedDate("$categoryId", currentDate())
     }
 

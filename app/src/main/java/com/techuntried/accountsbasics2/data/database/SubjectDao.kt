@@ -28,7 +28,7 @@ interface SubjectDao {
     suspend fun getSubjectsByGrades(course: Int): List<SubjectEntity>
 
     @Query("SELECT * FROM subjects WHERE categoryId = :id")
-    suspend fun getCategoryById(id:Int): SubjectEntity
+    suspend fun getSubjectById(id:Int): SubjectEntity
 
     @Transaction
     suspend fun clearAndInsertSubjects(subjects: List<SubjectEntity>) {

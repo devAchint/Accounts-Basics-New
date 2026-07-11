@@ -1,7 +1,7 @@
 package com.techuntried.accountsbasics2.data.database
 
 import androidx.room.TypeConverter
-import com.techuntried.accountsbasics2.domain.model.question.Option
+import com.techuntried.accountsbasics2.domain.model.content.Option
 import kotlinx.serialization.json.Json
 
 class Converters {
