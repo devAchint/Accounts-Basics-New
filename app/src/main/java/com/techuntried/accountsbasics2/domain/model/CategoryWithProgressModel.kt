@@ -1,6 +1,6 @@
 package com.techuntried.accountsbasics2.domain.model
 
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import java.util.concurrent.TimeUnit
 
 data class CategoryProgressModel(
@@ -14,7 +14,7 @@ data class CategoryProgressModel(
 )
 
 data class CategoryWithProgressModel(
-    val category: CategoryModel,
+    val category: SubjectModel,
     val progress: CategoryProgressModel
 ) {
     fun lastPlayedText(): String {

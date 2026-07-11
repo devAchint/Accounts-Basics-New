@@ -1,6 +1,6 @@
 package com.techuntried.accountsbasics2.ui.sectionCategories
 
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 
 sealed interface SectionCategoriesUiState {
     val message: String?
@@ -18,7 +18,7 @@ sealed interface SectionCategoriesUiState {
     ) : SectionCategoriesUiState
 
     data class Success(
-        val categories: List<CategoryModel> = emptyList(),
+        val categories: List<SubjectModel> = emptyList(),
         override val message: String? = null,
         override val actionLoading: Boolean = false
     ) : SectionCategoriesUiState {

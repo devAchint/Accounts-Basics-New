@@ -27,18 +27,18 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.techuntried.accountsbasics2.R
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.ui.theme.SecondaryText
 import com.techuntried.accountsbasics2.utils.debouncedClickable
 
 @Composable
-fun HomeCategoryItemCard(
-    modifier: Modifier = Modifier, categoryModel: CategoryModel, onClick: () -> Unit
+fun HomeSubjectItemCard(
+    modifier: Modifier = Modifier, subjectModel: SubjectModel, onClick: () -> Unit
 ) {
     val bgColor = try {
-        categoryModel.bgColor?.let { Color(it.toColorInt()) } ?: Color.White
+        subjectModel.bgColor?.let { Color(it.toColorInt()) } ?: Color.White
     } catch (e: Exception) {
         Color.White
     }
@@ -54,7 +54,7 @@ fun HomeCategoryItemCard(
 
         // Text at top/start
         Text(
-            text = categoryModel.categoryName,
+            text = subjectModel.categoryName,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -67,7 +67,7 @@ fun HomeCategoryItemCard(
             }
         )
         Text(
-            text = "Grade ${categoryModel.grade}",
+            text = "Grade ${subjectModel.course}",
             style = MaterialTheme.typography.labelSmall,
             maxLines = 2,
             color = SecondaryText,
@@ -77,9 +77,9 @@ fun HomeCategoryItemCard(
             }
         )
 
-        categoryModel.tag?.let {
+        subjectModel.tag?.let {
             Text(
-                text = categoryModel.tag,
+                text = subjectModel.tag,
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 textAlign = TextAlign.Center,
@@ -104,7 +104,7 @@ fun HomeCategoryItemCard(
         }
 
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current).data(categoryModel.imageUrl)
+            model = ImageRequest.Builder(LocalContext.current).data(subjectModel.imageUrl)
                 .size(imageSizePx) // 👈 density-aware downsampling
                 .scale(Scale.FILL) // matches ContentScale.Crop
                 .allowHardware(true).memoryCachePolicy(CachePolicy.ENABLED)

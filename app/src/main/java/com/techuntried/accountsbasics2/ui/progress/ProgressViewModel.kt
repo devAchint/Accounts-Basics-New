@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.CategoryProgressModel
 import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
-import com.techuntried.accountsbasics2.usecases.GetCategoriesUseCase
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.utils.ApiResult
@@ -47,15 +47,15 @@ sealed interface ProgressUiState {
 @HiltViewModel
 class ProgressViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
     private val logEventUseCase: LogEventUseCase
 ) :
     ViewModel() {
 
     private val _progressSort = MutableStateFlow(ProgressSortOption.RECENTS)
 
-    private val categoryMapFlow: Flow<ApiResult<Map<Int, CategoryModel>>> = flow {
-        when (val result = getCategoriesUseCase(null)) {
+    private val categoryMapFlow: Flow<ApiResult<Map<Int, SubjectModel>>> = flow {
+        when (val result = getSubjectsUseCase(null)) {
             is ApiResult.Success -> {
                 val map = result.data.associateBy { it.categoryId }
                 emit(ApiResult.Success(map))
@@ -83,8 +83,8 @@ class ProgressViewModel @Inject constructor(
                     .mapNotNull { stat ->
                         val category = categoryMap[stat.categoryId] ?: return@mapNotNull null
 
-                        val progress = if (category.levels > 0) {
-                            (stat.levelsPlayed.toFloat() / category.levels) * 100
+                        val progress = if (category.chapters > 0) {
+                            (stat.levelsPlayed.toFloat() / category.chapters) * 100
                         } else 0f
 
                         val totalAnswers = stat.correctAnswered + stat.wrongAnswered

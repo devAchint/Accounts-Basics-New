@@ -53,7 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.home.HomeCategoryItemCard
+import com.techuntried.accountsbasics2.ui.home.HomeSubjectItemCard
 import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
@@ -299,7 +299,7 @@ fun SearchResults(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp)
             ) {
                 items(state.searchResults) {
-                    HomeCategoryItemCard(categoryModel = it) {
+                    HomeSubjectItemCard(subjectModel = it) {
                         openGameLevel(
                             LevelArgs(
                                 categoryId = it.categoryId,

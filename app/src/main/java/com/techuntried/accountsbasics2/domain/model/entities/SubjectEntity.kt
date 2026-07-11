@@ -6,8 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-@Entity(tableName = "categories")
-data class CategoryEntity(
+@Entity(tableName = "subjects")
+data class SubjectEntity(
     @PrimaryKey
     val categoryId: Int,
     @ColumnInfo(name = "category_name")
@@ -34,15 +34,15 @@ data class CategoryEntity(
     val sectionWeight: Int,
     @ColumnInfo(name = "featuredWeight")
     val featuredWeight: Int,
-    @ColumnInfo(name = "grade")
-    val grade: Int,
+    @ColumnInfo(name = "course")
+    val course: Int,
 )
 
 
 data class CategoryWithProgressEntity(
 
     @Embedded
-    val category: CategoryEntity,
+    val category: SubjectEntity,
     @Relation(
         parentColumn = "categoryId",
         entityColumn = "categoryId"

@@ -175,7 +175,7 @@ fun HomeRecentItemCard(
                 )
                 Spacer(4.dp)
                 Text(
-                    text = "Grade ${category.grade}",
+                    text = "Grade ${category.course}",
                     color = SecondaryText,
                     style = MaterialTheme.typography.labelSmall,
                 )

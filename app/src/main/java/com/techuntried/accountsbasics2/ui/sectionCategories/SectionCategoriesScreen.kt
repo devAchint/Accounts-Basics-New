@@ -28,7 +28,7 @@ import com.techuntried.accountsbasics2.ads.BannerAdCard
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.home.HomeCategoryItemCard
+import com.techuntried.accountsbasics2.ui.home.HomeSubjectItemCard
 import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.usecases.LogEventType
@@ -175,8 +175,8 @@ fun QuizSectionContent(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(sectionCategoriesUiState.categories) { category ->
-                        HomeCategoryItemCard (
-                            categoryModel = category,
+                        HomeSubjectItemCard (
+                            subjectModel = category,
                             onClick = {
                                 onQuizCategoryClick(
                                     LevelArgs(

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "52798347ab73d37d631d04baa4a6ecbf",
+    "identityHash": "792ab0a70b9260c2011b1c9f0560f834",
     "entities": [
       {
-        "tableName": "categories",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER NOT NULL, `category_name` TEXT NOT NULL, `category_image` TEXT NOT NULL, `is_featured` INTEGER NOT NULL, `bgColor` TEXT, `active` INTEGER NOT NULL, `section` TEXT, `weight` INTEGER NOT NULL, `levels` INTEGER NOT NULL, `tag` TEXT, `showTopics` INTEGER NOT NULL, `sectionWeight` INTEGER NOT NULL, `featuredWeight` INTEGER NOT NULL, `grade` INTEGER NOT NULL, PRIMARY KEY(`categoryId`))",
+        "tableName": "subjects",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER NOT NULL, `category_name` TEXT NOT NULL, `category_image` TEXT NOT NULL, `is_featured` INTEGER NOT NULL, `bgColor` TEXT, `active` INTEGER NOT NULL, `section` TEXT, `weight` INTEGER NOT NULL, `levels` INTEGER NOT NULL, `tag` TEXT, `showTopics` INTEGER NOT NULL, `sectionWeight` INTEGER NOT NULL, `featuredWeight` INTEGER NOT NULL, `course` INTEGER NOT NULL, PRIMARY KEY(`categoryId`))",
         "fields": [
           {
             "fieldPath": "categoryId",
@@ -84,8 +84,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "grade",
-            "columnName": "grade",
+            "fieldPath": "course",
+            "columnName": "course",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -234,7 +234,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '52798347ab73d37d631d04baa4a6ecbf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '792ab0a70b9260c2011b1c9f0560f834')"
     ]
   }
 }

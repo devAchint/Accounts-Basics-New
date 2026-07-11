@@ -2,9 +2,9 @@ package com.techuntried.accountsbasics2.data.mappers
 
 import com.techuntried.accountsbasics2.domain.model.CategoryProgressModel
 import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
-import com.techuntried.accountsbasics2.domain.model.category.CategoryApiResponse
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryEntity
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
@@ -22,7 +22,7 @@ import com.techuntried.accountsbasics2.ui.game.OptionType
 
 fun CategoryWithProgressEntity.asCategoryWithProgressModel(): CategoryWithProgressModel {
 
-    val category = CategoryModel(
+    val category = SubjectModel(
         categoryId = category.categoryId,
         categoryName = category.categoryName,
         featured = category.isFeatured,
@@ -35,13 +35,13 @@ fun CategoryWithProgressEntity.asCategoryWithProgressModel(): CategoryWithProgre
         weight = category.weight,
         sectionWeight = category.sectionWeight,
         featuredWeight = category.featuredWeight,
-        levels = category.levels,
-        grade = category.grade
+        chapters = category.levels,
+        course = category.course
     )
 
     return CategoryWithProgressModel(
         category = category,
-        progress = progress?.asCategoryProgressModel(category.levels) ?: CategoryProgressModel(
+        progress = progress?.asCategoryProgressModel(category.chapters) ?: CategoryProgressModel(
             categoryId = category.categoryId
         )
     )
@@ -70,56 +70,56 @@ fun CategoryProgressEntity.asCategoryProgressModel(totalLevels: Int): CategoryPr
 }
 
 
-fun CategoryApiResponse.asCategoryEntity(): CategoryEntity {
-    return CategoryEntity(
-        categoryId = categoryId,
-        categoryName = categoryName,
-        categoryImage = categoryImage,
-        isFeatured = isFeatured,
+fun SubjectApiResponse.asCategoryEntity(): SubjectEntity {
+    return SubjectEntity(
+        categoryId = id,
+        categoryName = name,
+        categoryImage = imageUrl,
+        isFeatured = featured,
         bgColor = bgColor,
         active = active,
         weight = weight,
         section = section,
-        levels = levels,
+        levels = chapters,
         tag = tag,
-        grade = grades.firstOrNull() ?: 5,
+        course = courseId,
         showTopics = showTopics,
         featuredWeight = featuredWeight,
         sectionWeight = sectionWeight
     )
 }
 
-fun CategoryApiResponse.asCategoryModel(): CategoryModel {
-    return CategoryModel(
-        categoryId = categoryId,
-        categoryName = categoryName,
-        imageUrl = categoryImage,
-        featured = isFeatured,
+fun SubjectApiResponse.asSubjectModel(): SubjectModel {
+    return SubjectModel(
+        categoryId = id,
+        categoryName = name,
+        imageUrl = imageUrl,
+        featured = featured,
         bgColor = bgColor,
         active = active,
         weight = weight,
         section = section,
-        levels = levels,
+        chapters = chapters,
         tag = tag,
         showTopics = showTopics,
         featuredWeight = featuredWeight,
         sectionWeight = sectionWeight,
-        grade = grades.firstOrNull() ?: 5
+        course = courseId
     )
 }
 
-fun CategoryEntity.asCategoryModel(): CategoryModel {
-    return CategoryModel(
+fun SubjectEntity.asSubjectModel(): SubjectModel {
+    return SubjectModel(
         categoryId = categoryId,
         categoryName = categoryName,
-        grade = grade,
+        course = course,
         imageUrl = categoryImage,
         featured = isFeatured,
         bgColor = bgColor,
         active = active,
         weight = weight,
         section = section,
-        levels = levels,
+        chapters = levels,
         tag = tag,
         showTopics = showTopics,
         featuredWeight = featuredWeight,

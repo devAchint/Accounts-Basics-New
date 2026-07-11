@@ -194,6 +194,7 @@ fun shareScreenshotPreferWhatsApp(
 }
 
 fun getErrorMessageDescription(title: String? = null): String {
+    Log.d("MYDEBUG", "Error $title")
     return when {
         title == null -> {
             "An unexpected error occurred. Please try again shortly."
@@ -212,6 +213,7 @@ fun getErrorMessageDescription(title: String? = null): String {
 }
 
 fun getErrorMessageTitle(title: String? = null): String {
+    Log.d("MYDEBUG", "Error $title")
     return when {
         title == null -> {
             "Oops! Something went wrong"

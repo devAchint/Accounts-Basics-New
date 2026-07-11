@@ -3,8 +3,8 @@ package com.techuntried.accountsbasics2.ui.explore
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
-import com.techuntried.accountsbasics2.usecases.GetCategoriesUseCase
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
@@ -19,12 +19,12 @@ import javax.inject.Inject
 
 data class ExploreSectionModel(
     val title: String,
-    val categories: List<CategoryModel>,
+    val categories: List<SubjectModel>,
 )
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
     private val logEventUseCase: LogEventUseCase,
     private val uploadSuggestionWithLimitUseCase: UploadSuggestionWithLimitUseCase
 ) :
@@ -32,7 +32,7 @@ class ExploreViewModel @Inject constructor(
 
     private val _exploreUiState = MutableStateFlow<ExploreUiState>(ExploreUiState.Loading)
     val exploreUiState = _exploreUiState.asStateFlow()
-    private var categories = emptyList<CategoryModel>()
+    private var categories = emptyList<SubjectModel>()
 
 
     init {
@@ -43,7 +43,7 @@ class ExploreViewModel @Inject constructor(
         viewModelScope.launch {
             _exploreUiState.value = ExploreUiState.Loading
             try {
-                when (val response = getCategoriesUseCase(null)) {
+                when (val response = getSubjectsUseCase(null)) {
                     is ApiResult.Error -> {
                         _exploreUiState.value =
                             ExploreUiState.Error(errorMessage = response.errorMessage)
@@ -54,7 +54,7 @@ class ExploreViewModel @Inject constructor(
                         val categories = response.data
 //                            .filter { it.active }
                             .sortedWith(
-                                compareBy<CategoryModel> { it.grade }
+                                compareBy<SubjectModel> { it.course }
                                     .thenByDescending { it.weight }
                             )
                         val sections = categories.sortedByDescending { it.sectionWeight }
@@ -114,7 +114,7 @@ class ExploreViewModel @Inject constructor(
             .filter {
                 val sectionCheck = if (section == "All") true else it.section == section
                 val gradeCheck =
-                    grades.isEmpty() || it.grade in grades
+                    grades.isEmpty() || it.course in grades
                 sectionCheck && gradeCheck
             }
             .groupBy { it.section }

@@ -30,7 +30,7 @@ class DatabaseModule {
     fun providesCategoryProgressDao(db: AppDatabase) = db.categoryProgressDao()
 
     @Provides
-    fun providesCategoryDao(db: AppDatabase) = db.categoryDao()
+    fun providesCategoryDao(db: AppDatabase) = db.subjectDao()
 
     @Provides
     fun providesLevelDao(db: AppDatabase) = db.levelDao()

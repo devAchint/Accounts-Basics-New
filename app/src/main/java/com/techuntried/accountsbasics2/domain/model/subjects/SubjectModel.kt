@@ -1,6 +1,6 @@
-package com.techuntried.accountsbasics2.domain.model.category
+package com.techuntried.accountsbasics2.domain.model.subjects
 
-data class CategoryModel(
+data class SubjectModel(
     val categoryId: Int,
     val categoryName: String,
     val featured: Boolean,
@@ -13,6 +13,6 @@ data class CategoryModel(
     val weight: Int,
     val sectionWeight: Int,
     val featuredWeight: Int,
-    val levels: Int,
-    val grade: Int
+    val chapters: Int,
+    val course: Int
 )

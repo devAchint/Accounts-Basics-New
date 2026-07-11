@@ -1,9 +1,9 @@
 package com.techuntried.accountsbasics2.usecases
 
 import com.techuntried.accountsbasics2.data.mappers.asCategoryEntity
-import com.techuntried.accountsbasics2.data.mappers.asCategoryModel
+import com.techuntried.accountsbasics2.data.mappers.asSubjectModel
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.repository.NetworkMonitor
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
@@ -14,11 +14,11 @@ class GetCategoryDetailsUseCase @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val networkMonitor: NetworkMonitor // Better than passing 'context'
 ) {
-    suspend operator fun invoke(categoryId: Int): ApiResult<CategoryModel> {
+    suspend operator fun invoke(categoryId: Int): ApiResult<SubjectModel> {
         // 1. Check Local Source first
         val localResult = roomRepository.fetchCategoryById(categoryId)
         if (localResult is ApiResult.Success) {
-            return ApiResult.Success(localResult.data.asCategoryModel())
+            return ApiResult.Success(localResult.data.asSubjectModel())
         }
 
         // 2. Check Connectivity
@@ -30,12 +30,12 @@ class GetCategoryDetailsUseCase @Inject constructor(
         return fetchCategoryRemote(categoryId)
     }
 
-    private suspend fun fetchCategoryRemote(categoryId: Int): ApiResult<CategoryModel> {
+    private suspend fun fetchCategoryRemote(categoryId: Int): ApiResult<SubjectModel> {
         return try {
             when (val response = networkRepository.fetchCategoryDetails(categoryId)) {
                 is ApiResult.Success -> {
                     if (response.data.status) {
-                        val model = response.data.category.asCategoryEntity().asCategoryModel()
+                        val model = response.data.category.asCategoryEntity().asSubjectModel()
                         ApiResult.Success(model)
                     } else {
                         ApiResult.Error(response.data.message)

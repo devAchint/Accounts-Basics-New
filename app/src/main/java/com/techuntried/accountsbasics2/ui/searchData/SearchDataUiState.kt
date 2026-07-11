@@ -1,7 +1,7 @@
 package com.techuntried.accountsbasics2.ui.searchData
 
 import androidx.compose.ui.text.input.TextFieldValue
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 
 sealed interface SearchDataUiState {
     val message:String?
@@ -15,7 +15,7 @@ sealed interface SearchDataUiState {
         override val message: String? = null
     }
     data class Success(
-        val searchResults: List<CategoryModel>? = null,
+        val searchResults: List<SubjectModel>? = null,
         val searchQuery: TextFieldValue = TextFieldValue(""),
         val searchHints: List<String> = emptyList(),
         val hasFocus: Boolean = false,

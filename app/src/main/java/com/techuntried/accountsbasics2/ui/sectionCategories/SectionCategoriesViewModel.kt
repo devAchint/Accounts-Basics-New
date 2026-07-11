@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.ui.navigation.Routes
-import com.techuntried.accountsbasics2.usecases.GetCategoriesUseCase
+import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SectionCategoriesViewModel @Inject constructor(
     private val uploadSuggestionWithLimitUseCase: UploadSuggestionWithLimitUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
     private val logEventUseCase: LogEventUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val globalConfigController: GlobalConfigController
@@ -48,7 +48,7 @@ class SectionCategoriesViewModel @Inject constructor(
             _sectionCategoriesUiState.update { SectionCategoriesUiState.Loading }
             try {
                 when (val response =
-                    getCategoriesUseCase(grades = args.grades.takeIf { !it.isNullOrEmpty() })) {
+                    getSubjectsUseCase(course = 1)) {
                     is ApiResult.Error -> {
                         _sectionCategoriesUiState.update {
                             SectionCategoriesUiState.Error(
@@ -62,7 +62,7 @@ class SectionCategoriesViewModel @Inject constructor(
                             //  .filter { it.active } //remove before publishing
                             .filter { it.section == args.section }
                             .sortedWith(
-                                compareBy<CategoryModel> { it.grade }
+                                compareBy<SubjectModel> { it.course }
                                     .thenByDescending { it.weight }
                             )
 

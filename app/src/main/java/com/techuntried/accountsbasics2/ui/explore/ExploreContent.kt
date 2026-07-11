@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.home.HomeCategoryItemCard
+import com.techuntried.accountsbasics2.ui.home.HomeSubjectItemCard
 import com.techuntried.accountsbasics2.ui.theme.CardColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.utils.AppIcons
@@ -111,9 +111,9 @@ fun ExploreContent(
                                 end = if (index % 2 == 1) 16.dp else 0.dp,
                                 start = if (index % 2 == 0) 16.dp else 0.dp
                             )
-                            HomeCategoryItemCard(
+                            HomeSubjectItemCard(
                                 modifier = modifier.fillMaxWidth(),
-                                categoryModel = item,
+                                subjectModel = item,
                                 onClick = {
                                     onQuizCategoryClick(
                                         item.categoryId,
@@ -182,9 +182,9 @@ private fun ExploreCategoriesCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(categories.take(6)) { category ->
-                    HomeCategoryItemCard(
+                    HomeSubjectItemCard(
                         modifier = Modifier.width(180.dp),
-                        categoryModel = category,
+                        subjectModel = category,
                         onClick = {
                             onQuizCategoryClick(
                                 category.categoryId,

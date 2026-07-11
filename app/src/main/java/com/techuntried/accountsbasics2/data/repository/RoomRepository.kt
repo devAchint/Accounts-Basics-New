@@ -1,10 +1,10 @@
 package com.techuntried.accountsbasics2.data.repository
 
 import android.util.Log
-import com.techuntried.accountsbasics2.data.database.CategoryDao
+import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.CategoryProgressDao
 import com.techuntried.accountsbasics2.data.database.LevelDao
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
@@ -17,14 +17,14 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 class RoomRepository @Inject constructor(
-    private val categoryDao: CategoryDao,
+    private val subjectDao: SubjectDao,
     private val levelDao: LevelDao,
     private val categoryProgressDao: CategoryProgressDao
 ) {
 
-    suspend fun fetchCategoryById(categoryId: Int): ApiResult<CategoryEntity> {
+    suspend fun fetchCategoryById(categoryId: Int): ApiResult<SubjectEntity> {
         return try {
-            ApiResult.Success(categoryDao.getCategoryById(categoryId))
+            ApiResult.Success(subjectDao.getCategoryById(categoryId))
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Log.d("MYDEBUG", "${e.message}")
@@ -33,7 +33,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun observeLatestPlayedCategory(): Flow<CategoryWithProgressEntity?> {
-        return categoryDao.observeLatestPlayedCategory()
+        return subjectDao.observeLatestPlayedCategory()
             .catch {e ->
                 if (e is CancellationException) throw e
                 Log.e("Repo", "Error fetching latest category", e)

@@ -3,8 +3,8 @@ package com.techuntried.accountsbasics2.ui.searchData
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
-import com.techuntried.accountsbasics2.usecases.GetCategoriesUseCase
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadFeedbackUseCase
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchDataViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
     private val logEventUseCase: LogEventUseCase,
     private val uploadFeedbackUseCase: UploadFeedbackUseCase,
 ) :
@@ -30,7 +30,7 @@ class SearchDataViewModel @Inject constructor(
         MutableStateFlow<SearchDataUiState>(SearchDataUiState.InitialLoading)
     val searchDataUiState = _searchDataUiState.asStateFlow()
 
-    private var allData: List<CategoryModel> = emptyList()
+    private var allData: List<SubjectModel> = emptyList()
     private var allHints: List<String> = emptyList()
     private val _savedSearchQueries = mutableSetOf<String>()
 
@@ -45,7 +45,7 @@ class SearchDataViewModel @Inject constructor(
         // 1. We securely capture the job in a local immutable variable 'deferred'
         val deferred = fetchDeferred ?: viewModelScope.async {
             try {
-                when (val result = getCategoriesUseCase(null)) {
+                when (val result = getSubjectsUseCase(null)) {
                     is ApiResult.Success -> {
                         //removed before publishing
                         allData = result.data  //.filter { it.active }
@@ -137,7 +137,7 @@ class SearchDataViewModel @Inject constructor(
             sectionMatch || titleMatch
         }
             .sortedWith(
-                compareBy<CategoryModel> { it.grade }
+                compareBy<SubjectModel> { it.course }
                     .thenByDescending { it.weight }
             )
 

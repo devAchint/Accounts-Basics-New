@@ -442,7 +442,7 @@ fun CategoryProgressCard(
                                         fontFamily = RubikMedium
                                     )
                                 ) {
-                                    append("${categoryWithProgress.progress.levelsPlayed}/${categoryWithProgress.category.levels}")
+                                    append("${categoryWithProgress.progress.levelsPlayed}/${categoryWithProgress.category.chapters}")
                                 }
 
                                 withStyle(
@@ -468,7 +468,7 @@ fun CategoryProgressCard(
                     }
                     Spacer(4.dp)
                     Text(
-                        text = "Grade ${categoryWithProgress.category.grade}",
+                        text = "Grade ${categoryWithProgress.category.course}",
                         color = SecondaryText,
                         style = MaterialTheme.typography.labelSmall,
                     )

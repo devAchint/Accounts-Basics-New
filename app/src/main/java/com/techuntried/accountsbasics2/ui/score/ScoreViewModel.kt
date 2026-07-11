@@ -128,7 +128,7 @@ class ScoreViewModel @Inject constructor(
                     val level = levelResult.data
                     val categoryName = categoryResult.data.categoryName
                     val section = categoryResult.data.section
-                    val totalLevels = categoryResult.data.levels
+                    val totalLevels = categoryResult.data.chapters
 
                     val totalQuestions = level.questions
                     val levelName = level.levelName

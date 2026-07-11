@@ -8,8 +8,8 @@ import com.techuntried.accountsbasics2.domain.model.account.UserAppVersionReques
 import com.techuntried.accountsbasics2.domain.model.analytics.LogEventRequest
 import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResponse
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
-import com.techuntried.accountsbasics2.domain.model.category.FetchCategoriesResponse
-import com.techuntried.accountsbasics2.domain.model.category.FetchCategoryResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
 import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
@@ -23,9 +23,9 @@ interface NetworkRepository {
     suspend fun updateFcmToken(userFcmTokenRequest: UserFcmTokenRequest): ApiResult<BaseApiResponse>
     suspend fun updateAppVersion(userAppVersionRequest: UserAppVersionRequest): ApiResult<BaseApiResponse>
     suspend fun fetchCourses(): ApiResult<FetchCoursesResponse>
-    suspend fun fetchCategories(): ApiResult<FetchCategoriesResponse>
-    suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchCategoryResponse>
-    suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchCategoriesResponse>
+    suspend fun fetchSubjects(): ApiResult<FetchSubjectsResponse>
+    suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchSubjectResponse>
+    suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchSubjectsResponse>
 
     suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchLevelsResponse>
     suspend fun fetchLevelsDetails(categoryId: Int, levelId:Int): ApiResult<FetchLevelResponse>

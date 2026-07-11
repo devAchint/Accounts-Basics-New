@@ -1,10 +1,10 @@
 package com.techuntried.accountsbasics2.data.repository
 
 import android.util.Log
-import com.techuntried.accountsbasics2.data.database.CategoryDao
+import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.LevelDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class QuizRepository @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val categoryDao: CategoryDao,
+    private val subjectDao: SubjectDao,
     private val levelDao: LevelDao,
     private val questionDao: QuestionDao,
 ) {
@@ -44,12 +44,12 @@ class QuizRepository @Inject constructor(
     fun wasLevelsUpdatedThisSession(categoryId: Int) = verifiedLevelsCategories.contains(categoryId)
     fun wasQuestionsUpdatedThisSession(): Boolean = isQuestionsUpdatedInSession
 
-    suspend fun getLocalCategories(grades: List<Int>?): ApiResult<List<CategoryEntity>> {
+    suspend fun getLocalSubjects(course: Int?): ApiResult<List<SubjectEntity>> {
         return try {
-            val categories = if (grades==null){
-                categoryDao.getCategories()
+            val categories = if (course==null){
+                subjectDao.getSubjects()
             }else{
-                categoryDao.getCategoriesByGrades(grades)
+                subjectDao.getSubjectsByGrades(course)
             }
             ApiResult.Success(categories)
         } catch (e: Exception) {
@@ -58,12 +58,12 @@ class QuizRepository @Inject constructor(
         }
     }
 
-    suspend fun saveCategories(categories: List<CategoryEntity>) {
-        categoryDao.clearAndInsertCategories(categories)
+    suspend fun saveSubjects(subjects: List<SubjectEntity>) {
+        subjectDao.clearAndInsertSubjects(subjects)
         dataStoreRepository.saveCategoryLastUpdatedDate(currentDate())
     }
 
-    suspend fun fetchRemoteCategories() = networkRepository.fetchCategories()
+    suspend fun fetchRemoteSubjects() = networkRepository.fetchSubjects()
 
     suspend fun categoriesNeedsUpdate(): Boolean {
         val localDate = dataStoreRepository.getCategoryLastUpdatedDate() ?: return true

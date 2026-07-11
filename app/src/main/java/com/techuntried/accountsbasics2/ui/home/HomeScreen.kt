@@ -296,8 +296,8 @@ fun QuizSectionCard(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     rowItems.forEach { category ->
-                        HomeCategoryItemCard(
-                            modifier = Modifier.weight(1f), categoryModel = category, onClick = {
+                        HomeSubjectItemCard(
+                            modifier = Modifier.weight(1f), subjectModel = category, onClick = {
                                 onQuizCategoryClick(
                                     category.categoryId, category.categoryName, category.showTopics
                                 )

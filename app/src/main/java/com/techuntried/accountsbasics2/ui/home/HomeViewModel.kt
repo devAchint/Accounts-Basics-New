@@ -8,10 +8,10 @@ import com.techuntried.accountsbasics2.data.mappers.asCategoryWithProgressModel
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
-import com.techuntried.accountsbasics2.domain.model.category.CategoryModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
-import com.techuntried.accountsbasics2.usecases.GetCategoriesUseCase
+import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
@@ -47,13 +47,13 @@ data class AppUpdateModel(
 
 data class SectionCategoriesModel(
     val title: String,
-    val categories: List<CategoryModel>,
+    val categories: List<SubjectModel>,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getSubjectsUseCase: GetSubjectsUseCase,
     private val roomRepository: RoomRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val networkRepository: NetworkRepository,
@@ -102,14 +102,14 @@ class HomeViewModel @Inject constructor(
 
     private var cachedLastPlayed: CategoryWithProgressModel? = null
 
-    val gradeFlow = dataStoreRepository.getUserCourseFlow()
+    val courseFlow = dataStoreRepository.getUserCourseFlow()
         .filterNotNull()
         .distinctUntilChanged()
 
-    val categoriesFlow = gradeFlow
-        .flatMapLatest { grade ->
+    val categoriesFlow = courseFlow
+        .flatMapLatest { course ->
             flow {
-                emit(getCategoriesUseCase(listOf(grade)))
+                emit(getSubjectsUseCase(course))
             }.catch { e ->
                 emit(ApiResult.Error(e.message ?: "Unknown error"))
             }
@@ -127,7 +127,7 @@ class HomeViewModel @Inject constructor(
 
 
     private fun observeData() {
-        gradeFlow.flatMapLatest { grade ->
+        courseFlow.flatMapLatest { grade ->
 
             combine(
                 categoriesFlow,   // already uses grade internally
@@ -192,7 +192,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun buildSections(categories: List<CategoryModel>): List<SectionCategoriesModel> {
+    fun buildSections(categories: List<SubjectModel>): List<SectionCategoriesModel> {
         return categories
             .asSequence()
             //  .filter { it.active } change before publishing

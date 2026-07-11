@@ -1,6 +1,7 @@
 package com.techuntried.accountsbasics2.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.techuntried.accountsbasics2.domain.model.BaseApiResponse
 import com.techuntried.accountsbasics2.domain.model.UserFcmTokenRequest
 import com.techuntried.accountsbasics2.domain.model.account.CreateGuestAccountRequest
@@ -9,14 +10,15 @@ import com.techuntried.accountsbasics2.domain.model.account.UserAppVersionReques
 import com.techuntried.accountsbasics2.domain.model.analytics.LogEventRequest
 import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResponse
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
-import com.techuntried.accountsbasics2.domain.model.category.FetchCategoriesResponse
-import com.techuntried.accountsbasics2.domain.model.category.FetchCategoryResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
 import com.techuntried.accountsbasics2.domain.model.course.CourseResponse
 import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
 import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
 import com.techuntried.accountsbasics2.utils.getApiResponse
@@ -76,21 +78,31 @@ class NetworkRepositoryImpl @Inject constructor(
         return ApiResult.Success(response)
     }
 
-    override suspend fun fetchCategories(): ApiResult<FetchCategoriesResponse> {
+    override suspend fun fetchSubjects(): ApiResult<FetchSubjectsResponse> {
+        val text = context.assets
+            .open("subjects.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val courses = json.decodeFromString<List<SubjectApiResponse>>(text)
+        Log.d("MYDEBUG", "courses $courses")
+        
+        val response = FetchSubjectsResponse(categories = courses, status = true, message = "fsdfss")
+        return ApiResult.Success(response)
+
         return getApiResponse {
-            client.get("api/categories").body<FetchCategoriesResponse>()
+            client.get("api/categories").body<FetchSubjectsResponse>()
         }
     }
 
-    override suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchCategoryResponse> {
+    override suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchSubjectResponse> {
         return getApiResponse {
-            client.get("api/categories/$categoryId").body<FetchCategoryResponse>()
+            client.get("api/categories/$categoryId").body<FetchSubjectResponse>()
         }
     }
 
-    override suspend fun fetchCategoriesByGrade(grade: Int): ApiResult<FetchCategoriesResponse> {
+    override suspend fun fetchCategoriesByGrade(grade: Int): ApiResult<FetchSubjectsResponse> {
         return getApiResponse {
-            client.get("api/categoriesByGrade/$grade").body<FetchCategoriesResponse>()
+            client.get("api/categoriesByGrade/$grade").body<FetchSubjectsResponse>()
         }
     }
 
