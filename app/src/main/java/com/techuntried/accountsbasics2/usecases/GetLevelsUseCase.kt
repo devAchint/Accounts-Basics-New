@@ -3,7 +3,7 @@ package com.techuntried.accountsbasics2.usecases
 import com.techuntried.accountsbasics2.data.mappers.asLevelEntity
 import com.techuntried.accountsbasics2.data.mappers.asLevelModel
 import com.techuntried.accountsbasics2.data.repository.QuizRepository
-import com.techuntried.accountsbasics2.domain.model.level.LevelModel
+import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.repository.NetworkMonitor
 import com.techuntried.accountsbasics2.utils.ApiResult
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class GetLevelsUseCase @Inject constructor(
     private val repository: QuizRepository,
     private val networkMonitor: NetworkMonitor
 ) {
-    suspend operator fun invoke(categoryId: Int): ApiResult<List<LevelModel>> {
+    suspend operator fun invoke(categoryId: Int): ApiResult<List<ChapterModel>> {
         val localResult = repository.getLocalLevels(categoryId)
         val hasLocalData = localResult is ApiResult.Success && localResult.data.isNotEmpty()
         val isOnline = networkMonitor.isConnected()

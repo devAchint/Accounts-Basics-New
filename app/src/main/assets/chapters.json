@@ -1,0 +1,67 @@
+[
+  {
+    "subjectId": 101,
+    "chapterId": 1,
+    "module": 1,
+    "name": "Introduction to Accounting",
+    "type": "learn",
+    "questions": 10
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 2,
+    "module": 1,
+    "name": "Accounting Principles",
+    "type": "learn",
+    "questions": 12
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 3,
+    "module": 1,
+    "name": "Accounting Process",
+    "type": "learn",
+    "questions": 15
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 4,
+    "module": 1,
+    "name": "Module 1 Practice Test",
+    "type": "practice",
+    "questions": 30
+  },
+
+  {
+    "subjectId": 101,
+    "chapterId": 5,
+    "module": 2,
+    "name": "Journal Entries",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 6,
+    "module": 2,
+    "name": "Ledger",
+    "type": "learn",
+    "questions": 18
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 7,
+    "module": 2,
+    "name": "Trial Balance",
+    "type": "learn",
+    "questions": 15
+  },
+  {
+    "subjectId": 101,
+    "chapterId": 8,
+    "module": 2,
+    "name": "Module 2 Practice Test",
+    "type": "practice",
+    "questions": 35
+  }
+]

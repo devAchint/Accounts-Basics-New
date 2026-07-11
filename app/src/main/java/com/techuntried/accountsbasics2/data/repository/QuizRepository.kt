@@ -5,7 +5,7 @@ import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.LevelDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
-import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
+import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
@@ -76,7 +76,7 @@ class QuizRepository @Inject constructor(
 
 
     //levels
-    suspend fun getLocalLevels(categoryId: Int): ApiResult<List<LevelEntity>> {
+    suspend fun getLocalLevels(categoryId: Int): ApiResult<List<ChapterEntity>> {
         return try {
             ApiResult.Success(levelDao.getLevelsByCategory(categoryId))
         } catch (e: Exception) {
@@ -85,7 +85,7 @@ class QuizRepository @Inject constructor(
         }
     }
 
-    suspend fun saveLevels(categoryId: Int, levels: List<LevelEntity>) {
+    suspend fun saveLevels(categoryId: Int, levels: List<ChapterEntity>) {
         levelDao.clearAndInsertLevels(categoryId, levels)
         dataStoreRepository.saveLevelLastUpdatedDate("$categoryId", currentDate())
     }

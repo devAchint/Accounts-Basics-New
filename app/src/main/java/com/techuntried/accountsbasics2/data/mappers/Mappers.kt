@@ -7,10 +7,10 @@ import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
+import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
-import com.techuntried.accountsbasics2.domain.model.level.LevelApiResponse
-import com.techuntried.accountsbasics2.domain.model.level.LevelModel
+import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
+import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.model.question.Option
 import com.techuntried.accountsbasics2.domain.model.question.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
@@ -128,23 +128,25 @@ fun SubjectEntity.asSubjectModel(): SubjectModel {
 }
 
 
-fun LevelApiResponse.asLevelEntity(): LevelEntity {
-    return LevelEntity(
-        categoryId = categoryId,
-        levelId = levelId,
-        levelName = levelName,
+fun ChapterApiResponse.asLevelEntity(): ChapterEntity {
+    return ChapterEntity(
+        subjectId = subjectId,
+        chapterId = chapterId,
+        name = name,
         questions = questions,
-        topic = topic
+        module = module,
+        type = type
     )
 }
 
-fun LevelEntity.asLevelModel(): LevelModel {
-    return LevelModel(
-        categoryId = categoryId,
-        levelId = levelId,
-        levelName = levelName,
+fun ChapterEntity.asLevelModel(): ChapterModel {
+    return ChapterModel(
+        subjectId = subjectId,
+        chapterId = chapterId,
+        name = name,
         questions = questions,
-        topic = topic
+        module = module,
+        type = type
     )
 }
 

@@ -12,7 +12,7 @@ import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import com.techuntried.accountsbasics2.ui.feedback.FeedbackScreenRoot
 import com.techuntried.accountsbasics2.ui.game.GameScreenRoot
 import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
-import com.techuntried.accountsbasics2.ui.level.LevelScreenRoot
+import com.techuntried.accountsbasics2.ui.chapter.ChaptersScreenRoot
 import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
 import com.techuntried.accountsbasics2.ui.progress.ProgressScreenRoot
 import com.techuntried.accountsbasics2.ui.rules.RulesScreenRoot
@@ -120,7 +120,7 @@ fun NavGraph(
         composable<Routes.LevelScreenRoute> {
             val args = it.toRoute<Routes.LevelScreenRoute>()
             val levelArgs = args.toLevelArgs()
-            LevelScreenRoot(
+            ChaptersScreenRoot(
                 args = levelArgs,
                 onBack = {
                     navController.navigateUp()

@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.level
+package com.techuntried.accountsbasics2.ui.chapter
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,9 +25,9 @@ import com.techuntried.accountsbasics2.usecases.LogEventType
 import kotlinx.coroutines.launch
 
 @Composable
-fun LevelContent(
+fun ChapterContent(
     modifier: Modifier = Modifier,
-    levelUiState: LevelUiState.Success,
+    chapterUiState: ChapterUiState.Success,
     showTopics: Boolean,
     bannerAdUnit: String?,
     openRules: (levelId: Int) -> Unit,
@@ -38,12 +38,12 @@ fun LevelContent(
 ) {
     val listState = rememberLazyListState()
 
-    val targetIndex = remember(levelUiState.gameLevels) {
-        val unlocked = levelUiState.gameLevels.indexOfLast {
+    val targetIndex = remember(chapterUiState.gameLevels) {
+        val unlocked = chapterUiState.gameLevels.indexOfLast {
             it.levelState == LevelState.Unlocked
         }
         if (unlocked != -1) unlocked
-        else levelUiState.gameLevels.indexOfLast {
+        else chapterUiState.gameLevels.indexOfLast {
             it.levelState == LevelState.Completed
         }
     }
@@ -95,6 +95,10 @@ fun LevelContent(
                 .weight(1f)
                 .fillMaxWidth()
         ) {
+            val groupedLevels = remember(chapterUiState.gameLevels) {
+                chapterUiState.gameLevels.groupBy { it.module }
+            }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -107,26 +111,36 @@ fun LevelContent(
                 state = listState,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                itemsIndexed(levelUiState.gameLevels) { index, level ->
-                    GameLevelCard(
-                        level = level,
-                        isFirst = index == 0,
-                        isLast = index == levelUiState.gameLevels.lastIndex,
-                        showTopics = showTopics,
-                        onClick = {
-                            if (level.levelState == LevelState.Locked) {
-                                val levelsUnlocked =
-                                    levelUiState.levelsCompleted + 1
-                                if (level.levelId <= levelsUnlocked + 2) {
-                                    showLevelLockedSheet(level.levelId)
+                groupedLevels.forEach { (module, levels) ->
+
+                    item {
+                        ModuleCard(
+                            title = "Module $module",
+                            subtitle = "${levels.count { it.type == "learn" }} Chapters"
+                        )
+                    }
+
+                    itemsIndexed(levels) { index, level ->
+                        ChapterCard(
+                            level = level,
+                            isFirst = index == 0,
+                            isLast = index == levels.lastIndex,
+                            index = index,
+                            onClick = {
+                                if (level.levelState == LevelState.Locked) {
+                                    val levelsUnlocked =
+                                        chapterUiState.levelsCompleted + 1
+                                    if (level.chapterId <= levelsUnlocked + 2) {
+                                        showLevelLockedSheet(level.chapterId)
+                                    } else {
+                                        showLevelLockedDialog()
+                                    }
                                 } else {
-                                    showLevelLockedDialog()
+                                    openRules(level.chapterId)
                                 }
-                            } else {
-                                openRules(level.levelId)
                             }
-                        }
-                    )
+                        )
+                    }
                 }
                 item {
 

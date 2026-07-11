@@ -4,15 +4,17 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(tableName = "levels", primaryKeys = ["categoryId", "levelId"])
-data class LevelEntity(
+data class ChapterEntity(
     @ColumnInfo(name = "levelId")
-    val levelId: Int,
+    val chapterId: Int,
     @ColumnInfo(name = "categoryId")
-    val categoryId: Int,
+    val subjectId: Int,
     @ColumnInfo(name = "levelName")
-    val levelName: String,
+    val name: String,
     @ColumnInfo(name = "questions")
     val questions: Int,
-    @ColumnInfo(name = "topic")
-    val topic: String?
+    @ColumnInfo(name = "module")
+    val module:Int,
+    @ColumnInfo(name = "type")
+    val type:String,
 )

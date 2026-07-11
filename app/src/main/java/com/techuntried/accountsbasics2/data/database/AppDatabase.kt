@@ -5,13 +5,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
+import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 
 @Database(
     entities = [
         SubjectEntity::class,
-        LevelEntity::class,
+        ChapterEntity::class,
         QuestionEntity::class,
         CategoryProgressEntity::class,
     ],

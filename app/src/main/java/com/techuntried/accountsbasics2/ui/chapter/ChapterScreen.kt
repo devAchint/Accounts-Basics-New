@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.level
+package com.techuntried.accountsbasics2.ui.chapter
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
-import com.techuntried.accountsbasics2.domain.model.level.LevelModel
+import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.model.level.LevelState
 import com.techuntried.accountsbasics2.ui.commons.CoinsSheet
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
@@ -76,15 +76,15 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 
 @Composable
-fun LevelScreenRoot(
+fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
     args: LevelArgs,
     navigateToRules: (RuleArgs) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val viewModel: LevelViewModel = hiltViewModel()
-    val levelUiState = viewModel.levelUiState.collectAsStateWithLifecycle().value
+    val viewModel: ChapterViewModel = hiltViewModel()
+    val chaptersUiState = viewModel.chaptersUiState.collectAsStateWithLifecycle().value
 
     val coinsState =
         viewModel.coinsState.collectAsStateWithLifecycle().value
@@ -102,15 +102,15 @@ fun LevelScreenRoot(
         viewModel.logEvent(LogEventType.ScreenVisit("GameLevels"))
     }
 
-    LaunchedEffect(levelUiState.message) {
-        levelUiState.message?.let { message ->
+    LaunchedEffect(chaptersUiState.message) {
+        chaptersUiState.message?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             viewModel.clearMsg()
         }
     }
 
-    GameLevelScreen(
-        levelUiState = levelUiState,
+    ChaptersScreen(
+        chapterUiState = chaptersUiState,
         showTopics = args.showTopic,
         coins = coinsState,
         bannerAdUnit = bannerAdUnit,
@@ -131,8 +131,8 @@ fun LevelScreenRoot(
 
 
 @Composable
-private fun GameLevelScreen(
-    levelUiState: LevelUiState,
+private fun ChaptersScreen(
+    chapterUiState: ChapterUiState,
     categoryName: String,
     showTopics: Boolean,
     coins: Int,
@@ -184,26 +184,26 @@ private fun GameLevelScreen(
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            when (levelUiState) {
-                is LevelUiState.Error -> {
+            when (chapterUiState) {
+                is ChapterUiState.Error -> {
                     ErrorMessageView(
                         icon = R.drawable.error_icon_1,
-                        errorTitle = getErrorMessageTitle(levelUiState.errorMessage),
-                        description = getErrorMessageDescription(levelUiState.errorMessage),
+                        errorTitle = getErrorMessageTitle(chapterUiState.errorMessage),
+                        description = getErrorMessageDescription(chapterUiState.errorMessage),
                         actionButton = "Try Again",
                         action = { onAction(LevelActions.Refresh) },
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
-                LevelUiState.Loading -> {
+                ChapterUiState.Loading -> {
                     CommonCircularProgress(
                         modifier = Modifier
                             .size(40.dp)
                             .align(Alignment.Center),
                     )
                 }
-                is LevelUiState.Success -> {
-                    if (levelUiState.isEmpty()) {
+                is ChapterUiState.Success -> {
+                    if (chapterUiState.isEmpty()) {
                         ErrorMessageView(
                             modifier = Modifier.align(Alignment.Center),
                             icon = R.drawable.error_icon_1,
@@ -215,8 +215,8 @@ private fun GameLevelScreen(
                             }
                         )
                     } else {
-                        LevelContent(
-                            levelUiState = levelUiState,
+                        ChapterContent(
+                            chapterUiState = chapterUiState,
                             showTopics = showTopics,
                             bannerAdUnit = bannerAdUnit,
                             openRules = openRules,
@@ -228,7 +228,7 @@ private fun GameLevelScreen(
                     }
                 }
             }
-            if (levelUiState.actionLoading) {
+            if (chapterUiState.actionLoading) {
                 CommonCircularProgress(
                     modifier = Modifier
                         .size(40.dp)
@@ -249,7 +249,7 @@ private fun GameLevelScreen(
         )
     }
     levelLockedSheet?.let { levelId ->
-        val unlockCoins = (levelUiState as? LevelUiState.Success)?.unlockCoinsCost ?: 100
+        val unlockCoins = (chapterUiState as? ChapterUiState.Success)?.unlockCoinsCost ?: 100
         LevelLockedDialog(
             onDismiss = {
                 levelLockedSheet = null
@@ -268,7 +268,7 @@ private fun GameLevelScreen(
         )
     }
 
-    (levelUiState as? LevelUiState.Success)?.levelUnlocked?.let { levelId ->
+    (chapterUiState as? ChapterUiState.Success)?.levelUnlocked?.let { levelId ->
         LevelUnLockedDialog(
             onDismiss = {
                 onAction(LevelActions.ClearLevelUnlocked)
@@ -294,12 +294,12 @@ private fun GameLevelScreen(
 
 
 @Composable
-fun GameLevelCard(
+fun ChapterCard(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
+    index:Int,
     isLast: Boolean = false,
-    level: LevelModel,
-    showTopics: Boolean,
+    level: ChapterModel,
     onClick: () -> Unit
 ) {
     val circleIndicator =
@@ -390,15 +390,15 @@ fun GameLevelCard(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                if (level.topic != null && showTopics) {
+                if (level.type=="learn") {
                     Text(
-                        text = level.levelName,
+                        text = "Chapter ${index.plus(1)}",
                         maxLines = 1,
                         color = SecondaryText,
                         style = MaterialTheme.typography.labelMedium
                     )
                     Text(
-                        text = level.topic,
+                        text = level.name,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MainText,
@@ -406,7 +406,7 @@ fun GameLevelCard(
                     )
                 } else {
                     Text(
-                        text = level.levelName,
+                        text = level.name,
                         maxLines = 1,
                         color = MainText,
                         style = MaterialTheme.typography.titleLarge
@@ -446,6 +446,58 @@ fun GameLevelCard(
     }
 }
 
+@Composable
+fun ModuleCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String? = null
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+    ) {
+        Spacer(modifier = Modifier.width(40.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(CardColor)
+                .border(1.dp, BorderColor, RoundedCornerShape(12.dp))
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.book_icon), // your module icon
+                contentDescription = null,
+                tint = MainText,
+                modifier = Modifier.size(22.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MainText
+                )
+
+                subtitle?.let {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = SecondaryText
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun VerticalDashedLine(

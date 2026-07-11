@@ -131,7 +131,7 @@ class ScoreViewModel @Inject constructor(
                     val totalLevels = categoryResult.data.chapters
 
                     val totalQuestions = level.questions
-                    val levelName = level.levelName
+                    val levelName = level.name
 
                     // 🔹 BUSINESS LOGIC
                     val minimumScore = (totalQuestions * 60) / 100

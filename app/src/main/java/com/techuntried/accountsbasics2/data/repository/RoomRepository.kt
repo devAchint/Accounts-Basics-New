@@ -7,7 +7,7 @@ import com.techuntried.accountsbasics2.data.database.LevelDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.LevelEntity
+import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.utils.ApiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -41,7 +41,7 @@ class RoomRepository @Inject constructor(
             }
     }
 
-    suspend fun fetchLevelDetailsByCategory(categoryId: Int, levelId: Int): ApiResult<LevelEntity> {
+    suspend fun fetchLevelDetailsByCategory(categoryId: Int, levelId: Int): ApiResult<ChapterEntity> {
         return try {
             ApiResult.Success(levelDao.getLevelDetailByCategory(categoryId, levelId))
         } catch (e: Exception) {

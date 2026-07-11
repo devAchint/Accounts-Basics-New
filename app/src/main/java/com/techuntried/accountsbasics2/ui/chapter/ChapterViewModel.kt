@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.level
+package com.techuntried.accountsbasics2.ui.chapter
 
 
 import android.util.Log
@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class LevelViewModel @Inject constructor(
+class ChapterViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val getLevelsUseCase: GetLevelsUseCase,
@@ -40,8 +40,8 @@ class LevelViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _levelUiState = MutableStateFlow<LevelUiState>(LevelUiState.Loading)
-    val levelUiState = _levelUiState.asStateFlow()
+    private val _chapterUiState = MutableStateFlow<ChapterUiState>(ChapterUiState.Loading)
+    val chaptersUiState = _chapterUiState.asStateFlow()
 
     val coinsState: StateFlow<Int> = dataStoreRepository.fetchCoins()
         .catch { e ->
@@ -73,12 +73,12 @@ class LevelViewModel @Inject constructor(
 
     private fun fetchLevels(categoryId: Int) {
         viewModelScope.launch {
-            _levelUiState.value = LevelUiState.Loading
+            _chapterUiState.value = ChapterUiState.Loading
             try {
                 when (val response = getLevelsUseCase(categoryId)) {
                     is ApiResult.Error -> {
                         Log.d("MYDEBUG", response.errorMessage)
-                        _levelUiState.value = LevelUiState.Error(
+                        _chapterUiState.value = ChapterUiState.Error(
                             errorMessage = response.errorMessage
                         )
                     }
@@ -89,11 +89,11 @@ class LevelViewModel @Inject constructor(
                         val unlockLevelCoins = dataStoreRepository.fetchUnlockLevelCoinsCost()
                         val levels = response.data.mapIndexed { index, level ->
                             level.copy(
-                                levelState = getLevelState(level.levelId, levelsCompleted),
+                                levelState = getLevelState(level.chapterId, levelsCompleted),
                                 isLast = index == response.data.size - 1
                             )
                         }
-                        _levelUiState.value = LevelUiState.Success(
+                        _chapterUiState.value = ChapterUiState.Success(
                             gameLevels = levels,
                             levelsCompleted = levelsCompleted,
                             unlockCoinsCost = unlockLevelCoins
@@ -103,7 +103,7 @@ class LevelViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.d("MYDEBUG", "${e.message}")
-                _levelUiState.value = LevelUiState.Error(
+                _chapterUiState.value = ChapterUiState.Error(
                     errorMessage = e.message
                 )
             }
@@ -139,7 +139,7 @@ class LevelViewModel @Inject constructor(
     private fun unlockLevel(levelId: Int, isAdWatched: Boolean) {
         viewModelScope.launch {
             if (isAdWatched) {
-                _levelUiState.update {
+                _chapterUiState.update {
                     it.withActionLoading(false).updateSuccess { copy(levelUnlocked = levelId) }
                 }
             } else {
@@ -147,34 +147,34 @@ class LevelViewModel @Inject constructor(
                 val unlockCost = dataStoreRepository.fetchUnlockLevelCoinsCost()
                 if (coins >= unlockCost) {
                     dataStoreRepository.useCoins(unlockCost)
-                    _levelUiState.update { it.updateSuccess { copy(levelUnlocked = levelId) } }
+                    _chapterUiState.update { it.updateSuccess { copy(levelUnlocked = levelId) } }
                 } else {
-                    _levelUiState.update { it.withMessage("Insufficient Coins") }
+                    _chapterUiState.update { it.withMessage("Insufficient Coins") }
                 }
             }
         }
     }
 
     private fun clearIsLevelUnlocked() {
-        _levelUiState.update { it.updateSuccess { copy(levelUnlocked = null) } }
+        _chapterUiState.update { it.updateSuccess { copy(levelUnlocked = null) } }
     }
 
     fun clearMsg() {
-        _levelUiState.update { it.withMessage(null) }
+        _chapterUiState.update { it.withMessage(null) }
     }
 
     private fun uploadSuggestion(comment: String) {
         viewModelScope.launch {
-            _levelUiState.update { it.withActionLoading(true) }
+            _chapterUiState.update { it.withActionLoading(true) }
             when (val result = uploadSuggestionWithLimitUseCase.invoke(comment)) {
                 is ApiResult.Error -> {
-                    _levelUiState.update {
+                    _chapterUiState.update {
                         it.withActionLoading(false).withMessage(result.errorMessage)
                     }
                 }
 
                 is ApiResult.Success -> {
-                    _levelUiState.update {
+                    _chapterUiState.update {
                         it.withActionLoading(false)
                             .withMessage("Thanks! Your report has been recorded.")
                     }
@@ -194,9 +194,9 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 dataStoreRepository.addCoins(rewardAmount)
-                _levelUiState.update { it.withMessage("Earned $rewardAmount coins") }
+                _chapterUiState.update { it.withMessage("Earned $rewardAmount coins") }
             } catch (e: Exception) {
-                _levelUiState.update { it.withMessage(e.message) }
+                _chapterUiState.update { it.withMessage(e.message) }
             }
         }
     }

@@ -15,8 +15,9 @@ import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectRespons
 import com.techuntried.accountsbasics2.domain.model.course.CourseResponse
 import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
-import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
-import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
+import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
+import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
+import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
 import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
@@ -106,18 +107,28 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchLevelsResponse> {
+    override suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchChaptersResponse> {
+        val text = context.assets
+            .open("chapters.json")
+            .bufferedReader()
+            .use { it.readText() }
+        val courses = json.decodeFromString<List<ChapterApiResponse>>(text)
+        Log.d("MYDEBUG", "courses $courses")
+
+        val response = FetchChaptersResponse(levels = courses, status = true, message = "fsdfss")
+        return ApiResult.Success(response)
+
         return getApiResponse {
-            client.get("api/levelByCategory/category/$categoryId").body<FetchLevelsResponse>()
+            client.get("api/levelByCategory/category/$categoryId").body<FetchChaptersResponse>()
         }
     }
 
     override suspend fun fetchLevelsDetails(
         categoryId: Int,
         levelId: Int
-    ): ApiResult<FetchLevelResponse> {
+    ): ApiResult<FetchChapterResponse> {
         return getApiResponse {
-            client.get("api/levelDetails/$categoryId/$levelId").body<FetchLevelResponse>()
+            client.get("api/levelDetails/$categoryId/$levelId").body<FetchChapterResponse>()
         }
     }
 

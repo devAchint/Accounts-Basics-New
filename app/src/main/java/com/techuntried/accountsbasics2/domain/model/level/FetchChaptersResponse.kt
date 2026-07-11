@@ -4,26 +4,27 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FetchLevelsResponse(
+data class FetchChaptersResponse(
     val status: Boolean,
     val message: String,
     @SerialName("data")
-    val levels: List<LevelApiResponse>
+    val levels: List<ChapterApiResponse>
 )
 
 @Serializable
-data class FetchLevelResponse(
+data class FetchChapterResponse(
     val status: Boolean,
     val message: String,
     @SerialName("data")
-    val level: LevelApiResponse
+    val level: ChapterApiResponse
 )
 
 @Serializable
-data class LevelApiResponse(
-    val categoryId: Int,
-    val levelId: Int,
-    val levelName: String,
+data class ChapterApiResponse(
+    val subjectId: Int,
+    val chapterId: Int,
+    val name: String,
     val questions: Int,
-    val topic:String?
+    val module:Int,
+    val type:String,
 )

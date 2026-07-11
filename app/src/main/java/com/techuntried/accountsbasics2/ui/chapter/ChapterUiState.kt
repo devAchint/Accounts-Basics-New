@@ -1,24 +1,24 @@
-package com.techuntried.accountsbasics2.ui.level
+package com.techuntried.accountsbasics2.ui.chapter
 
-import com.techuntried.accountsbasics2.domain.model.level.LevelModel
+import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 
-sealed interface LevelUiState {
+sealed interface ChapterUiState {
     val message: String?
     val actionLoading: Boolean
 
-    data object Loading : LevelUiState {
+    data object Loading : ChapterUiState {
         override val message: String? = null
         override val actionLoading: Boolean = false
     }
 
     data class Success(
-        val gameLevels: List<LevelModel>,
+        val gameLevels: List<ChapterModel>,
         val levelsCompleted: Int,
         val unlockCoinsCost:Int,
         val levelUnlocked: Int? = null,
         override val actionLoading: Boolean = false,
         override val message: String? = null,
-    ) : LevelUiState {
+    ) : ChapterUiState {
         fun isEmpty() = gameLevels.isEmpty()
     }
 
@@ -26,28 +26,28 @@ sealed interface LevelUiState {
         val errorMessage:String?,
         override val message: String?=null,
         override val actionLoading: Boolean = false,
-    ) : LevelUiState
+    ) : ChapterUiState
 }
 
-fun LevelUiState.withMessage(newMessage: String?): LevelUiState {
+fun ChapterUiState.withMessage(newMessage: String?): ChapterUiState {
     return when (this) {
-        is LevelUiState.Success -> this.copy(message = newMessage)
-        is LevelUiState.Error -> this.copy(message = newMessage)
-        is LevelUiState.Loading -> this
+        is ChapterUiState.Success -> this.copy(message = newMessage)
+        is ChapterUiState.Error -> this.copy(message = newMessage)
+        is ChapterUiState.Loading -> this
     }
 }
 
-fun LevelUiState.withActionLoading(isLoading: Boolean): LevelUiState {
+fun ChapterUiState.withActionLoading(isLoading: Boolean): ChapterUiState {
     return when (this) {
-        is LevelUiState.Success -> this.copy(actionLoading = isLoading)
-        is LevelUiState.Error -> this.copy(actionLoading = isLoading)
+        is ChapterUiState.Success -> this.copy(actionLoading = isLoading)
+        is ChapterUiState.Error -> this.copy(actionLoading = isLoading)
         else -> this // Ignore for full-screen Loading state
     }
 }
 
 
-inline fun LevelUiState.updateSuccess(block: LevelUiState.Success.() -> LevelUiState): LevelUiState {
-    return if (this is LevelUiState.Success) this.block() else this
+inline fun ChapterUiState.updateSuccess(block: ChapterUiState.Success.() -> ChapterUiState): ChapterUiState {
+    return if (this is ChapterUiState.Success) this.block() else this
 }
 
 sealed interface LevelActions {

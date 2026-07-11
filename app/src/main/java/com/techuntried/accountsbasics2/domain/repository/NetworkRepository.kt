@@ -12,8 +12,8 @@ import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsRespon
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
 import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
-import com.techuntried.accountsbasics2.domain.model.level.FetchLevelResponse
-import com.techuntried.accountsbasics2.domain.model.level.FetchLevelsResponse
+import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
+import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
 import com.techuntried.accountsbasics2.domain.model.question.FetchQuestionsResponse
 import com.techuntried.accountsbasics2.utils.ApiResult
 
@@ -27,8 +27,8 @@ interface NetworkRepository {
     suspend fun fetchCategoryDetails(categoryId: Int): ApiResult<FetchSubjectResponse>
     suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchSubjectsResponse>
 
-    suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchLevelsResponse>
-    suspend fun fetchLevelsDetails(categoryId: Int, levelId:Int): ApiResult<FetchLevelResponse>
+    suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchChaptersResponse>
+    suspend fun fetchLevelsDetails(categoryId: Int, levelId:Int): ApiResult<FetchChapterResponse>
 
     suspend fun fetchQuestionsByLevel(
         categoryId: Int,
