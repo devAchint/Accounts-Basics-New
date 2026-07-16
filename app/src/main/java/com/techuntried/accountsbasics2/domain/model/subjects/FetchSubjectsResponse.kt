@@ -34,5 +34,5 @@ data class SubjectApiResponse(
     val sectionWeight: Int,
     val featuredWeight: Int,
     val chapters: Int,
-    val courseId: Int
+    val courseId: Int?
 )

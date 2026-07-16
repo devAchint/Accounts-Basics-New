@@ -1,6 +1,7 @@
 package com.techuntried.accountsbasics2.ui.home
 
 import android.util.Log
+import androidx.compose.ui.text.font.FontVariation.grade
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techuntried.accountsbasics2.BuildConfig
@@ -102,18 +103,11 @@ class HomeViewModel @Inject constructor(
 
     private var cachedLastPlayed: CategoryWithProgressModel? = null
 
-    val courseFlow = dataStoreRepository.getUserCourseFlow()
-        .filterNotNull()
-        .distinctUntilChanged()
-
-    val categoriesFlow = courseFlow
-        .flatMapLatest { course ->
-            flow {
-                emit(getSubjectsUseCase(course))
-            }.catch { e ->
-                emit(ApiResult.Error(e.message ?: "Unknown error"))
-            }
-        }
+    val categoriesFlow = flow {
+        emit(getSubjectsUseCase(null))
+    }.catch { e ->
+        emit(ApiResult.Error(e.message ?: "Unknown error"))
+    }
 
     val lastPlayedFlow = roomRepository.observeLatestPlayedCategory()
         .map { it?.asCategoryWithProgressModel() }
@@ -127,32 +121,28 @@ class HomeViewModel @Inject constructor(
 
 
     private fun observeData() {
-        courseFlow.flatMapLatest { grade ->
 
-            combine(
-                categoriesFlow,   // already uses grade internally
-                lastPlayedFlow
-            ) { result, lastPlayed ->
 
-                when (result) {
-                    is ApiResult.Error -> HomeUiState.Error(result.errorMessage)
+        combine(
+            categoriesFlow,   // already uses grade internally
+            lastPlayedFlow
+        ) { result, lastPlayed ->
 
-                    is ApiResult.Success -> {
-                        val userGrade = Grade.entries.firstOrNull { it.gradeNumber == grade }
-                        HomeUiState.Success(
-                            userGrade = userGrade,
-                            sectionCategories = buildSections(result.data),
-                            lastPlayedCategory = lastPlayed
-                        )
-                    }
+            when (result) {
+                is ApiResult.Error -> HomeUiState.Error(result.errorMessage)
+
+                is ApiResult.Success -> {
+                    HomeUiState.Success(
+                        userGrade = null,
+                        sectionCategories = buildSections(result.data),
+                        lastPlayedCategory = lastPlayed
+                    )
                 }
-
-            }.onStart {
-                emit(HomeUiState.Loading)
             }
 
-        }
-            .onEach { state ->
+        }.onStart {
+            emit(HomeUiState.Loading)
+        }.onEach { state ->
                 _homeUiState.value = state
             }
             .launchIn(viewModelScope)

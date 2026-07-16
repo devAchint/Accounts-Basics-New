@@ -10,15 +10,15 @@ import com.techuntried.accountsbasics2.domain.model.account.UserAppVersionReques
 import com.techuntried.accountsbasics2.domain.model.analytics.LogEventRequest
 import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResponse
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
+import com.techuntried.accountsbasics2.domain.model.content.FetchLearnContentResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
-import com.techuntried.accountsbasics2.domain.model.course.CourseResponse
-import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
 import com.techuntried.accountsbasics2.domain.model.content.FetchQuestionsResponse
+import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
 import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
@@ -70,29 +70,29 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchCourses(): ApiResult<FetchCoursesResponse> {
-        val text = context.assets
-            .open("courses.json")
-            .bufferedReader()
-            .use { it.readText() }
-        val courses = json.decodeFromString<List<CourseResponse>>(text)
-        val response = FetchCoursesResponse(data = courses, status = true, message = "")
-        return ApiResult.Success(response)
-    }
+//    override suspend fun fetchCourses(): ApiResult<FetchCoursesResponse> {
+//        val text = context.assets
+//            .open("courses.json")
+//            .bufferedReader()
+//            .use { it.readText() }
+//        val courses = json.decodeFromString<List<CourseResponse>>(text)
+//        val response = FetchCoursesResponse(data = courses, status = true, message = "")
+//        return ApiResult.Success(response)
+//    }
 
     override suspend fun fetchSubjects(): ApiResult<FetchSubjectsResponse> {
-        val text = context.assets
-            .open("subjects.json")
-            .bufferedReader()
-            .use { it.readText() }
-        val courses = json.decodeFromString<List<SubjectApiResponse>>(text)
-        Log.d("MYDEBUG", "courses $courses")
-        
-        val response = FetchSubjectsResponse(categories = courses, status = true, message = "fsdfss")
-        return ApiResult.Success(response)
+//        val text = context.assets
+//            .open("subjects.json")
+//            .bufferedReader()
+//            .use { it.readText() }
+//        val courses = json.decodeFromString<List<SubjectApiResponse>>(text)
+//        Log.d("MYDEBUG", "courses $courses")
+//
+//        val response = FetchSubjectsResponse(categories = courses, status = true, message = "fsdfss")
+//        return ApiResult.Success(response)
 
         return getApiResponse {
-            client.get("api/categories").body<FetchSubjectsResponse>()
+            client.get("api/subjects").body<FetchSubjectsResponse>()
         }
     }
 
@@ -113,25 +113,25 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchCategoriesByGrade(grade: Int): ApiResult<FetchSubjectsResponse> {
+//    override suspend fun fetchCategoriesByGrade(grade: Int): ApiResult<FetchSubjectsResponse> {
+//        return getApiResponse {
+//            client.get("api/categoriesByGrade/$grade").body<FetchSubjectsResponse>()
+//        }
+//    }
+
+    override suspend fun fetchChaptersBySubject(subjectId: Int): ApiResult<FetchChaptersResponse> {
+//        val text = context.assets
+//            .open("chapters.json")
+//            .bufferedReader()
+//            .use { it.readText() }
+//        val courses = json.decodeFromString<List<ChapterApiResponse>>(text)
+//        Log.d("MYDEBUG", "courses $courses")
+//
+//        val response = FetchChaptersResponse(levels = courses, status = true, message = "fsdfss")
+//        return ApiResult.Success(response)
+
         return getApiResponse {
-            client.get("api/categoriesByGrade/$grade").body<FetchSubjectsResponse>()
-        }
-    }
-
-    override suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchChaptersResponse> {
-        val text = context.assets
-            .open("chapters.json")
-            .bufferedReader()
-            .use { it.readText() }
-        val courses = json.decodeFromString<List<ChapterApiResponse>>(text)
-        Log.d("MYDEBUG", "courses $courses")
-
-        val response = FetchChaptersResponse(levels = courses, status = true, message = "fsdfss")
-        return ApiResult.Success(response)
-
-        return getApiResponse {
-            client.get("api/levelByCategory/category/$categoryId").body<FetchChaptersResponse>()
+            client.get("api/chaptersBySubject/$subjectId").body<FetchChaptersResponse>()
         }
     }
 
@@ -173,6 +173,30 @@ class NetworkRepositoryImpl @Inject constructor(
         return getApiResponse {
             client.get("api/questionsByLevel/category/$categoryId/level/$levelId")
                 .body<FetchQuestionsResponse>()
+        }
+    }
+
+    override suspend fun fetchLearnContent(
+        subjectId: Int,
+        chapterId: Int
+    ): ApiResult<FetchLearnContentResponse> {
+//        val json = Json {
+//            ignoreUnknownKeys = true
+//            classDiscriminator = "type"
+//        }
+//        val text = context.assets
+//            .open("learnContent.json")
+//            .bufferedReader()
+//            .use { it.readText() }
+//        val courses = json.decodeFromString<List<LearnContentApiResponse>>(text)
+//        Log.d("MYDEBUG", "courses $courses")
+//
+//        val response = FetchLearnContentResponse(questions = courses, status = true, message = "fsdfss")
+//        return ApiResult.Success(response)
+
+        return getApiResponse {
+            client.get("api/learnContentByChapter/$subjectId/$chapterId")
+                .body<FetchLearnContentResponse>()
         }
     }
 

@@ -14,5 +14,5 @@ data class SubjectModel(
     val sectionWeight: Int,
     val featuredWeight: Int,
     val chapters: Int,
-    val course: Int
+    val course: Int?
 )

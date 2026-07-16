@@ -2,6 +2,8 @@ package com.techuntried.accountsbasics2.data.mappers
 
 import com.techuntried.accountsbasics2.domain.model.CategoryProgressModel
 import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
+import com.techuntried.accountsbasics2.domain.model.content.LearnContentModel
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
@@ -13,6 +15,7 @@ import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.model.content.Option
 import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
+import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
@@ -133,7 +136,6 @@ fun ChapterApiResponse.asChapterEntity(): ChapterEntity {
         subjectId = subjectId,
         chapterId = chapterId,
         name = name,
-        questions = questions,
         module = module,
         type = type
     )
@@ -144,7 +146,6 @@ fun ChapterEntity.asChapterModel(): ChapterModel {
         subjectId = subjectId,
         chapterId = chapterId,
         name = name,
-        questions = questions,
         module = module,
         type = type
     )
@@ -186,5 +187,27 @@ fun QuestionModel.asGameQuestion(): GameQuestionModel {
         options = options,
         questionId = questionId,
         questionText = questionText
+    )
+}
+
+fun LearnContentApiResponse.asLearnContentEntity(): LearnContentEntity {
+    return LearnContentEntity(
+        contentId = contentId,
+        subjectId = subjectId,
+        chapterId = chapterId,
+        page = page,
+        title = title,
+        content = content
+    )
+}
+
+fun LearnContentEntity.asLearnContentModel(): LearnContentModel {
+    return LearnContentModel(
+        contentId = contentId,
+        subjectId = subjectId,
+        chapterId = chapterId,
+        page = page,
+        title = title,
+        content = content
     )
 }

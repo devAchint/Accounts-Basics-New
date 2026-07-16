@@ -1,26 +1,74 @@
 [
   {
     "id": 1,
-    "name": "CA",
-    "description": "Chartered Accountant Foundation Course",
-    "image": "ca.png"
+    "name": "Accounting",
+    "description": "Core General Accounting - From Basics to Advanced",
+    "image": "accounting.png"
   },
   {
     "id": 2,
-    "name": "CMA",
-    "description": "Cost and Management Accounting",
-    "image": "cma.png"
+    "name": "SAP",
+    "description": "SAP FICO - Financial Accounting & Controlling",
+    "image": "sap.png"
   },
   {
     "id": 3,
-    "name": "US Accounting",
-    "description": "US GAAP Fundamentals",
-    "image": "us_accounting.png"
-  },
-  {
-    "id": 4,
     "name": "Tally Prime",
     "description": "Learn Tally from Beginner to Advanced",
     "image": "tally.png"
+  },
+  {
+    "id": 4,
+    "name": "ACCA",
+    "description": "Association of Chartered Certified Accountants - Global",
+    "image": "acca.png"
+  },
+  {
+    "id": 5,
+    "name": "CMA (USA)",
+    "description": "Certified Management Accountant - US Certification",
+    "image": "cma_usa.png"
+  },
+  {
+    "id": 6,
+    "name": "CMA (India)",
+    "description": "Cost and Management Accountancy - Indian Certification",
+    "image": "cma_india.png"
+  },
+  {
+    "id": 7,
+    "name": "CPA",
+    "description": "Certified Public Accountant - US Certification",
+    "image": "cpa.png"
+  },
+  {
+    "id": 8,
+    "name": "GST",
+    "description": "Goods and Services Tax - Indian Indirect Taxation",
+    "image": "gst.png"
+  },
+  {
+    "id": 9,
+    "name": "CA (India)",
+    "description": "Chartered Accountancy - Indian Certification",
+    "image": "ca_india.png"
+  },
+  {
+    "id": 10,
+    "name": "CA (International)",
+    "description": "Chartered Accountancy - Global Certification (ACA, CA ANZ, CPA Canada)",
+    "image": "ca_international.png"
+  },
+  {
+    "id": 11,
+    "name": "Income Tax",
+    "description": "Direct Taxation - Indian Income Tax Laws & Compliance",
+    "image": "income_tax.png"
+  },
+  {
+    "id": 12,
+    "name": "Auditing",
+    "description": "Auditing & Assurance - Principles, Standards & Practices",
+    "image": "auditing.png"
   }
 ]

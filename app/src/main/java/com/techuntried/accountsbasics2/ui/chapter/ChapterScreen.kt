@@ -80,6 +80,7 @@ fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
     args: LevelArgs,
     navigateToRules: (RuleArgs) -> Unit,
+    navigateToLearn: () -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -115,6 +116,7 @@ fun ChaptersScreenRoot(
         coins = coinsState,
         bannerAdUnit = bannerAdUnit,
         rewardedAdUnit = rewardedAdUnit,
+        openLearn = navigateToLearn,
         openRules = { levelId ->
             val ruleArgs = RuleArgs(
                 categoryId = args.categoryId,
@@ -140,6 +142,7 @@ private fun ChaptersScreen(
     bannerAdUnit: String?,
     onAction: (LevelActions) -> Unit,
     openRules: (levelId: Int) -> Unit = {},
+    openLearn: () -> Unit,
     logEvent:(LogEventType)->Unit,
     onBack: () -> Unit
 ) {
@@ -220,6 +223,7 @@ private fun ChaptersScreen(
                             showTopics = showTopics,
                             bannerAdUnit = bannerAdUnit,
                             openRules = openRules,
+                            openLearn = openLearn,
                             showSuggestionSheet = { suggestionSheet = true },
                             showLevelLockedDialog = { showLevelLockedDialog = true },
                             logEvent = logEvent,
@@ -412,7 +416,7 @@ fun ChapterCard(
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "${level.questions} Questions",
+                        text = "0 Questions",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelMedium,

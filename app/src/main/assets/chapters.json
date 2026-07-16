@@ -3,65 +3,480 @@
     "subjectId": 1,
     "chapterId": 1,
     "module": 1,
-    "name": "Introduction to Accounting",
-    "type": "learn",
-    "questions": 10
-  },
-  {
-    "subjectId": 101,
-    "chapterId": 2,
-    "module": 1,
-    "name": "Accounting Principles",
-    "type": "learn",
-    "questions": 12
-  },
-  {
-    "subjectId": 101,
-    "chapterId": 3,
-    "module": 1,
-    "name": "Accounting Process",
-    "type": "learn",
-    "questions": 15
-  },
-  {
-    "subjectId": 101,
-    "chapterId": 4,
-    "module": 1,
-    "name": "Module 1 Practice Test",
-    "type": "practice",
-    "questions": 30
-  },
-
-  {
-    "subjectId": 101,
-    "chapterId": 5,
-    "module": 2,
-    "name": "Journal Entries",
+    "name": "Conceptual Framework",
     "type": "learn",
     "questions": 20
   },
   {
-    "subjectId": 101,
+    "subjectId": 1,
+    "chapterId": 2,
+    "module": 1,
+    "name": "Financial Statements",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 3,
+    "module": 1,
+    "name": "Standard-Setting & GAAP",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 4,
+    "module": 1,
+    "name": "Module 1 Practice Test",
+    "type": "practice",
+    "questions": 50
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 5,
+    "module": 2,
+    "name": "Accounting Cycle",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
     "chapterId": 6,
     "module": 2,
-    "name": "Ledger",
+    "name": "Cash & Cash Equivalents",
     "type": "learn",
-    "questions": 18
+    "questions": 20
   },
   {
-    "subjectId": 101,
+    "subjectId": 1,
     "chapterId": 7,
     "module": 2,
-    "name": "Trial Balance",
+    "name": "Accounts Receivable",
     "type": "learn",
-    "questions": 15
+    "questions": 25
   },
   {
-    "subjectId": 101,
+    "subjectId": 1,
+    "chapterId": 8,
+    "module": 2,
+    "name": "Inventory",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 9,
+    "module": 2,
+    "name": "Module 2 Practice Test",
+    "type": "practice",
+    "questions": 60
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 10,
+    "module": 3,
+    "name": "Property, Plant & Equipment",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 11,
+    "module": 3,
+    "name": "Intangible Assets",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 12,
+    "module": 3,
+    "name": "Investments",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 13,
+    "module": 3,
+    "name": "Module 3 Practice Test",
+    "type": "practice",
+    "questions": 60
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 14,
+    "module": 4,
+    "name": "Current Liabilities",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 15,
+    "module": 4,
+    "name": "Long-Term Liabilities",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 16,
+    "module": 4,
+    "name": "Equity",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 17,
+    "module": 4,
+    "name": "Revenue Recognition",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 18,
+    "module": 4,
+    "name": "Module 4 Practice Test",
+    "type": "practice",
+    "questions": 70
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 19,
+    "module": 5,
+    "name": "Statement of Cash Flows",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 20,
+    "module": 5,
+    "name": "Governmental Accounting",
+    "type": "learn",
+    "questions": 35
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 21,
+    "module": 5,
+    "name": "Not-for-Profit Accounting",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 1,
+    "chapterId": 22,
+    "module": 5,
+    "name": "Comprehensive FAR Review",
+    "type": "practice",
+    "questions": 100
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 1,
+    "module": 1,
+    "name": "Nature & Scope of Auditing",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 2,
+    "module": 1,
+    "name": "Professional Ethics & Independence",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 3,
+    "module": 1,
+    "name": "Professional Responsibilities",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 4,
+    "module": 1,
+    "name": "Module 1 Practice Test",
+    "type": "practice",
+    "questions": 50
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 5,
+    "module": 2,
+    "name": "Audit Planning",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 6,
+    "module": 2,
+    "name": "Risk Assessment",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 7,
+    "module": 2,
+    "name": "Internal Control",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
     "chapterId": 8,
     "module": 2,
     "name": "Module 2 Practice Test",
     "type": "practice",
-    "questions": 35
+    "questions": 60
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 9,
+    "module": 3,
+    "name": "Audit Evidence",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 10,
+    "module": 3,
+    "name": "Sampling Techniques",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 11,
+    "module": 3,
+    "name": "Audit Procedures",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 12,
+    "module": 3,
+    "name": "Module 3 Practice Test",
+    "type": "practice",
+    "questions": 60
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 13,
+    "module": 4,
+    "name": "Audit Reports",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 14,
+    "module": 4,
+    "name": "Attestation Engagements",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 15,
+    "module": 4,
+    "name": "Government Auditing",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 16,
+    "module": 4,
+    "name": "Module 4 Practice Test",
+    "type": "practice",
+    "questions": 70
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 17,
+    "module": 5,
+    "name": "Compliance & Special Purpose Audits",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 18,
+    "module": 5,
+    "name": "Integrated Audit Review",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 2,
+    "chapterId": 19,
+    "module": 5,
+    "name": "Final AUD Review",
+    "type": "practice",
+    "questions": 100
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 1,
+    "module": 1,
+    "name": "Federal Taxation Fundamentals",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 2,
+    "module": 1,
+    "name": "Tax Filing Status & Dependents",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 3,
+    "module": 1,
+    "name": "Gross Income",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 4,
+    "module": 1,
+    "name": "Module 1 Practice Test",
+    "type": "practice",
+    "questions": 50
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 5,
+    "module": 2,
+    "name": "Adjustments & Deductions",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 6,
+    "module": 2,
+    "name": "Credits & Tax Liability",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 7,
+    "module": 2,
+    "name": "Property Transactions",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 8,
+    "module": 2,
+    "name": "Module 2 Practice Test",
+    "type": "practice",
+    "questions": 60
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 9,
+    "module": 3,
+    "name": "Corporate Taxation",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 10,
+    "module": 3,
+    "name": "Partnership Taxation",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 11,
+    "module": 3,
+    "name": "S Corporation Taxation",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 12,
+    "module": 3,
+    "name": "Module 3 Practice Test",
+    "type": "practice",
+    "questions": 60
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 13,
+    "module": 4,
+    "name": "Business Law",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 14,
+    "module": 4,
+    "name": "Contracts & Commercial Transactions",
+    "type": "learn",
+    "questions": 25
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 15,
+    "module": 4,
+    "name": "Professional Responsibilities & Ethics",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 16,
+    "module": 4,
+    "name": "Module 4 Practice Test",
+    "type": "practice",
+    "questions": 70
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 17,
+    "module": 5,
+    "name": "Circular 230 & Tax Procedures",
+    "type": "learn",
+    "questions": 20
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 18,
+    "module": 5,
+    "name": "Comprehensive REG Review",
+    "type": "learn",
+    "questions": 30
+  },
+  {
+    "subjectId": 3,
+    "chapterId": 19,
+    "module": 5,
+    "name": "Final REG Review",
+    "type": "practice",
+    "questions": 100
   }
 ]

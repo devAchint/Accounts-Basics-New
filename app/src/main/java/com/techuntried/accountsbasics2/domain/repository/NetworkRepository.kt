@@ -8,6 +8,7 @@ import com.techuntried.accountsbasics2.domain.model.account.UserAppVersionReques
 import com.techuntried.accountsbasics2.domain.model.analytics.LogEventRequest
 import com.techuntried.accountsbasics2.domain.model.appConfig.FetchAppConfigResponse
 import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfoResponse
+import com.techuntried.accountsbasics2.domain.model.content.FetchLearnContentResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
 import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
@@ -22,18 +23,23 @@ interface NetworkRepository {
     suspend fun createGuestAccount(createGuestAccountRequest: CreateGuestAccountRequest): ApiResult<CreateGuestResponse>
     suspend fun updateFcmToken(userFcmTokenRequest: UserFcmTokenRequest): ApiResult<BaseApiResponse>
     suspend fun updateAppVersion(userAppVersionRequest: UserAppVersionRequest): ApiResult<BaseApiResponse>
-    suspend fun fetchCourses(): ApiResult<FetchCoursesResponse>
+//    suspend fun fetchCourses(): ApiResult<FetchCoursesResponse>
     suspend fun fetchSubjects(): ApiResult<FetchSubjectsResponse>
     suspend fun fetchSubjectDetails(categoryId: Int): ApiResult<FetchSubjectResponse>
-    suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchSubjectsResponse>
+//    suspend fun fetchCategoriesByGrade(grade:Int): ApiResult<FetchSubjectsResponse>
 
-    suspend fun fetchLevelsByCategory(categoryId: Int): ApiResult<FetchChaptersResponse>
+    suspend fun fetchChaptersBySubject(subjectId: Int): ApiResult<FetchChaptersResponse>
     suspend fun fetchChapterDetails(subjectId: Int, chapterId:Int): ApiResult<FetchChapterResponse>
 
     suspend fun fetchQuestionsByLevel(
         categoryId: Int,
         levelId: Int
     ): ApiResult<FetchQuestionsResponse>
+
+    suspend fun fetchLearnContent(
+        subjectId: Int,
+        chapterId: Int
+    ): ApiResult<FetchLearnContentResponse>
 
     suspend fun fetchCategoryLastUpdatedDate(): ApiResult<BaseApiResponse>
     suspend fun fetchLevelLastUpdatedDate(): ApiResult<BaseApiResponse>

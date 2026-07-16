@@ -21,6 +21,7 @@ val ToolbarContentColor = Color(0xFF000000)
 val BorderColor = Color(0xFFE0E0E0)
 val ShimmerColor = Color(0xFFE0E0E0)
 val CardColor = Color(0xFFEDEDED)
+val SelectColor = Color(0xff71d561)
 
 val InputBackgroundColor = Color(0xFFFFFFFF)
 val InputHintColor = Color(0xFF9CA3AF)

@@ -7,7 +7,6 @@ data class ChapterEntity(
     val chapterId: Int,
     val subjectId: Int,
     val name: String,
-    val questions: Int,
     val module: Int,
     val type: String
 )

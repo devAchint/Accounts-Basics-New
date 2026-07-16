@@ -3,9 +3,11 @@ package com.techuntried.accountsbasics2.data.repository
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
+import com.techuntried.accountsbasics2.data.database.LearnContentDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
+import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
@@ -23,6 +25,7 @@ class QuizRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val chaptersDao: ChaptersDao,
     private val questionDao: QuestionDao,
+    private val learnContentDao: LearnContentDao
 ) {
 
     private var isCategoriesUpdatedInSession: Boolean = false
@@ -90,8 +93,8 @@ class QuizRepository @Inject constructor(
         dataStoreRepository.saveLevelLastUpdatedDate("$categoryId", currentDate())
     }
 
-    suspend fun fetchRemoteLevels(categoryId: Int) =
-        networkRepository.fetchLevelsByCategory(categoryId = categoryId)
+    suspend fun fetchRemoteChapters(categoryId: Int) =
+        networkRepository.fetchChaptersBySubject(subjectId = categoryId)
 
     suspend fun levelsNeedsUpdate(categoryId: Int): Boolean {
         val localDate = dataStoreRepository.getLevelLastUpdatedDate("$categoryId") ?: return true
@@ -144,6 +147,24 @@ class QuizRepository @Inject constructor(
             localDate < remoteResult.data.message // Assuming message is the date string
         } else true
     }
+
+    //LearnContent
+    suspend fun getLocalLearnContent(subjectId: Int, chapterId: Int): ApiResult<List<LearnContentEntity>> {
+        return try {
+            ApiResult.Success(learnContentDao.getContent(subjectId, chapterId))
+        } catch (e: Exception) {
+            Log.d("MYDEBUG", "${e.message}")
+            ApiResult.Error("Oops! Something went wrong while fetching questions. Please try again.")
+        }
+    }
+
+    suspend fun saveLearnContent(subjectId: Int, chapterId: Int, questions: List<LearnContentEntity>) {
+        learnContentDao.clearAndInsertContent(subjectId, chapterId, questions)
+        dataStoreRepository.saveQuestionLastUpdatedDate(currentDate())
+    }
+
+    suspend fun fetchRemoteLearnContent(subjectId: Int, chapterId: Int) =
+        networkRepository.fetchLearnContent(subjectId = subjectId, chapterId = chapterId)
 
     private fun currentDate(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())

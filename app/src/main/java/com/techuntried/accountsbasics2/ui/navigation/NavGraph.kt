@@ -7,12 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
-import com.techuntried.accountsbasics2.ui.chooseCourse.ChooseCourseScreenRoot
+import com.techuntried.accountsbasics2.ui.chapter.ChaptersScreenRoot
 import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import com.techuntried.accountsbasics2.ui.feedback.FeedbackScreenRoot
 import com.techuntried.accountsbasics2.ui.game.GameScreenRoot
 import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
-import com.techuntried.accountsbasics2.ui.chapter.ChaptersScreenRoot
+import com.techuntried.accountsbasics2.ui.learn.LearnScreenRoot
 import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
 import com.techuntried.accountsbasics2.ui.progress.ProgressScreenRoot
 import com.techuntried.accountsbasics2.ui.rules.RulesScreenRoot
@@ -46,7 +46,7 @@ fun NavGraph(
         composable<Routes.HomeScreenRoute> {
             HomeScreenRoot(
                 openChooseGrade = {
-                    navController.navigate(Routes.ChooseGradeScreenRoute)
+
                 },
                 openLevels = { levelArgs ->
                     navController.navigate(
@@ -70,7 +70,7 @@ fun NavGraph(
                     navController.navigateUp()
                 },
                 openChooseGrade = {
-                    navController.navigate(Routes.ChooseGradeScreenRoute)
+
                 },
                 openFeedback = {
                     navController.navigate(Routes.FeedbackScreenRoute)
@@ -82,25 +82,7 @@ fun NavGraph(
         composable<Routes.StartScreenRoute> {
             StartScreenRoot(
                 openChooseGrade = {
-                    navController.navigate(Routes.ChooseGradeScreenRoute)
-                }
-            )
-        }
-
-        composable<Routes.ChooseGradeScreenRoute> {
-            ChooseCourseScreenRoot(
-                isFirstTime = isFirstTime,
-                openNotificationRequest = {
                     navController.navigate(Routes.NotificationPermissionScreenRoute)
-                },
-                openHome = {
-                    navController.navigate(Routes.HomeScreenRoute){
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                },
-                navigateBack = {
-                    navController.navigateUp()
                 }
             )
         }
@@ -117,13 +99,16 @@ fun NavGraph(
             )
         }
 
-        composable<Routes.LevelScreenRoute> {
-            val args = it.toRoute<Routes.LevelScreenRoute>()
+        composable<Routes.ChaptersScreenRoute> {
+            val args = it.toRoute<Routes.ChaptersScreenRoute>()
             val levelArgs = args.toLevelArgs()
             ChaptersScreenRoot(
                 args = levelArgs,
                 onBack = {
                     navController.navigateUp()
+                },
+                navigateToLearn = {
+                    navController.navigate(Routes.LearnScreenRoute)
                 },
                 navigateToRules = { ruleArgs ->
                     navController.navigate(
@@ -228,7 +213,7 @@ fun NavGraph(
                 openSearchData = {
                     navController.navigate(Routes.SearchDataScreenRoute)
                 },
-                onMoreCategoriesClick = { section ,grades->
+                onMoreCategoriesClick = { section, grades ->
                     navController.navigate(
                         Routes.SectionCategoriesScreenRoute(
                             section = section,
@@ -265,6 +250,11 @@ fun NavGraph(
                     navController.navigate(levelArgs.toLevelScreenRoute())
                 }
             )
+        }
+
+
+        composable<Routes.LearnScreenRoute> {
+            LearnScreenRoot()
         }
     }
 }

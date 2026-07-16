@@ -35,7 +35,7 @@ data class SubjectEntity(
     @ColumnInfo(name = "featuredWeight")
     val featuredWeight: Int,
     @ColumnInfo(name = "course")
-    val course: Int,
+    val course: Int?,
 )
 
 

@@ -8,7 +8,7 @@ import com.techuntried.accountsbasics2.domain.repository.NetworkMonitor
 import com.techuntried.accountsbasics2.utils.ApiResult
 import javax.inject.Inject
 
-class GetLevelsUseCase @Inject constructor(
+class GetChaptersUseCase @Inject constructor(
     private val repository: QuizRepository,
     private val networkMonitor: NetworkMonitor
 ) {
@@ -29,7 +29,7 @@ class GetLevelsUseCase @Inject constructor(
         if (shouldAttemptSync) {
             try {
                 if (!hasLocalData || repository.levelsNeedsUpdate(categoryId)) {
-                    val remoteResponse = repository.fetchRemoteLevels(categoryId)
+                    val remoteResponse = repository.fetchRemoteChapters(categoryId)
 
                     if (remoteResponse is ApiResult.Success && remoteResponse.data.status) {
                         val entities = remoteResponse.data.levels.map { it.asChapterEntity() }
@@ -48,7 +48,7 @@ class GetLevelsUseCase @Inject constructor(
         return if (hasLocalData) {
             ApiResult.Success(localResult.data.map { it.asChapterModel() })
         } else {
-            ApiResult.Error("Failed to fetch categories.")
+            ApiResult.Error("Failed to fetch chapters.")
         }
     }
 }

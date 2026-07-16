@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
+import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 
 @Database(
@@ -14,6 +15,7 @@ import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
         ChapterEntity::class,
         QuestionEntity::class,
         CategoryProgressEntity::class,
+        LearnContentEntity::class
     ],
     version = 1
 )
@@ -23,4 +25,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun subjectDao(): SubjectDao
     abstract fun levelDao(): ChaptersDao
     abstract fun questionDao(): QuestionDao
+
+    abstract fun learnContentDao(): LearnContentDao
 }

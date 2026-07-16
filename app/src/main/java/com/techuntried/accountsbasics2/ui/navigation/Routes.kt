@@ -23,9 +23,6 @@ sealed class Routes {
     object StartScreenRoute : Routes()
 
     @Serializable
-    object ChooseGradeScreenRoute : Routes()
-
-    @Serializable
     data class GameScreenRoute(
         val categoryId: Int,
         val levelId: Int,
@@ -45,7 +42,7 @@ sealed class Routes {
     data class RulesScreenRoute(val categoryId: Int, val levelId: Int) : Routes()
 
     @Serializable
-    data class LevelScreenRoute(
+    data class ChaptersScreenRoute(
         val categoryId: Int,
         val categoryName: String,
         val showTopic: Boolean
@@ -65,6 +62,8 @@ sealed class Routes {
 
     @Serializable
     data class SectionCategoriesScreenRoute(val section: String, val grades: List<Int>?) : Routes()
+    @Serializable
+    object LearnScreenRoute: Routes()
 }
 
 

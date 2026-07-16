@@ -24,7 +24,6 @@ data class ChapterApiResponse(
     val subjectId: Int,
     val chapterId: Int,
     val name: String,
-    val questions: Int,
     val module:Int,
     val type:String,
 )

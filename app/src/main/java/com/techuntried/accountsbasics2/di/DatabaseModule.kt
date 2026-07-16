@@ -39,6 +39,9 @@ class DatabaseModule {
     fun providesQuestionDao(db: AppDatabase) = db.questionDao()
 
     @Provides
+    fun providesLearnContentDao(db: AppDatabase) = db.learnContentDao()
+
+    @Provides
     @Singleton
     fun provideNetworkMonitor(
         @ApplicationContext context: Context

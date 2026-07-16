@@ -31,6 +31,7 @@ fun ChapterContent(
     showTopics: Boolean,
     bannerAdUnit: String?,
     openRules: (levelId: Int) -> Unit,
+    openLearn: () -> Unit,
     showSuggestionSheet: () -> Unit,
     showLevelLockedDialog: () -> Unit,
     logEvent: (LogEventType) -> Unit,
@@ -136,7 +137,11 @@ fun ChapterContent(
                                         showLevelLockedDialog()
                                     }
                                 } else {
-                                    openRules(level.chapterId)
+                                    if (level.type == "learn") {
+                                        openLearn()
+                                    } else {
+                                        openRules(level.chapterId)
+                                    }
                                 }
                             }
                         )

@@ -11,7 +11,7 @@ import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.level.LevelState
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.ui.navigation.Routes
-import com.techuntried.accountsbasics2.usecases.GetLevelsUseCase
+import com.techuntried.accountsbasics2.usecases.GetChaptersUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
@@ -32,7 +32,7 @@ import javax.inject.Inject
 class ChapterViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     private val dataStoreRepository: DataStoreRepository,
-    private val getLevelsUseCase: GetLevelsUseCase,
+    private val getChaptersUseCase: GetChaptersUseCase,
     private val logEventUseCase: LogEventUseCase,
     private val savedStateHandle: SavedStateHandle,
     private val uploadSuggestionWithLimitUseCase: UploadSuggestionWithLimitUseCase,
@@ -56,7 +56,7 @@ class ChapterViewModel @Inject constructor(
     val globalConfigState = globalConfigController.globalConfig
 
 
-    val args = savedStateHandle.toRoute<Routes.LevelScreenRoute>()
+    val args = savedStateHandle.toRoute<Routes.ChaptersScreenRoute>()
 
     init {
         fetchData()
@@ -75,7 +75,7 @@ class ChapterViewModel @Inject constructor(
         viewModelScope.launch {
             _chapterUiState.value = ChapterUiState.Loading
             try {
-                when (val response = getLevelsUseCase(categoryId)) {
+                when (val response = getChaptersUseCase(categoryId)) {
                     is ApiResult.Error -> {
                         Log.d("MYDEBUG", response.errorMessage)
                         _chapterUiState.value = ChapterUiState.Error(

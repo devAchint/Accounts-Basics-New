@@ -130,7 +130,7 @@ class ScoreViewModel @Inject constructor(
                     val section = categoryResult.data.section
                     val totalLevels = categoryResult.data.chapters
 
-                    val totalQuestions = level.questions
+                    val totalQuestions = 0 //level.questions
                     val levelName = level.name
 
                     // 🔹 BUSINESS LOGIC

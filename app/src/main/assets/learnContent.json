@@ -15,11 +15,11 @@
         "text": "Accounting is the process of recording, classifying, summarizing, and interpreting financial transactions. It helps businesses understand their financial performance and position."
       },
       {
-        "type": "sub_heading",
+        "type": "subHeading",
         "text": "Why is Accounting Important?"
       },
       {
-        "type": "bullet_list",
+        "type": "bulletList",
         "items": [
           "Records financial transactions.",
           "Measures profit and loss.",

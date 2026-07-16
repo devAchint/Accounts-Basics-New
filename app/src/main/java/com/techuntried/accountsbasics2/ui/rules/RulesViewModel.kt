@@ -77,7 +77,7 @@ class RulesViewModel @Inject constructor(
                 val chapterResult = getChapterDetailsUseCase(categoryId, levelId)
 
                 if (subjectResult is ApiResult.Success && chapterResult is ApiResult.Success) {
-                    val totalQuestions = chapterResult.data.questions
+                    val totalQuestions = 0 //chapterResult.data.questions
                     val minimumScore = (60 * totalQuestions) / 100
 
                     val ruleList = listOf(

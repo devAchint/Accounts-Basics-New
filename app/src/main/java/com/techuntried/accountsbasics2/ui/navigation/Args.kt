@@ -77,7 +77,7 @@ fun RuleArgs.toRuleScreenRoute(): Routes.RulesScreenRoute {
     )
 }
 
-fun Routes.LevelScreenRoute.toLevelArgs(): LevelArgs {
+fun Routes.ChaptersScreenRoute.toLevelArgs(): LevelArgs {
     return LevelArgs(
         categoryId = categoryId,
         categoryName = categoryName,
@@ -85,8 +85,8 @@ fun Routes.LevelScreenRoute.toLevelArgs(): LevelArgs {
     )
 }
 
-fun LevelArgs.toLevelScreenRoute(): Routes.LevelScreenRoute {
-    return Routes.LevelScreenRoute(
+fun LevelArgs.toLevelScreenRoute(): Routes.ChaptersScreenRoute {
+    return Routes.ChaptersScreenRoute(
         categoryId = categoryId,
         categoryName = categoryName,
         showTopic = showTopic

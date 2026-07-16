@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e1061ddf15e9a909d3900976c179c96e",
+    "identityHash": "4936f26c1285e9a5e638f53ddc77ff38",
     "entities": [
       {
         "tableName": "subjects",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER NOT NULL, `category_name` TEXT NOT NULL, `category_image` TEXT NOT NULL, `is_featured` INTEGER NOT NULL, `bgColor` TEXT, `active` INTEGER NOT NULL, `section` TEXT, `weight` INTEGER NOT NULL, `levels` INTEGER NOT NULL, `tag` TEXT, `showTopics` INTEGER NOT NULL, `sectionWeight` INTEGER NOT NULL, `featuredWeight` INTEGER NOT NULL, `course` INTEGER NOT NULL, PRIMARY KEY(`categoryId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER NOT NULL, `category_name` TEXT NOT NULL, `category_image` TEXT NOT NULL, `is_featured` INTEGER NOT NULL, `bgColor` TEXT, `active` INTEGER NOT NULL, `section` TEXT, `weight` INTEGER NOT NULL, `levels` INTEGER NOT NULL, `tag` TEXT, `showTopics` INTEGER NOT NULL, `sectionWeight` INTEGER NOT NULL, `featuredWeight` INTEGER NOT NULL, `course` INTEGER, PRIMARY KEY(`categoryId`))",
         "fields": [
           {
             "fieldPath": "categoryId",
@@ -86,8 +86,7 @@
           {
             "fieldPath": "course",
             "columnName": "course",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -99,7 +98,7 @@
       },
       {
         "tableName": "chapters",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chapterId` INTEGER NOT NULL, `subjectId` INTEGER NOT NULL, `name` TEXT NOT NULL, `questions` INTEGER NOT NULL, `module` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`chapterId`, `subjectId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`chapterId` INTEGER NOT NULL, `subjectId` INTEGER NOT NULL, `name` TEXT NOT NULL, `module` INTEGER NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`chapterId`, `subjectId`))",
         "fields": [
           {
             "fieldPath": "chapterId",
@@ -117,12 +116,6 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "questions",
-            "columnName": "questions",
-            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -237,11 +230,61 @@
             "categoryId"
           ]
         }
+      },
+      {
+        "tableName": "learnContent",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contentId` INTEGER NOT NULL, `subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `page` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, PRIMARY KEY(`subjectId`, `chapterId`, `contentId`))",
+        "fields": [
+          {
+            "fieldPath": "contentId",
+            "columnName": "contentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subjectId",
+            "columnName": "subjectId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterId",
+            "columnName": "chapterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "subjectId",
+            "chapterId",
+            "contentId"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1061ddf15e9a909d3900976c179c96e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4936f26c1285e9a5e638f53ddc77ff38')"
     ]
   }
 }
