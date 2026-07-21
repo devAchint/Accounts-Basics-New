@@ -39,12 +39,12 @@ fun ChapterContent(
 ) {
     val listState = rememberLazyListState()
 
-    val targetIndex = remember(chapterUiState.gameLevels) {
-        val unlocked = chapterUiState.gameLevels.indexOfLast {
+    val targetIndex = remember(chapterUiState.chapters) {
+        val unlocked = chapterUiState.chapters.indexOfLast {
             it.chapterState == ChapterState.Unlocked
         }
         if (unlocked != -1) unlocked
-        else chapterUiState.gameLevels.indexOfLast {
+        else chapterUiState.chapters.indexOfLast {
             it.chapterState == ChapterState.Completed
         }
     }
@@ -96,8 +96,8 @@ fun ChapterContent(
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            val groupedLevels = remember(chapterUiState.gameLevels) {
-                chapterUiState.gameLevels.groupBy { it.module }
+            val groupedLevels = remember(chapterUiState.chapters) {
+                chapterUiState.chapters.groupBy { it.module }
             }
 
             LazyColumn(
@@ -130,7 +130,7 @@ fun ChapterContent(
                             onClick = {
                                 if (level.chapterState == ChapterState.Locked) {
                                     val levelsUnlocked =
-                                        chapterUiState.levelsCompleted + 1
+                                        chapterUiState.chaptersCompleted + 1
                                     if (level.chapterId <= levelsUnlocked + 2) {
                                         showLevelLockedSheet(level.chapterId)
                                     } else {

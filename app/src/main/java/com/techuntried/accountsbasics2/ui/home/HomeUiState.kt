@@ -1,6 +1,6 @@
 package com.techuntried.accountsbasics2.ui.home
 
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 
 sealed interface HomeUiState {
     val message: String?
@@ -18,8 +18,8 @@ sealed interface HomeUiState {
     ) : HomeUiState
 
     data class Success(
-        val sectionCategories: List<SectionCategoriesModel>? = null,
-        val lastPlayedCategory: CategoryWithProgressModel? = null,
+        val sectionCategories: List<SectionSubjectsModel>? = null,
+        val lastPlayedSubject: SubjectWithProgressModel? = null,
         val actionMessage: String? = null,
         override val message: String? = null,
         override val actionLoading: Boolean = false,

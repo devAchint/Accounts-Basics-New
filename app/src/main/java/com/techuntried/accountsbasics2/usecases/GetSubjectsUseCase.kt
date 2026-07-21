@@ -1,7 +1,7 @@
 package com.techuntried.accountsbasics2.usecases
 
 import android.util.Log
-import com.techuntried.accountsbasics2.data.mappers.asCategoryEntity
+import com.techuntried.accountsbasics2.data.mappers.asSubjectEntity
 import com.techuntried.accountsbasics2.data.mappers.asSubjectModel
 import com.techuntried.accountsbasics2.data.repository.QuizRepository
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
@@ -54,11 +54,11 @@ class GetSubjectsUseCase @Inject constructor(
                         is ApiResult.Success -> {
                             Log.d(
                                 TAG,
-                                "Remote fetch success. Status: ${remoteResponse.data.status}, Count: ${remoteResponse.data.categories.size}"
+                                "Remote fetch success. Status: ${remoteResponse.data.status}, Count: ${remoteResponse.data.subjects.size}"
                             )
 
                             if (remoteResponse.data.status) {
-                                val entities = remoteResponse.data.categories.map { it.asCategoryEntity() }
+                                val entities = remoteResponse.data.subjects.map { it.asSubjectEntity() }
 
                                 Log.d(TAG, "Saving ${entities.size} subjects locally.")
 

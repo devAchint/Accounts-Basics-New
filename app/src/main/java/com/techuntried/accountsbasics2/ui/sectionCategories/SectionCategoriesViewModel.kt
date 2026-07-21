@@ -67,7 +67,7 @@ class SectionCategoriesViewModel @Inject constructor(
                             )
 
                         _sectionCategoriesUiState.update {
-                            SectionCategoriesUiState.Success(categories = allCategories)
+                            SectionCategoriesUiState.Success(subjects = allCategories)
                         }
                     }
                 }

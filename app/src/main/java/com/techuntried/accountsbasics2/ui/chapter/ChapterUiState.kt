@@ -12,14 +12,14 @@ sealed interface ChapterUiState {
     }
 
     data class Success(
-        val gameLevels: List<ChapterModel>,
-        val levelsCompleted: Int,
+        val chapters: List<ChapterModel>,
+        val chaptersCompleted: Int,
         val unlockCoinsCost:Int,
-        val levelUnlocked: Int? = null,
+        val chapterUnlocked: Int? = null,
         override val actionLoading: Boolean = false,
         override val message: String? = null,
     ) : ChapterUiState {
-        fun isEmpty() = gameLevels.isEmpty()
+        fun isEmpty() = chapters.isEmpty()
     }
 
     data class Error(
@@ -50,10 +50,10 @@ inline fun ChapterUiState.updateSuccess(block: ChapterUiState.Success.() -> Chap
     return if (this is ChapterUiState.Success) this.block() else this
 }
 
-sealed interface LevelActions {
-    data class AddCoin(val coins: Int) : LevelActions
-    data class UploadSuggestion(val comment: String) : LevelActions
-    data class UnlockLevel(val levelId: Int,val isAdWatched:Boolean) : LevelActions
-    data object ClearLevelUnlocked : LevelActions
-    data object Refresh : LevelActions
+sealed interface ChapterActions {
+    data class AddCoin(val coins: Int) : ChapterActions
+    data class UploadSuggestion(val comment: String) : ChapterActions
+    data class UnlockChapter(val chapterId: Int, val isAdWatched:Boolean) : ChapterActions
+    data object ClearChapterUnlocked : ChapterActions
+    data object Refresh : ChapterActions
 }

@@ -3,50 +3,50 @@ package com.techuntried.accountsbasics2.ui.navigation
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
 
 data class ScoreArgs(
-    val categoryId: Int,
-    val levelId: Int,
+    val subjectId: Int,
+    val chapterId: Int,
     val correctAnswers: Int,
     val totalQuestions: Int,
     val questionReview: List<QuestionReviewModel>
 )
 
 data class RuleArgs(
-    val categoryId: Int,
-    val levelId: Int
+    val subjectId: Int,
+    val chapterId: Int
 )
 
-data class GameArgs(
-    val categoryId: Int,
-    val levelId: Int,
+data class QuestionsArgs(
+    val subjectId: Int,
+    val chapterId: Int,
     val timerCount: Int?
 )
 
-data class LevelArgs(
-    val categoryId: Int,
-    val categoryName: String,
+data class ChapterArgs(
+    val subjectId: Int,
+    val subjectName: String,
     val showTopic: Boolean
 )
 
-fun Routes.GameScreenRoute.toGameArgs(): GameArgs {
-    return GameArgs(
-        categoryId = categoryId,
-        levelId = levelId,
+fun Routes.QuestionsScreenRoute.toQuestionArgs(): QuestionsArgs {
+    return QuestionsArgs(
+        subjectId = subjectId,
+        chapterId = chapterId,
         timerCount = timerCount
     )
 }
 
-fun GameArgs.toGameScreenRoute(): Routes.GameScreenRoute {
-    return Routes.GameScreenRoute(
-        categoryId = categoryId,
-        levelId = levelId,
+fun QuestionsArgs.toQuestionsScreenRoute(): Routes.QuestionsScreenRoute {
+    return Routes.QuestionsScreenRoute(
+        subjectId = subjectId,
+        chapterId = chapterId,
         timerCount = timerCount
     )
 }
 
 fun Routes.ScoreScreenRoute.toScoreArgs(): ScoreArgs {
     return ScoreArgs(
-        categoryId = categoryId,
-        levelId = levelId,
+        subjectId = subjectId,
+        chapterId = chapterId,
         correctAnswers = correctAnswers,
         totalQuestions = totalQuestions,
         questionReview = questionReview
@@ -55,8 +55,8 @@ fun Routes.ScoreScreenRoute.toScoreArgs(): ScoreArgs {
 
 fun ScoreArgs.toScoreScreenRoute(): Routes.ScoreScreenRoute {
     return Routes.ScoreScreenRoute(
-        categoryId = categoryId,
-        levelId = levelId,
+        subjectId = subjectId,
+        chapterId = chapterId,
         correctAnswers = correctAnswers,
         totalQuestions = totalQuestions,
         questionReview = questionReview
@@ -65,30 +65,30 @@ fun ScoreArgs.toScoreScreenRoute(): Routes.ScoreScreenRoute {
 
 fun Routes.RulesScreenRoute.toRuleArgs(): RuleArgs {
     return RuleArgs(
-        categoryId = categoryId,
-        levelId = levelId,
+        subjectId = subjectId,
+        chapterId = chapterId,
     )
 }
 
 fun RuleArgs.toRuleScreenRoute(): Routes.RulesScreenRoute {
     return Routes.RulesScreenRoute(
-        categoryId = categoryId,
-        levelId = levelId,
+        subjectId = subjectId,
+        chapterId = chapterId,
     )
 }
 
-fun Routes.ChaptersScreenRoute.toLevelArgs(): LevelArgs {
-    return LevelArgs(
-        categoryId = categoryId,
-        categoryName = categoryName,
+fun Routes.ChaptersScreenRoute.toLevelArgs(): ChapterArgs {
+    return ChapterArgs(
+        subjectId = subjectId,
+        subjectName = subjectName,
         showTopic = showTopic
     )
 }
 
-fun LevelArgs.toLevelScreenRoute(): Routes.ChaptersScreenRoute {
+fun ChapterArgs.toLevelScreenRoute(): Routes.ChaptersScreenRoute {
     return Routes.ChaptersScreenRoute(
-        categoryId = categoryId,
-        categoryName = categoryName,
+        subjectId = subjectId,
+        subjectName = subjectName,
         showTopic = showTopic
     )
 }

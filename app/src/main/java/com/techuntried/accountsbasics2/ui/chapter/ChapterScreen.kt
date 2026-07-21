@@ -55,9 +55,9 @@ import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.dialog.CommonInformationDialog
-import com.techuntried.accountsbasics2.ui.dialog.LevelLockedDialog
-import com.techuntried.accountsbasics2.ui.dialog.LevelUnLockedDialog
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.dialog.ChapterLockedDialog
+import com.techuntried.accountsbasics2.ui.dialog.ChapterUnLockedDialog
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.navigation.RuleArgs
 import com.techuntried.accountsbasics2.ui.sheets.SuggestionSheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
@@ -78,7 +78,7 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 @Composable
 fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
-    args: LevelArgs,
+    args: ChapterArgs,
     navigateToRules: (RuleArgs) -> Unit,
     navigateToLearn: () -> Unit,
     onBack: () -> Unit
@@ -119,12 +119,12 @@ fun ChaptersScreenRoot(
         openLearn = navigateToLearn,
         openRules = { levelId ->
             val ruleArgs = RuleArgs(
-                categoryId = args.categoryId,
-                levelId = levelId
+                subjectId = args.subjectId,
+                chapterId = levelId
             )
             navigateToRules(ruleArgs)
         },
-        categoryName = args.categoryName,
+        categoryName = args.subjectName,
         logEvent = viewModel::logEvent,
         onAction = viewModel::onAction,
         onBack = onBack
@@ -140,7 +140,7 @@ private fun ChaptersScreen(
     coins: Int,
     rewardedAdUnit: String?,
     bannerAdUnit: String?,
-    onAction: (LevelActions) -> Unit,
+    onAction: (ChapterActions) -> Unit,
     openRules: (levelId: Int) -> Unit = {},
     openLearn: () -> Unit,
     logEvent:(LogEventType)->Unit,
@@ -159,7 +159,7 @@ private fun ChaptersScreen(
             onDismiss = { showCoinsSheet = false },
             rewardedAdUnit = rewardedAdUnit,
             onAddCoins = {
-                onAction(LevelActions.AddCoin(50))
+                onAction(ChapterActions.AddCoin(50))
             }
         )
     }
@@ -194,7 +194,7 @@ private fun ChaptersScreen(
                         errorTitle = getErrorMessageTitle(chapterUiState.errorMessage),
                         description = getErrorMessageDescription(chapterUiState.errorMessage),
                         actionButton = "Try Again",
-                        action = { onAction(LevelActions.Refresh) },
+                        action = { onAction(ChapterActions.Refresh) },
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
@@ -214,7 +214,7 @@ private fun ChaptersScreen(
                             description = "Something went wrong on our end — not yours.",
                             actionButton = "Report Issue",
                             action = {
-                                onAction(LevelActions.UploadSuggestion("Report : $categoryName Levels didn't Load"))
+                                onAction(ChapterActions.UploadSuggestion("Report : $categoryName Levels didn't Load"))
                             }
                         )
                     } else {
@@ -254,7 +254,7 @@ private fun ChaptersScreen(
     }
     levelLockedSheet?.let { levelId ->
         val unlockCoins = (chapterUiState as? ChapterUiState.Success)?.unlockCoinsCost ?: 100
-        LevelLockedDialog(
+        ChapterLockedDialog(
             onDismiss = {
                 levelLockedSheet = null
             },
@@ -262,23 +262,23 @@ private fun ChaptersScreen(
             logEvent = logEvent,
             unlockCoins = unlockCoins,
             onAdRewardEarned = {
-                onAction(LevelActions.UnlockLevel(levelId = levelId, isAdWatched = true))
+                onAction(ChapterActions.UnlockChapter(chapterId = levelId, isAdWatched = true))
                 levelLockedSheet = null
             },
             useCoins = {
-                onAction(LevelActions.UnlockLevel(levelId = levelId, isAdWatched = false))
+                onAction(ChapterActions.UnlockChapter(chapterId = levelId, isAdWatched = false))
                 levelLockedSheet = null
             }
         )
     }
 
-    (chapterUiState as? ChapterUiState.Success)?.levelUnlocked?.let { levelId ->
-        LevelUnLockedDialog(
+    (chapterUiState as? ChapterUiState.Success)?.chapterUnlocked?.let { levelId ->
+        ChapterUnLockedDialog(
             onDismiss = {
-                onAction(LevelActions.ClearLevelUnlocked)
+                onAction(ChapterActions.ClearChapterUnlocked)
             },
             play = {
-                onAction(LevelActions.ClearLevelUnlocked)
+                onAction(ChapterActions.ClearChapterUnlocked)
                 openRules(levelId)
             }
         )
@@ -289,7 +289,7 @@ private fun ChaptersScreen(
             onDismiss = {
                 suggestionSheet = false
             }, onSubmit = {
-                onAction(LevelActions.UploadSuggestion("Level Suggestion: $categoryName - $it"))
+                onAction(ChapterActions.UploadSuggestion("Level Suggestion: $categoryName - $it"))
                 suggestionSheet = false
             }
         )

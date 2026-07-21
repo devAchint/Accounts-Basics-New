@@ -1,6 +1,6 @@
 package com.techuntried.accountsbasics2.usecases
 
-import com.techuntried.accountsbasics2.data.mappers.asCategoryEntity
+import com.techuntried.accountsbasics2.data.mappers.asSubjectEntity
 import com.techuntried.accountsbasics2.data.mappers.asSubjectModel
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
@@ -14,9 +14,9 @@ class GetSubjectDetailsUseCase @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val networkMonitor: NetworkMonitor // Better than passing 'context'
 ) {
-    suspend operator fun invoke(categoryId: Int): ApiResult<SubjectModel> {
+    suspend operator fun invoke(subjectId: Int): ApiResult<SubjectModel> {
         // 1. Check Local Source first
-        val localResult = roomRepository.fetchSubjectById(categoryId)
+        val localResult = roomRepository.fetchSubjectById(subjectId)
         if (localResult is ApiResult.Success) {
             return ApiResult.Success(localResult.data.asSubjectModel())
         }
@@ -27,7 +27,7 @@ class GetSubjectDetailsUseCase @Inject constructor(
         }
 
         // 3. Fetch from Remote
-        return fetchSubjectRemote(categoryId)
+        return fetchSubjectRemote(subjectId)
     }
 
     private suspend fun fetchSubjectRemote(categoryId: Int): ApiResult<SubjectModel> {
@@ -35,7 +35,7 @@ class GetSubjectDetailsUseCase @Inject constructor(
             when (val response = networkRepository.fetchSubjectDetails(categoryId)) {
                 is ApiResult.Success -> {
                     if (response.data.status) {
-                        val model = response.data.subject.asCategoryEntity().asSubjectModel()
+                        val model = response.data.subject.asSubjectEntity().asSubjectModel()
                         ApiResult.Success(model)
                     } else {
                         ApiResult.Error(response.data.message)

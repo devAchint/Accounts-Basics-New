@@ -60,11 +60,11 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.techuntried.accountsbasics2.R
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.theme.AverageAccuracyColor
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
@@ -88,7 +88,7 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 fun ProgressScreenRoot(
     modifier: Modifier = Modifier,
     openQuizSection: () -> Unit,
-    openGameLevel: (levelArgs: LevelArgs) -> Unit
+    openChapters: (chapterArgs: ChapterArgs) -> Unit
 ) {
     val context = LocalContext.current
     val viewModel: ProgressViewModel = hiltViewModel()
@@ -103,7 +103,7 @@ fun ProgressScreenRoot(
         progressUiState = progressUiState,
         updateSort = viewModel::updateSort,
         play = openQuizSection,
-        openGameLevel = openGameLevel
+        openChapters = openChapters
     )
 }
 
@@ -113,7 +113,7 @@ fun ProgressScreen(
     progressUiState: ProgressUiState,
     play: () -> Unit = {},
     updateSort: (sort: ProgressSortOption) -> Unit = {},
-    openGameLevel: (levelArgs: LevelArgs) -> Unit
+    openChapters: (chapterArgs: ChapterArgs) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -193,8 +193,8 @@ fun ProgressScreen(
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .fillMaxHeight(),
-                                                value = progressUiState.categoriesPlayed.toString(),
-                                                label = if (progressUiState.categoriesPlayed == 1)
+                                                value = progressUiState.chaptersCompleted.toString(),
+                                                label = if (progressUiState.chaptersCompleted == 1)
                                                     stringResource(R.string.category_played)
                                                 else stringResource(R.string.categories_played),
                                                 icon = AppIcons.LevelsCompleted
@@ -226,12 +226,12 @@ fun ProgressScreen(
                                 }
 
                                 items(progressUiState.progressList) {
-                                    CategoryProgressCard(categoryWithProgress = it) {
-                                        openGameLevel(
-                                            LevelArgs(
-                                                categoryId = it.category.categoryId,
-                                                categoryName = it.category.categoryName,
-                                                showTopic = it.category.showTopics
+                                    SubjectProgressCard(subjectWithProgress = it) {
+                                        openChapters(
+                                            ChapterArgs(
+                                                subjectId = it.subject.subjectId,
+                                                subjectName = it.subject.name,
+                                                showTopic = it.subject.showTopics
                                             )
                                         )
                                     }
@@ -359,14 +359,14 @@ fun CircleProgressWithIcon(
 
 
 @Composable
-fun CategoryProgressCard(
-    categoryWithProgress: CategoryWithProgressModel,
+fun SubjectProgressCard(
+    subjectWithProgress: SubjectWithProgressModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
 
     val bgColor = try {
-        if (!categoryWithProgress.category.bgColor.isNullOrEmpty()) Color(categoryWithProgress.category.bgColor.toColorInt()) else Color.White
+        if (!subjectWithProgress.subject.bgColor.isNullOrEmpty()) Color(subjectWithProgress.subject.bgColor.toColorInt()) else Color.White
     } catch (e: Exception) {
         Color.White
     }
@@ -407,7 +407,7 @@ fun CategoryProgressCard(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(categoryWithProgress.category.imageUrl)
+                            .data(subjectWithProgress.subject.imageUrl)
                             .size(imageSizePx) // 👈 density-aware downsampling
                             .scale(Scale.FILL) // matches ContentScale.Crop
                             .allowHardware(true)
@@ -426,7 +426,7 @@ fun CategoryProgressCard(
 
                 Column {
                     Text(
-                        text = categoryWithProgress.category.categoryName,
+                        text = subjectWithProgress.subject.name,
                         color = MainText,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -442,7 +442,7 @@ fun CategoryProgressCard(
                                         fontFamily = RubikMedium
                                     )
                                 ) {
-                                    append("${categoryWithProgress.progress.levelsPlayed}/${categoryWithProgress.category.chapters}")
+                                    append("${subjectWithProgress.progress.chaptersCompleted}/${subjectWithProgress.subject.chapters}")
                                 }
 
                                 withStyle(
@@ -461,14 +461,14 @@ fun CategoryProgressCard(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = "${categoryWithProgress.progress.accuracy.toInt()}% accuracy",
+                            text = "${subjectWithProgress.progress.accuracy.toInt()}% accuracy",
                             style = MaterialTheme.typography.labelMedium,
-                            color = categoryWithProgress.progress.accuracy.accuracyColor()
+                            color = subjectWithProgress.progress.accuracy.accuracyColor()
                         )
                     }
                     Spacer(4.dp)
                     Text(
-                        text = "Grade ${categoryWithProgress.category.course}",
+                        text = "Grade ${subjectWithProgress.subject.course}",
                         color = SecondaryText,
                         style = MaterialTheme.typography.labelSmall,
                     )
@@ -477,7 +477,7 @@ fun CategoryProgressCard(
 
             // RIGHT PERCENT
             Text(
-                text = "${categoryWithProgress.progress.progressPercentage.toInt()}%",
+                text = "${subjectWithProgress.progress.progressPercentage.toInt()}%",
                 color = MainText,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -485,7 +485,7 @@ fun CategoryProgressCard(
 
         Spacer(modifier = Modifier.height(14.dp))
         val animatedProgress by animateFloatAsState(
-            targetValue = (categoryWithProgress.progress.progressPercentage / 100).toFloat(),
+            targetValue = (subjectWithProgress.progress.progressPercentage / 100).toFloat(),
             animationSpec = tween(durationMillis = 500) // adjust speed here
         )
 

@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.InputHintColor
@@ -50,7 +50,7 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 fun ExploreScreenRoot(
     modifier: Modifier = Modifier,
     openSearchData: (query: String) -> Unit,
-    openGameLevel: (LevelArgs) -> Unit,
+    openGameLevel: (ChapterArgs) -> Unit,
     onMoreCategoriesClick: (section: String,grade:List<Int>) -> Unit,
 ) {
     val context = LocalContext.current
@@ -80,9 +80,9 @@ fun ExploreScreenRoot(
         },
         openGameLevel = { categoryId, categoryName, showTopic ->
             openGameLevel(
-                LevelArgs(
-                    categoryId = categoryId,
-                    categoryName = categoryName,
+                ChapterArgs(
+                    subjectId = categoryId,
+                    subjectName = categoryName,
                     showTopic = showTopic
                 )
             )

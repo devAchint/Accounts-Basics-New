@@ -63,7 +63,7 @@ class ChapterViewModel @Inject constructor(
     }
 
     private fun fetchData() {
-        fetchChapters(args.categoryId)
+        fetchChapters(args.subjectId)
     }
 
     fun refreshData() {
@@ -94,8 +94,8 @@ class ChapterViewModel @Inject constructor(
                             )
                         }
                         _chapterUiState.value = ChapterUiState.Success(
-                            gameLevels = chapters,
-                            levelsCompleted = chaptersCompleted,
+                            chapters = chapters,
+                            chaptersCompleted = chaptersCompleted,
                             unlockCoinsCost = unlockChapterCoins
                         )
                     }
@@ -122,17 +122,17 @@ class ChapterViewModel @Inject constructor(
         }
     }
 
-    fun onAction(gameLevelActions: LevelActions) {
+    fun onAction(gameLevelActions: ChapterActions) {
         when (gameLevelActions) {
-            is LevelActions.AddCoin -> addCoins(gameLevelActions.coins)
-            LevelActions.ClearLevelUnlocked -> clearIsLevelUnlocked()
-            is LevelActions.UnlockLevel -> unlockLevel(
-                gameLevelActions.levelId,
+            is ChapterActions.AddCoin -> addCoins(gameLevelActions.coins)
+            ChapterActions.ClearChapterUnlocked -> clearIsLevelUnlocked()
+            is ChapterActions.UnlockChapter -> unlockLevel(
+                gameLevelActions.chapterId,
                 gameLevelActions.isAdWatched
             )
 
-            is LevelActions.UploadSuggestion -> uploadSuggestion(gameLevelActions.comment)
-            LevelActions.Refresh -> refreshData()
+            is ChapterActions.UploadSuggestion -> uploadSuggestion(gameLevelActions.comment)
+            ChapterActions.Refresh -> refreshData()
         }
     }
 
@@ -140,14 +140,14 @@ class ChapterViewModel @Inject constructor(
         viewModelScope.launch {
             if (isAdWatched) {
                 _chapterUiState.update {
-                    it.withActionLoading(false).updateSuccess { copy(levelUnlocked = levelId) }
+                    it.withActionLoading(false).updateSuccess { copy(chapterUnlocked = levelId) }
                 }
             } else {
                 val coins = coinsState.value
                 val unlockCost = dataStoreRepository.fetchUnlockLevelCoinsCost()
                 if (coins >= unlockCost) {
                     dataStoreRepository.useCoins(unlockCost)
-                    _chapterUiState.update { it.updateSuccess { copy(levelUnlocked = levelId) } }
+                    _chapterUiState.update { it.updateSuccess { copy(chapterUnlocked = levelId) } }
                 } else {
                     _chapterUiState.update { it.withMessage("Insufficient Coins") }
                 }
@@ -156,7 +156,7 @@ class ChapterViewModel @Inject constructor(
     }
 
     private fun clearIsLevelUnlocked() {
-        _chapterUiState.update { it.updateSuccess { copy(levelUnlocked = null) } }
+        _chapterUiState.update { it.updateSuccess { copy(chapterUnlocked = null) } }
     }
 
     fun clearMsg() {

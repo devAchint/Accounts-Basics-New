@@ -127,7 +127,7 @@ fun ScoreScreenRoot(
             val finalAction =
                 if (action is ScoreActions.SubmitLevelRating) {
                     action.copy(
-                        ratingText = "Category ${args.categoryId} Level ${args.levelId}\n${action.ratingText}"
+                        ratingText = "Category ${args.subjectId} Level ${args.chapterId}\n${action.ratingText}"
                     )
                 } else {
                     action
@@ -137,16 +137,16 @@ fun ScoreScreenRoot(
         playNextLevel = {
             navigateToRule(
                 RuleArgs(
-                    categoryId = args.categoryId,
-                    levelId = args.levelId + 1
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId + 1
                 )
             )
         },
         playAgain = {
             navigateToRule(
                 RuleArgs(
-                    categoryId = args.categoryId,
-                    levelId = args.levelId
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId
                 )
             )
         },
@@ -294,7 +294,7 @@ fun ScoreScreen(
 
 
 @Composable
-fun LevelRatingsCard(modifier: Modifier = Modifier) {
+fun ChapterRatingsCard(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -7,7 +7,7 @@ import com.techuntried.accountsbasics2.BuildConfig
 import com.techuntried.accountsbasics2.data.mappers.asCategoryWithProgressModel
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
@@ -42,9 +42,9 @@ data class AppUpdateModel(
 )
 
 
-data class SectionCategoriesModel(
+data class SectionSubjectsModel(
     val title: String,
-    val categories: List<SubjectModel>,
+    val subjects: List<SubjectModel>,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -97,9 +97,9 @@ class HomeViewModel @Inject constructor(
     val config = globalConfigController.globalConfig
 
 
-    private var cachedLastPlayed: CategoryWithProgressModel? = null
+    private var cachedLastPlayed: SubjectWithProgressModel? = null
 
-    val categoriesFlow = flow {
+    val subjectsFlow = flow {
         emit(getSubjectsUseCase(null))
     }.catch { e ->
         emit(ApiResult.Error(e.message ?: "Unknown error"))
@@ -120,7 +120,7 @@ class HomeViewModel @Inject constructor(
 
 
         combine(
-            categoriesFlow,   // already uses grade internally
+            subjectsFlow,   // already uses grade internally
             lastPlayedFlow
         ) { result, lastPlayed ->
 
@@ -130,7 +130,7 @@ class HomeViewModel @Inject constructor(
                 is ApiResult.Success -> {
                     HomeUiState.Success(
                         sectionCategories = buildSections(result.data),
-                        lastPlayedCategory = lastPlayed
+                        lastPlayedSubject = lastPlayed
                     )
                 }
             }
@@ -177,7 +177,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun buildSections(categories: List<SubjectModel>): List<SectionCategoriesModel> {
+    fun buildSections(categories: List<SubjectModel>): List<SectionSubjectsModel> {
         return categories
             .asSequence()
             //  .filter { it.active } change before publishing
@@ -185,9 +185,9 @@ class HomeViewModel @Inject constructor(
             .toList()
             .sortedByDescending { (_, items) -> items.sumOf { it.sectionWeight } }
             .map { (title, categories) ->
-                SectionCategoriesModel(
+                SectionSubjectsModel(
                     title = title,
-                    categories = categories.sortedByDescending { it.weight }
+                    subjects = categories.sortedByDescending { it.weight }
                 )
             }
     }

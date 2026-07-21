@@ -2,11 +2,11 @@ package com.techuntried.accountsbasics2.data.repository
 
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
-import com.techuntried.accountsbasics2.data.database.CategoryProgressDao
+import com.techuntried.accountsbasics2.data.database.SubjectProgressDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.utils.ApiResult
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class RoomRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val chaptersDao: ChaptersDao,
-    private val categoryProgressDao: CategoryProgressDao
+    private val subjectProgressDao: SubjectProgressDao
 ) {
 
     suspend fun fetchSubjectById(categoryId: Int): ApiResult<SubjectEntity> {
@@ -32,7 +32,7 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    fun observeLatestPlayedCategory(): Flow<CategoryWithProgressEntity?> {
+    fun observeLatestPlayedCategory(): Flow<SubjectWithProgressEntity?> {
         return subjectDao.observeLatestPlayedCategory()
             .catch {e ->
                 if (e is CancellationException) throw e
@@ -54,9 +54,9 @@ class RoomRepository @Inject constructor(
 
     suspend fun updateLevelsCompleted(categoryId: Int, levelCompleted: Int) {
         safeRoomCall {
-            val levels = categoryProgressDao.getLevelsCompleted(categoryId) ?: 0
+            val levels = subjectProgressDao.getLevelsCompleted(categoryId) ?: 0
             if (levelCompleted > levels) {
-                categoryProgressDao.updateLevelsCompleted(
+                subjectProgressDao.updateLevelsCompleted(
                     id = categoryId,
                     levelsCompleted = levelCompleted,
                     lastPlayedTime = System.currentTimeMillis()
@@ -67,7 +67,7 @@ class RoomRepository @Inject constructor(
 
     suspend fun updateCorrectAnswered(categoryId: Int) {
         safeRoomCall {
-            categoryProgressDao.updateCorrectAnswered(
+            subjectProgressDao.updateCorrectAnswered(
                 id = categoryId,
                 lastPlayedTime = System.currentTimeMillis()
             )
@@ -76,7 +76,7 @@ class RoomRepository @Inject constructor(
 
     suspend fun updateWrongAnswered(categoryId: Int) {
         safeRoomCall {
-            categoryProgressDao.updateWrongAnswered(
+            subjectProgressDao.updateWrongAnswered(
                 id = categoryId,
                 lastPlayedTime = System.currentTimeMillis()
             )
@@ -85,17 +85,17 @@ class RoomRepository @Inject constructor(
 
     suspend fun getLevelsCompleted(categoryId: Int): Int {
         return safeRoomCall {
-            if (categoryProgressDao.exists(categoryId)) {
-                categoryProgressDao.getLevelsCompleted(categoryId) ?: 0
+            if (subjectProgressDao.exists(categoryId)) {
+                subjectProgressDao.getLevelsCompleted(categoryId) ?: 0
             } else {
-                categoryProgressDao.insert(CategoryProgressEntity(categoryId = categoryId))
+                subjectProgressDao.insert(SubjectProgressEntity(subjectId = categoryId))
                 0
             }
         } ?: 0
     }
 
-    fun observeUserStats(): Flow<List<CategoryProgressEntity>> {
-        return categoryProgressDao.observeAll().catch {e->
+    fun observeUserStats(): Flow<List<SubjectProgressEntity>> {
+        return subjectProgressDao.observeAll().catch { e->
             if (e is CancellationException) throw e
             Log.e("Repo", "Error fetching stats", e)
             emit(emptyList())

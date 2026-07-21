@@ -3,9 +3,9 @@ package com.techuntried.accountsbasics2.domain.model
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import java.util.concurrent.TimeUnit
 
-data class CategoryProgressModel(
-    val categoryId: Int,
-    val levelsPlayed: Int = 0,
+data class SubjectProgressModel(
+    val subjectId: Int,
+    val chaptersCompleted: Int = 0,
     val correctAnswered: Int = 0,
     val wrongAnswered: Int = 0,
     val lastPlayedTime: Long = 0L,
@@ -13,9 +13,9 @@ data class CategoryProgressModel(
     val accuracy: Float = 0f
 )
 
-data class CategoryWithProgressModel(
-    val category: SubjectModel,
-    val progress: CategoryProgressModel
+data class SubjectWithProgressModel(
+    val subject: SubjectModel,
+    val progress: SubjectProgressModel
 ) {
     fun lastPlayedText(): String {
         if (progress.lastPlayedTime == 0L) return "Never played"

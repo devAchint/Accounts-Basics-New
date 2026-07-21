@@ -13,15 +13,15 @@ interface QuestionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestions(questions: List<QuestionEntity>)
 
-    @Query("Delete FROM questions WHERE categoryId=:categoryId AND levelId=:levelId")
-    suspend fun deleteQuestions(categoryId: Int, levelId: Int)
+    @Query("Delete FROM questions WHERE subjectId=:subjectId AND chapterId=:chapterId")
+    suspend fun deleteQuestions(subjectId: Int, chapterId: Int)
 
-    @Query("SELECT * FROM questions WHERE categoryId=:categoryId AND levelId=:levelId")
-    suspend fun getQuestions(categoryId: Int, levelId: Int): List<QuestionEntity>
+    @Query("SELECT * FROM questions WHERE subjectId=:subjectId AND chapterId=:chapterId")
+    suspend fun getQuestions(subjectId: Int, chapterId: Int): List<QuestionEntity>
 
     @Transaction
-    suspend fun clearAndInsertQuestions(categoryId: Int, levelId:Int, questions: List<QuestionEntity>) {
-        deleteQuestions(categoryId,levelId)
+    suspend fun clearAndInsertQuestions(subjectId: Int, chapterId:Int, questions: List<QuestionEntity>) {
+        deleteQuestions(subjectId,chapterId)
         insertQuestions(questions)
     }
 }

@@ -65,7 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.techuntried.accountsbasics2.R
-import com.techuntried.accountsbasics2.ui.game.CoinTag
+import com.techuntried.accountsbasics2.ui.questions.CoinTag
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.CircularProgressColor

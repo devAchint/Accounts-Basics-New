@@ -50,7 +50,7 @@ class SearchDataViewModel @Inject constructor(
                         //removed before publishing
                         allData = result.data  //.filter { it.active }
                         allHints = allData
-                            .flatMap { listOfNotNull(it.section, it.categoryName) }
+                            .flatMap { listOfNotNull(it.section, it.name) }
                             .map { it.lowercase() }
                             .distinct()
                         true // Success
@@ -133,7 +133,7 @@ class SearchDataViewModel @Inject constructor(
     private fun performLocalSearch(text: String) {
         val filtered = allData.filter { item ->
             val sectionMatch = item.section?.contains(text, ignoreCase = true) ?: false
-            val titleMatch = item.categoryName.contains(text, ignoreCase = true)
+            val titleMatch = item.name.contains(text, ignoreCase = true)
             sectionMatch || titleMatch
         }
             .sortedWith(

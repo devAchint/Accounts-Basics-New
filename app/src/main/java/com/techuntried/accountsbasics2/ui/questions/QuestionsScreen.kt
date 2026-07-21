@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.game
+package com.techuntried.accountsbasics2.ui.questions
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -58,7 +58,7 @@ import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.dialog.ResumeGameDialog
-import com.techuntried.accountsbasics2.ui.navigation.GameArgs
+import com.techuntried.accountsbasics2.ui.navigation.QuestionsArgs
 import com.techuntried.accountsbasics2.ui.navigation.ScoreArgs
 import com.techuntried.accountsbasics2.ui.sheets.ConfirmBackSheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
@@ -74,9 +74,9 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 import com.techuntried.accountsbasics2.utils.textColor
 
 @Composable
-fun GameScreenRoot(
+fun QuestionsScreenRoot(
     modifier: Modifier = Modifier,
-    args: GameArgs,
+    args: QuestionsArgs,
     onBack: () -> Unit = {},
     navigateToScore: (
         scoreArgs: ScoreArgs
@@ -133,8 +133,8 @@ fun GameScreenRoot(
             if (gameCompleted) {
                 navigateToScore(
                     ScoreArgs(
-                        categoryId = args.categoryId,
-                        levelId = args.levelId,
+                        subjectId = args.subjectId,
+                        chapterId = args.chapterId,
                         correctAnswers = gameUiState.correctAnswers,
                         totalQuestions = gameUiState.totalQuestions,
                         questionReview = viewModel.questionReviewList,
@@ -144,7 +144,7 @@ fun GameScreenRoot(
         }
     }
 
-    GameScreen(
+    QuestionsScreen(
         gameUiState = gameUiState,
         onAction = viewModel::onAction,
         coins = coinsState,
@@ -170,8 +170,8 @@ fun GameScreenRoot(
             activeGameState?.let {
                 navigateToScore(
                     ScoreArgs(
-                        categoryId = args.categoryId,
-                        levelId = args.levelId,
+                        subjectId = args.subjectId,
+                        chapterId = args.chapterId,
                         correctAnswers = gameUiState.correctAnswers,
                         totalQuestions = gameUiState.totalQuestions,
                         questionReview = viewModel.questionReviewList,
@@ -224,7 +224,7 @@ fun GameScreenRoot(
 
 
 @Composable
-private fun GameScreen(
+private fun QuestionsScreen(
     modifier: Modifier = Modifier,
     gameUiState: GameUiState,
     coins: Int,

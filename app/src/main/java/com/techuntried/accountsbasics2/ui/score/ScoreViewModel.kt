@@ -66,8 +66,8 @@ class ScoreViewModel @Inject constructor(
     )
 
     private var correctAnswered = scoreArgs.correctAnswers
-    private var categoryId = scoreArgs.categoryId
-    private var levelId = scoreArgs.levelId
+    private var subjectId = scoreArgs.subjectId
+    private var chapterId = scoreArgs.chapterId
     private val totalQuestions = scoreArgs.totalQuestions
     private var review = scoreArgs.questionReview
 
@@ -91,8 +91,8 @@ class ScoreViewModel @Inject constructor(
     init {
         fetchData()
         updateAnalytics(
-            categoryId = categoryId,
-            levelId = levelId,
+            subjectId = subjectId,
+            chapterId = chapterId,
             totalQuestions = totalQuestions,
             answeredCount = review.size
         )
@@ -100,7 +100,7 @@ class ScoreViewModel @Inject constructor(
 
 
     fun fetchData() {
-        calculateResult(correctAnswered, categoryId, levelId,review)
+        calculateResult(correctAnswered, subjectId, chapterId,review)
     }
 
     fun refreshData() {
@@ -110,28 +110,28 @@ class ScoreViewModel @Inject constructor(
 
     private fun calculateResult(
         correctAnswers: Int,
-        categoryId: Int,
-        levelId: Int,
+        subjectId: Int,
+        chapterId: Int,
         review: List<QuestionReviewModel>
     ) {
         viewModelScope.launch {
             _scoreScreenUiState.value = ScoreScreenUiState.Loading
             try {
-                val categoryDeferred = async { getSubjectDetailsUseCase(categoryId) }
-                val levelDeferred = async { getChapterDetailsUseCase(categoryId, levelId) }
+                val subjectDeferred = async { getSubjectDetailsUseCase(subjectId) }
+                val chapterDeferred = async { getChapterDetailsUseCase(subjectId, chapterId) }
 
-                val categoryResult = categoryDeferred.await()
-                val levelResult = levelDeferred.await()
+                val subjectResult = subjectDeferred.await()
+                val chapterResult = chapterDeferred.await()
 
-                if (categoryResult is ApiResult.Success && levelResult is ApiResult.Success) {
+                if (subjectResult is ApiResult.Success && chapterResult is ApiResult.Success) {
                     val rewardCoins = dataStoreRepository.fetchCorrectAnswerCoins()
-                    val level = levelResult.data
-                    val categoryName = categoryResult.data.categoryName
-                    val section = categoryResult.data.section
-                    val totalLevels = categoryResult.data.chapters
+                    val chapter = chapterResult.data
+                    val subjectName = subjectResult.data.name
+                    val section = subjectResult.data.section
+                    val totalLevels = subjectResult.data.chapters
 
-                    val totalQuestions = 0 //level.questions
-                    val levelName = level.name
+                    val totalQuestions = 0 //chapter.questions
+                    val chapterName = chapter.name
 
                     // 🔹 BUSINESS LOGIC
                     val minimumScore = (totalQuestions * 60) / 100
@@ -145,10 +145,10 @@ class ScoreViewModel @Inject constructor(
                         else 0
 
                     val score = ScoreModel(
-                        title = categoryName,
+                        title = subjectName,
                         isWon = isWon,
-                        isLastLevel = totalLevels == levelId,
-                        description = levelName,
+                        isLastLevel = totalLevels == chapterId,
+                        description = chapterName,
                         totalQuestions = totalQuestions,
                         correct = correctAnswers,
                         coinsEarned = coinsEarned,
@@ -166,8 +166,8 @@ class ScoreViewModel @Inject constructor(
                     handlePostScoreActions(
                         isWon = isWon,
                         coinsEarned = coinsEarned,
-                        categoryId = categoryId,
-                        levelId = levelId,
+                        subjectId = subjectId,
+                        chapterId = chapterId,
                         section = section,
                     )
                 } else {
@@ -184,14 +184,14 @@ class ScoreViewModel @Inject constructor(
     private suspend fun handlePostScoreActions(
         isWon: Boolean,
         coinsEarned: Int,
-        categoryId: Int,
-        levelId: Int,
+        subjectId: Int,
+        chapterId: Int,
         section: String?,
     ) {
         supervisorScope {
             if (isWon) {
                 launch {
-                    roomRepository.updateLevelsCompleted(categoryId, levelId)
+                    roomRepository.updateLevelsCompleted(subjectId, chapterId)
                 }
             }
             launch {
@@ -212,15 +212,15 @@ class ScoreViewModel @Inject constructor(
 
 
     fun updateAnalytics(
-        categoryId: Int,
-        levelId: Int,
+        subjectId: Int,
+        chapterId: Int,
         answeredCount: Int,
         totalQuestions: Int,
     ) {
         logEvent(
-            LogEventType.LevelComplete(
-                categoryId = categoryId,
-                levelId = levelId,
+            LogEventType.PracticeChapterComplete(
+                subjectId = subjectId,
+                chapterId = chapterId,
                 answeredCount = answeredCount,
                 totalQuestions = totalQuestions
             )
@@ -233,7 +233,7 @@ class ScoreViewModel @Inject constructor(
                 val isScoreRatingDismissed = dataStoreRepository.isScoreRatingDismissed()
                 val enoughLevelsPlayed =
                     (roomRepository.observeUserStats().firstOrNull()
-                        ?.sumOf { it.levelsPlayed }
+                        ?.sumOf { it.chaptersCompleted }
                         ?: 0) > 5
                 _scoreScreenUiState.update {
                     it.updateSuccess { copy(scoreRatingEnabled = !isScoreRatingDismissed && enoughLevelsPlayed ) }

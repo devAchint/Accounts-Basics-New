@@ -1,8 +1,8 @@
 package com.techuntried.accountsbasics2.domain.model.subjects
 
 data class SubjectModel(
-    val categoryId: Int,
-    val categoryName: String,
+    val subjectId: Int,
+    val name: String,
     val featured: Boolean,
     val imageUrl: String,
     val bgColor: String?,

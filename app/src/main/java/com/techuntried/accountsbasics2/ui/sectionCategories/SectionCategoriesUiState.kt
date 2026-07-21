@@ -18,11 +18,11 @@ sealed interface SectionCategoriesUiState {
     ) : SectionCategoriesUiState
 
     data class Success(
-        val categories: List<SubjectModel> = emptyList(),
+        val subjects: List<SubjectModel> = emptyList(),
         override val message: String? = null,
         override val actionLoading: Boolean = false
     ) : SectionCategoriesUiState {
-        fun isEmpty(): Boolean = categories.isEmpty()
+        fun isEmpty(): Boolean = subjects.isEmpty()
     }
 }
 

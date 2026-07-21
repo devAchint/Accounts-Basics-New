@@ -54,7 +54,7 @@ fun HomeSubjectItemCard(
 
         // Text at top/start
         Text(
-            text = subjectModel.categoryName,
+            text = subjectModel.name,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

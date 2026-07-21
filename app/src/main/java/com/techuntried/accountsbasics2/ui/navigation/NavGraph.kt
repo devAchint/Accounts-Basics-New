@@ -10,7 +10,7 @@ import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewMode
 import com.techuntried.accountsbasics2.ui.chapter.ChaptersScreenRoot
 import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import com.techuntried.accountsbasics2.ui.feedback.FeedbackScreenRoot
-import com.techuntried.accountsbasics2.ui.game.GameScreenRoot
+import com.techuntried.accountsbasics2.ui.questions.QuestionsScreenRoot
 import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
 import com.techuntried.accountsbasics2.ui.learn.LearnScreenRoot
 import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
@@ -120,8 +120,8 @@ fun NavGraph(
                 onBackClick = {
                     navController.navigateUp()
                 },
-                navigateToGame = { gameArgs ->
-                    navController.navigate(gameArgs.toGameScreenRoute()) {
+                navigateToQuestions = { questionArgs ->
+                    navController.navigate(questionArgs.toQuestionsScreenRoute()) {
                         popUpTo<Routes.RulesScreenRoute> {
                             inclusive = true
                         }
@@ -131,11 +131,11 @@ fun NavGraph(
         }
 
 
-        composable<Routes.GameScreenRoute> {
-            val args = it.toRoute<Routes.GameScreenRoute>()
-            val gameArgs = args.toGameArgs()
-            GameScreenRoot(
-                args = gameArgs,
+        composable<Routes.QuestionsScreenRoute> {
+            val args = it.toRoute<Routes.QuestionsScreenRoute>()
+            val questionsArgs = args.toQuestionArgs()
+            QuestionsScreenRoot(
+                args = questionsArgs,
                 onBack = {
                     navController.navigateUp()
                 },
@@ -192,7 +192,7 @@ fun NavGraph(
         composable<Routes.ProgressScreenRoute> {
             ProgressScreenRoot(
                 openQuizSection = {},
-                openGameLevel = { levelArgs ->
+                openChapters = { levelArgs ->
                     navController.navigate(levelArgs.toLevelScreenRoute())
                 }
             )

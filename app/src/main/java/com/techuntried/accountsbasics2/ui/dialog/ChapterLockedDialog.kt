@@ -38,7 +38,7 @@ import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.utils.findActivity
 
 @Composable
-fun LevelLockedDialog(
+fun ChapterLockedDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     logEvent: (LogEventType) -> Unit = {},

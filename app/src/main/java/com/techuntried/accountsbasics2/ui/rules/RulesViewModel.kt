@@ -42,11 +42,11 @@ class RulesViewModel @Inject constructor(
 
 
     init {
-        prepareCategoryRules(categoryId = args.categoryId, levelId = args.levelId)
+        prepareCategoryRules(categoryId = args.subjectId, levelId = args.chapterId)
     }
 
     fun refresh() {
-        prepareCategoryRules(categoryId = args.categoryId, levelId = args.levelId)
+        prepareCategoryRules(categoryId = args.subjectId, levelId = args.chapterId)
     }
 
     fun updateIsRuleFirstTime() {
@@ -109,7 +109,7 @@ class RulesViewModel @Inject constructor(
                     )
                     _rulesScreenUiState.value = RulesScreenUiState.Success(
                         rules = ruleList,
-                        title = subjectResult.data.categoryName,
+                        title = subjectResult.data.name,
                         iconUrl = subjectResult.data.imageUrl,
                         bgColor = subjectResult.data.bgColor,
                         timerCount = if (isTimer) 15 else null,

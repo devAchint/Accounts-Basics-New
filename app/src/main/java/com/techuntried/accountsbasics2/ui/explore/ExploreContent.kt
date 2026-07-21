@@ -106,7 +106,7 @@ fun ExploreContent(
                             )
                         }
                     } else {
-                        itemsIndexed(exploreUiState.data.first().categories) { index, item ->
+                        itemsIndexed(exploreUiState.data.first().subjects) { index, item ->
                             val modifier = Modifier.padding(
                                 end = if (index % 2 == 1) 16.dp else 0.dp,
                                 start = if (index % 2 == 0) 16.dp else 0.dp
@@ -116,8 +116,8 @@ fun ExploreContent(
                                 subjectModel = item,
                                 onClick = {
                                     onQuizCategoryClick(
-                                        item.categoryId,
-                                        item.categoryName,
+                                        item.subjectId,
+                                        item.name,
                                         item.showTopics
                                     )
                                 }
@@ -137,7 +137,7 @@ private fun ExploreCategoriesCard(
     onQuizCategoryClick: (categoryId: Int, categoryName: String, showTopic: Boolean) -> Unit,
     onAllCategoriesClick: () -> Unit
 ) {
-    exploreSection.categories.let { categories ->
+    exploreSection.subjects.let { categories ->
         Column(modifier = modifier) {
             Row(
                 modifier = Modifier
@@ -187,8 +187,8 @@ private fun ExploreCategoriesCard(
                         subjectModel = category,
                         onClick = {
                             onQuizCategoryClick(
-                                category.categoryId,
-                                category.categoryName,
+                                category.subjectId,
+                                category.name,
                                 category.showTopics
                             )
                         }

@@ -32,7 +32,7 @@ class GetChaptersUseCase @Inject constructor(
                     val remoteResponse = repository.fetchRemoteChapters(categoryId)
 
                     if (remoteResponse is ApiResult.Success && remoteResponse.data.status) {
-                        val entities = remoteResponse.data.levels.map { it.asChapterEntity() }
+                        val entities = remoteResponse.data.chapters.map { it.asChapterEntity() }
                         repository.saveLevels(categoryId, entities)
                         repository.markLevelsUpdatedForCategory(categoryId)
                         return ApiResult.Success(entities.map { it.asChapterModel() })

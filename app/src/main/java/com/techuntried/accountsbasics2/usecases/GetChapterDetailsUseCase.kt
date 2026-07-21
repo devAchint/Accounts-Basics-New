@@ -14,9 +14,9 @@ class GetChapterDetailsUseCase @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val networkMonitor: NetworkMonitor // Better than passing 'context'
 ) {
-    suspend operator fun invoke(categoryId: Int,levelId:Int): ApiResult<ChapterModel> {
+    suspend operator fun invoke(subjectId: Int, chapterId:Int): ApiResult<ChapterModel> {
         // 1. Check Local Source first
-        val localResult = roomRepository.fetchChapterDetailsBySubject(categoryId,levelId)
+        val localResult = roomRepository.fetchChapterDetailsBySubject(subjectId,chapterId)
         if (localResult is ApiResult.Success) {
             return ApiResult.Success(localResult.data.asChapterModel())
         }
@@ -27,7 +27,7 @@ class GetChapterDetailsUseCase @Inject constructor(
         }
 
         // 3. Fetch from Remote
-        return fetchChapterRemote(categoryId,levelId)
+        return fetchChapterRemote(subjectId,chapterId)
     }
 
     private suspend fun fetchChapterRemote(subjectId: Int, levelId: Int): ApiResult<ChapterModel> {

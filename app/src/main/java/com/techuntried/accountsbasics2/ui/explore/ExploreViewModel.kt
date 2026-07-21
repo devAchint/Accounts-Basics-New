@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 data class ExploreSectionModel(
     val title: String,
-    val categories: List<SubjectModel>,
+    val subjects: List<SubjectModel>,
 )
 
 @HiltViewModel
@@ -32,7 +32,7 @@ class ExploreViewModel @Inject constructor(
 
     private val _exploreUiState = MutableStateFlow<ExploreUiState>(ExploreUiState.Loading)
     val exploreUiState = _exploreUiState.asStateFlow()
-    private var categories = emptyList<SubjectModel>()
+    private var subjects = emptyList<SubjectModel>()
 
 
     init {
@@ -59,7 +59,7 @@ class ExploreViewModel @Inject constructor(
                             )
                         val sections = categories.sortedByDescending { it.sectionWeight }
                             .mapNotNull { it.section }.distinct()
-                        this@ExploreViewModel.categories = categories
+                        this@ExploreViewModel.subjects = categories
                         val allSections = listOf("All") + sections
 
                         val exploreSections = filterCategories(section = "All", grades = emptySet())
@@ -110,7 +110,7 @@ class ExploreViewModel @Inject constructor(
     }
 
     fun filterCategories(section: String, grades: Set<Int>): List<ExploreSectionModel> {
-        return categories
+        return subjects
             .filter {
                 val sectionCheck = if (section == "All") true else it.section == section
                 val gradeCheck =
@@ -121,7 +121,7 @@ class ExploreViewModel @Inject constructor(
             .map {
                 ExploreSectionModel(
                     title = it.key ?: "Others",
-                    categories = it.value
+                    subjects = it.value
                 )
             }
     }

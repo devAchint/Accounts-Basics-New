@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.game
+package com.techuntried.accountsbasics2.ui.questions
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent

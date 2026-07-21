@@ -8,7 +8,7 @@ data class FetchSubjectsResponse(
     val status: Boolean,
     val message: String,
     @SerialName("data")
-    val categories: List<SubjectApiResponse>
+    val subjects: List<SubjectApiResponse>
 )
 
 @Serializable

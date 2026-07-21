@@ -35,7 +35,7 @@ import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.ui.theme.PrimaryColor
 
 @Composable
-fun LevelUnLockedDialog(
+fun ChapterUnLockedDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     play: () -> Unit

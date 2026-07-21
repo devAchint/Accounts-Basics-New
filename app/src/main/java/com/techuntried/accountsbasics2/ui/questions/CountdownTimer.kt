@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.game
+package com.techuntried.accountsbasics2.ui.questions
 
 import com.techuntried.accountsbasics2.R
 import androidx.compose.animation.core.Animatable

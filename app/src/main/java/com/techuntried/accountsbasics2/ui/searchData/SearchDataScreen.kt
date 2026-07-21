@@ -54,7 +54,7 @@ import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.home.HomeSubjectItemCard
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.InputHintColor
@@ -66,7 +66,7 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 fun SearchDataScreenRoot(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
-    openGameLevel: (LevelArgs) -> Unit
+    openGameLevel: (ChapterArgs) -> Unit
 ) {
     val context = LocalContext.current
     val viewModel: SearchDataViewModel = hiltViewModel()
@@ -100,7 +100,7 @@ fun SearchDataScreenRoot(
 fun SearchDataScreen(
     searchDataUiState: SearchDataUiState,
     updateFocus: (Boolean) -> Unit = {},
-    openGameLevel: (LevelArgs) -> Unit,
+    openGameLevel: (ChapterArgs) -> Unit,
     refresh: () -> Unit = {},
     updateSearchQuery: (TextFieldValue) -> Unit = {},
     onSearch: (TextFieldValue) -> Unit = {},
@@ -225,7 +225,7 @@ private fun SearchContent(
     state: SearchDataUiState.Success,
     onSearch: (TextFieldValue) -> Unit,
     onBack: () -> Unit,
-    openGameLevel: (LevelArgs) -> Unit
+    openGameLevel: (ChapterArgs) -> Unit
 ) {
     if (state.hasFocus) {
         SearchHintsList(state, onSearch = onSearch)
@@ -277,7 +277,7 @@ fun SearchHintsList(state: SearchDataUiState.Success, onSearch: (TextFieldValue)
 fun SearchResults(
     state: SearchDataUiState.Success,
     onBack: () -> Unit,
-    openGameLevel: (LevelArgs) -> Unit
+    openGameLevel: (ChapterArgs) -> Unit
 ) {
     if (state.searchResults != null)
         if (state.searchResultsEmpty()) {
@@ -301,9 +301,9 @@ fun SearchResults(
                 items(state.searchResults) {
                     HomeSubjectItemCard(subjectModel = it) {
                         openGameLevel(
-                            LevelArgs(
-                                categoryId = it.categoryId,
-                                categoryName = it.categoryName,
+                            ChapterArgs(
+                                subjectId = it.subjectId,
+                                subjectName = it.name,
                                 showTopic = it.showTopics
                             )
                         )

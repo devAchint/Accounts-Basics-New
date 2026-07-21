@@ -1,7 +1,7 @@
 package com.techuntried.accountsbasics2.utils
 
 import androidx.compose.ui.graphics.Color
-import com.techuntried.accountsbasics2.ui.game.OptionType
+import com.techuntried.accountsbasics2.ui.questions.OptionType
 import com.techuntried.accountsbasics2.ui.theme.CorrectOptionBorderColor
 import com.techuntried.accountsbasics2.ui.theme.CorrectOptionColor
 import com.techuntried.accountsbasics2.ui.theme.CorrectOptionTextColor

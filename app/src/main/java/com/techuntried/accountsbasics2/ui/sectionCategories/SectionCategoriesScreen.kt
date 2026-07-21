@@ -29,7 +29,7 @@ import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.home.HomeSubjectItemCard
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.utils.AppIcons
@@ -41,7 +41,7 @@ fun SectionCategoriesScreenRoot(
     modifier: Modifier = Modifier,
     section: String,
     onBack: () -> Unit,
-    openGameLevel: (LevelArgs) -> Unit
+    openGameLevel: (ChapterArgs) -> Unit
 ) {
     val context = LocalContext.current
     val viewModel: SectionCategoriesViewModel = hiltViewModel()
@@ -91,7 +91,7 @@ private fun SectionCategoriesScreen(
     section: String,
     bannerAdUnit: String?,
     logEvent: (LogEventType) -> Unit,
-    onQuizCategoryClick: (LevelArgs) -> Unit,
+    onQuizCategoryClick: (ChapterArgs) -> Unit,
     reportIssue: () -> Unit,
     onBack: () -> Unit,
     refresh: () -> Unit
@@ -152,7 +152,7 @@ fun QuizSectionContent(
     sectionCategoriesUiState: SectionCategoriesUiState.Success,
     reportIssue: () -> Unit,
     bannerAdUnit: String?,
-    onQuizCategoryClick: (LevelArgs) -> Unit,
+    onQuizCategoryClick: (ChapterArgs) -> Unit,
     logEvent: (LogEventType) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()){
@@ -174,14 +174,14 @@ fun QuizSectionContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(sectionCategoriesUiState.categories) { category ->
+                    items(sectionCategoriesUiState.subjects) { category ->
                         HomeSubjectItemCard (
                             subjectModel = category,
                             onClick = {
                                 onQuizCategoryClick(
-                                    LevelArgs(
-                                        category.categoryId,
-                                        category.categoryName,
+                                    ChapterArgs(
+                                        category.subjectId,
+                                        category.name,
                                         category.showTopics
                                     )
                                 )

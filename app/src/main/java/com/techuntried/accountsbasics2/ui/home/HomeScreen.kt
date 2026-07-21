@@ -39,7 +39,7 @@ import com.techuntried.accountsbasics2.ui.commons.AppUpdateCard
 import com.techuntried.accountsbasics2.ui.commons.CoinsSheet
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.navigation.LevelArgs
+import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
 import com.techuntried.accountsbasics2.ui.sheets.SuggestCategorySheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.CardColor
@@ -54,7 +54,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreenRoot(
     modifier: Modifier = Modifier,
-    openLevels: (LevelArgs) -> Unit,
+    openLevels: (ChapterArgs) -> Unit,
     onMoreCategoriesClick: (section: String, grade: Int?) -> Unit
 ) {
     val context = LocalContext.current
@@ -109,8 +109,8 @@ fun HomeScreenRoot(
         coins = coins,
         onQuizCategoryClick = { categoryId, categoryName, showTopic ->
             openLevels(
-                LevelArgs(
-                    categoryId = categoryId, categoryName = categoryName, showTopic = showTopic
+                ChapterArgs(
+                    subjectId = categoryId, subjectName = categoryName, showTopic = showTopic
                 )
             )
         },
@@ -238,11 +238,11 @@ fun HomeScreen(
 @Composable
 fun QuizSectionCard(
     modifier: Modifier = Modifier,
-    section: SectionCategoriesModel,
+    section: SectionSubjectsModel,
     onQuizCategoryClick: (categoryId: Int, categoryName: String, showTopic: Boolean) -> Unit,
     onAllCategoriesClick: () -> Unit
 ) {
-    section.categories.let { categories ->
+    section.subjects.let { categories ->
         Column(modifier = modifier) {
             Row(
                 modifier = Modifier
@@ -294,7 +294,7 @@ fun QuizSectionCard(
                         HomeSubjectItemCard(
                             modifier = Modifier.weight(1f), subjectModel = category, onClick = {
                                 onQuizCategoryClick(
-                                    category.categoryId, category.categoryName, category.showTopics
+                                    category.subjectId, category.name, category.showTopics
                                 )
                             })
                     }

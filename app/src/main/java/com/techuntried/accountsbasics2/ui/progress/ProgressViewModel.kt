@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
-import com.techuntried.accountsbasics2.domain.model.CategoryProgressModel
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.usecases.GetSubjectsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
@@ -33,11 +33,11 @@ sealed interface ProgressUiState {
     object Loading : ProgressUiState
     data class Error(val message: String?) : ProgressUiState
     data class Success(
-        val progressList: List<CategoryWithProgressModel>,
+        val progressList: List<SubjectWithProgressModel>,
         val questionsAttempted: Int = 0,
         val accuracy: Int = 0,
         val streak: Int = 0,
-        val categoriesPlayed: Int = 0,
+        val chaptersCompleted: Int = 0,
         val selectedSortOption: ProgressSortOption
     ) : ProgressUiState {
         fun isEmpty(): Boolean = progressList.isEmpty()
@@ -54,10 +54,10 @@ class ProgressViewModel @Inject constructor(
 
     private val _progressSort = MutableStateFlow(ProgressSortOption.RECENTS)
 
-    private val categoryMapFlow: Flow<ApiResult<Map<Int, SubjectModel>>> = flow {
+    private val subjectMapFlow: Flow<ApiResult<Map<Int, SubjectModel>>> = flow {
         when (val result = getSubjectsUseCase(null)) {
             is ApiResult.Success -> {
-                val map = result.data.associateBy { it.categoryId }
+                val map = result.data.associateBy { it.subjectId }
                 emit(ApiResult.Success(map))
             }
 
@@ -70,7 +70,7 @@ class ProgressViewModel @Inject constructor(
     val progressUiState: StateFlow<ProgressUiState> =
         combine(
             roomRepository.observeUserStats(),
-            categoryMapFlow,
+            subjectMapFlow,
             _progressSort
         ) { userStats, categoryResult, sortOption ->
 
@@ -79,12 +79,12 @@ class ProgressViewModel @Inject constructor(
             }
             val categoryMap = (categoryResult as ApiResult.Success).data
             val progressList =
-                userStats.filter { (it.levelsPlayed + it.correctAnswered + it.wrongAnswered) > 0 }
+                userStats.filter { (it.chaptersCompleted + it.correctAnswered + it.wrongAnswered) > 0 }
                     .mapNotNull { stat ->
-                        val category = categoryMap[stat.categoryId] ?: return@mapNotNull null
+                        val category = categoryMap[stat.subjectId] ?: return@mapNotNull null
 
                         val progress = if (category.chapters > 0) {
-                            (stat.levelsPlayed.toFloat() / category.chapters) * 100
+                            (stat.chaptersCompleted.toFloat() / category.chapters) * 100
                         } else 0f
 
                         val totalAnswers = stat.correctAnswered + stat.wrongAnswered
@@ -92,9 +92,9 @@ class ProgressViewModel @Inject constructor(
                             (stat.correctAnswered.toFloat() / totalAnswers) * 100f
                         } else 0f
 
-                        val categoryProgressModel = CategoryProgressModel(
-                            categoryId = category.categoryId,
-                            levelsPlayed = stat.levelsPlayed,
+                        val subjectProgressModel = SubjectProgressModel(
+                            subjectId = category.subjectId,
+                            chaptersCompleted = stat.chaptersCompleted,
                             correctAnswered = stat.correctAnswered,
                             wrongAnswered = stat.wrongAnswered,
                             lastPlayedTime = stat.lastPlayedTime,
@@ -102,9 +102,9 @@ class ProgressViewModel @Inject constructor(
                             accuracy = accuracy
                         )
 
-                        CategoryWithProgressModel(
-                            category = category,
-                            progress = categoryProgressModel
+                        SubjectWithProgressModel(
+                            subject = category,
+                            progress = subjectProgressModel
                         )
                     }
 
@@ -133,7 +133,7 @@ class ProgressViewModel @Inject constructor(
                 progressList = sortedProgressList,
                 accuracy = totalAccuracy.toInt(),
                 questionsAttempted = totalAttempted,
-                categoriesPlayed = sortedProgressList.map { it.category.categoryId }
+                chaptersCompleted = sortedProgressList.map { it.subject.subjectId }
                     .distinct().size,
                 selectedSortOption = sortOption
             )

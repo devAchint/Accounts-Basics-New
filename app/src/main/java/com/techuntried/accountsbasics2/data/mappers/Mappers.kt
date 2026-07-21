@@ -1,14 +1,14 @@
 package com.techuntried.accountsbasics2.data.mappers
 
-import com.techuntried.accountsbasics2.domain.model.CategoryProgressModel
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentModel
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
@@ -19,41 +19,41 @@ import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
-import com.techuntried.accountsbasics2.ui.game.OptionType
+import com.techuntried.accountsbasics2.ui.questions.OptionType
 
 
 
-fun CategoryWithProgressEntity.asCategoryWithProgressModel(): CategoryWithProgressModel {
+fun SubjectWithProgressEntity.asCategoryWithProgressModel(): SubjectWithProgressModel {
 
     val category = SubjectModel(
-        categoryId = category.categoryId,
-        categoryName = category.categoryName,
-        featured = category.isFeatured,
-        imageUrl = category.categoryImage,
-        bgColor = category.bgColor,
-        active = category.active,
-        showTopics = category.showTopics,
-        section = category.section,
-        tag = category.tag,
-        weight = category.weight,
-        sectionWeight = category.sectionWeight,
-        featuredWeight = category.featuredWeight,
-        chapters = category.levels,
-        course = category.course
+        subjectId = subject.subjectId,
+        name = subject.name,
+        featured = subject.isFeatured,
+        imageUrl = subject.imageUrl,
+        bgColor = subject.bgColor,
+        active = subject.active,
+        showTopics = subject.showTopics,
+        section = subject.section,
+        tag = subject.tag,
+        weight = subject.weight,
+        sectionWeight = subject.sectionWeight,
+        featuredWeight = subject.featuredWeight,
+        chapters = subject.chapters,
+        course = subject.course
     )
 
-    return CategoryWithProgressModel(
-        category = category,
-        progress = progress?.asCategoryProgressModel(category.chapters) ?: CategoryProgressModel(
-            categoryId = category.categoryId
+    return SubjectWithProgressModel(
+        subject = category,
+        progress = progress?.asCategoryProgressModel(category.chapters) ?: SubjectProgressModel(
+            subjectId = category.subjectId
         )
     )
 }
 
-fun CategoryProgressEntity.asCategoryProgressModel(totalLevels: Int): CategoryProgressModel {
+fun SubjectProgressEntity.asCategoryProgressModel(totalLevels: Int): SubjectProgressModel {
 
     val progress = if (totalLevels > 0) {
-        (levelsPlayed.toFloat() / totalLevels) * 100
+        (chaptersCompleted.toFloat() / totalLevels) * 100
     } else 0f
 
     val totalAnswers = correctAnswered + wrongAnswered
@@ -61,9 +61,9 @@ fun CategoryProgressEntity.asCategoryProgressModel(totalLevels: Int): CategoryPr
         (correctAnswered.toFloat() / totalAnswers) * 100f
     } else 0f
 
-    return CategoryProgressModel(
-        categoryId = categoryId,
-        levelsPlayed = levelsPlayed,
+    return SubjectProgressModel(
+        subjectId = subjectId,
+        chaptersCompleted = chaptersCompleted,
         correctAnswered = correctAnswered,
         wrongAnswered = wrongAnswered,
         lastPlayedTime = lastPlayedTime,
@@ -73,17 +73,17 @@ fun CategoryProgressEntity.asCategoryProgressModel(totalLevels: Int): CategoryPr
 }
 
 
-fun SubjectApiResponse.asCategoryEntity(): SubjectEntity {
+fun SubjectApiResponse.asSubjectEntity(): SubjectEntity {
     return SubjectEntity(
-        categoryId = id,
-        categoryName = name,
-        categoryImage = imageUrl,
+        subjectId = id,
+        name = name,
+        imageUrl = imageUrl,
         isFeatured = featured,
         bgColor = bgColor,
         active = active,
         weight = weight,
         section = section,
-        levels = chapters,
+        chapters = chapters,
         tag = tag,
         course = courseId,
         showTopics = showTopics,
@@ -94,8 +94,8 @@ fun SubjectApiResponse.asCategoryEntity(): SubjectEntity {
 
 fun SubjectApiResponse.asSubjectModel(): SubjectModel {
     return SubjectModel(
-        categoryId = id,
-        categoryName = name,
+        subjectId = id,
+        name = name,
         imageUrl = imageUrl,
         featured = featured,
         bgColor = bgColor,
@@ -113,16 +113,16 @@ fun SubjectApiResponse.asSubjectModel(): SubjectModel {
 
 fun SubjectEntity.asSubjectModel(): SubjectModel {
     return SubjectModel(
-        categoryId = categoryId,
-        categoryName = categoryName,
+        subjectId = subjectId,
+        name = name,
         course = course,
-        imageUrl = categoryImage,
+        imageUrl = imageUrl,
         featured = isFeatured,
         bgColor = bgColor,
         active = active,
         weight = weight,
         section = section,
-        chapters = levels,
+        chapters = chapters,
         tag = tag,
         showTopics = showTopics,
         featuredWeight = featuredWeight,
@@ -157,8 +157,8 @@ fun QuestionApiResponse.asQuestionEntity(): QuestionEntity {
         questionText = questionText,
         options = options,
         correctOptionId = correctOptionId,
-        levelId = chapterId,
-        categoryId = subjectId
+        chapterId = chapterId,
+        subjectId = subjectId
     )
 }
 
@@ -168,8 +168,8 @@ fun QuestionEntity.asQuestionModel(): QuestionModel {
         questionText = questionText,
         options = options.map { it.asGameOption() },
         correctOptionId = correctOptionId,
-        levelId = levelId,
-        categoryId = categoryId
+        chapterId = chapterId,
+        subjectId = subjectId
     )
 }
 

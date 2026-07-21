@@ -1,4 +1,4 @@
-package com.techuntried.accountsbasics2.ui.game
+package com.techuntried.accountsbasics2.ui.questions
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -98,7 +98,7 @@ class GameViewModel @Inject constructor(
     val globalConfigState = globalConfigController.globalConfig
 
 
-    private val args = savedStateHandle.toRoute<Routes.GameScreenRoute>()
+    private val args = savedStateHandle.toRoute<Routes.QuestionsScreenRoute>()
 
     private var quizStartTimerJob: Job? = null
     private var questionTimerJob: Job? = null
@@ -114,12 +114,12 @@ class GameViewModel @Inject constructor(
 
     init {
         questionTimerCount = args.timerCount
-        fetchCategoryGameData(args.categoryId, args.levelId)
-        updateAnalytics(args.categoryId, args.levelId)
+        fetchCategoryGameData(args.subjectId, args.chapterId)
+        updateAnalytics(args.subjectId, args.chapterId)
     }
 
     fun refresh() {
-        fetchCategoryGameData(args.categoryId, args.levelId)
+        fetchCategoryGameData(args.subjectId, args.chapterId)
     }
 
     fun onAction(action: GameEvent) {
@@ -295,7 +295,7 @@ class GameViewModel @Inject constructor(
 
                 val isCorrect = selectedOptionId == activeState.currentQuestion.correctOptionId
 
-                args.categoryId.let { id ->
+                args.subjectId.let { id ->
                     viewModelScope.launch {
                         if (isCorrect) {
                             roomRepository.updateCorrectAnswered(categoryId = id)
@@ -526,7 +526,7 @@ class GameViewModel @Inject constructor(
             val state = gameUiState.value as? GameUiState.ActiveGame ?: return@launch
             val currentQuestion = state.currentQuestion.questionText
             val comment =
-                "CategoryId ${args.categoryId}\nLevelId ${args.levelId}\nQuestionId ${currentQuestion}\nReport :$reason\nDetails: $details"
+                "CategoryId ${args.subjectId}\nLevelId ${args.chapterId}\nQuestionId ${currentQuestion}\nReport :$reason\nDetails: $details"
 
             when (val response = uploadFeedbackUseCase(comment = comment)) {
                 is ApiResult.Error -> {
@@ -547,9 +547,9 @@ class GameViewModel @Inject constructor(
 
     fun updateAnalytics(categoryId: Int, levelId: Int) {
         logEvent(
-            LogEventType.LevelStart(
-                categoryId = categoryId,
-                levelId = levelId
+            LogEventType.PracticeChapterStart(
+                subjectId = categoryId,
+                chapterId = levelId
             )
         )
     }

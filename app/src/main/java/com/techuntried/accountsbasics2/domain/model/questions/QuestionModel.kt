@@ -1,11 +1,11 @@
 package com.techuntried.accountsbasics2.domain.model.questions
 
-import com.techuntried.accountsbasics2.ui.game.OptionType
+import com.techuntried.accountsbasics2.ui.questions.OptionType
 
 
 data class QuestionModel(
-    val categoryId: Int,
-    val levelId: Int,
+    val subjectId: Int,
+    val chapterId: Int,
     val correctOptionId: Int,
     val options: List<GameOption>,
     val questionId: Int,

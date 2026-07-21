@@ -23,28 +23,28 @@ sealed class Routes {
     object StartScreenRoute : Routes()
 
     @Serializable
-    data class GameScreenRoute(
-        val categoryId: Int,
-        val levelId: Int,
+    data class QuestionsScreenRoute(
+        val subjectId: Int,
+        val chapterId: Int,
         val timerCount: Int?
     ) : Routes()
 
     @Serializable
     data class ScoreScreenRoute(
-        val categoryId: Int,
-        val levelId: Int,
+        val subjectId: Int,
+        val chapterId: Int,
         val correctAnswers: Int,
         val totalQuestions: Int,
         val questionReview: List<QuestionReviewModel>
     ) : Routes()
 
     @Serializable
-    data class RulesScreenRoute(val categoryId: Int, val levelId: Int) : Routes()
+    data class RulesScreenRoute(val subjectId: Int, val chapterId: Int) : Routes()
 
     @Serializable
     data class ChaptersScreenRoute(
-        val categoryId: Int,
-        val categoryName: String,
+        val subjectId: Int,
+        val subjectName: String,
         val showTopic: Boolean
     ) : Routes()
 

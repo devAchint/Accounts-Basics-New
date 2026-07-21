@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
-import com.techuntried.accountsbasics2.domain.model.entities.CategoryWithProgressEntity
+import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,7 +27,7 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects WHERE course=:course")
     suspend fun getSubjectsByGrades(course: Int): List<SubjectEntity>
 
-    @Query("SELECT * FROM subjects WHERE categoryId = :id")
+    @Query("SELECT * FROM subjects WHERE subjectId = :id")
     suspend fun getSubjectById(id:Int): SubjectEntity
 
     @Transaction
@@ -37,18 +37,20 @@ interface SubjectDao {
     }
 
     @Transaction
-    @Query("""
+    @Query(
+        """
     SELECT c.*
     FROM subjects c
-    INNER JOIN category_progress cp
-        ON c.categoryId = cp.categoryId
+    INNER JOIN subject_progress cp
+        ON c.subjectId = cp.subjectId
     ORDER BY cp.lastPlayedTime DESC
     LIMIT 1
-""")
-    fun observeLatestPlayedCategory(): Flow<CategoryWithProgressEntity?>
+"""
+    )
+    fun observeLatestPlayedCategory(): Flow<SubjectWithProgressEntity?>
 
 
-    @Query("SELECT * FROM subjects Where categoryId = :categoryId")
+    @Query("SELECT * FROM subjects Where subjectId = :categoryId")
     suspend fun getCategory(categoryId: Int): SubjectEntity
 
 }

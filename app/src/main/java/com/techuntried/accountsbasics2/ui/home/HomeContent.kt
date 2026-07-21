@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import com.techuntried.accountsbasics2.R
-import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.ui.theme.ProgressColor
@@ -63,7 +63,7 @@ fun HomeContent(
 //            )
 //        }
 
-        if (homeUiState.lastPlayedCategory != null) {
+        if (homeUiState.lastPlayedSubject != null) {
             item(span = { GridItemSpan(2) }) {
                 Column(
                     modifier = Modifier
@@ -77,12 +77,12 @@ fun HomeContent(
                     )
                     Spacer(10.dp)
                     HomeRecentItemCard(
-                        categoryWithProgressModel = homeUiState.lastPlayedCategory
+                        subjectWithProgressModel = homeUiState.lastPlayedSubject
                     ) {
                         onQuizCategoryClick(
-                            homeUiState.lastPlayedCategory.category.categoryId,
-                            homeUiState.lastPlayedCategory.category.categoryName,
-                            homeUiState.lastPlayedCategory.category.showTopics
+                            homeUiState.lastPlayedSubject.subject.subjectId,
+                            homeUiState.lastPlayedSubject.subject.name,
+                            homeUiState.lastPlayedSubject.subject.showTopics
                         )
                     }
                 }
@@ -118,11 +118,11 @@ fun HomeContent(
 @Composable
 fun HomeRecentItemCard(
     modifier: Modifier = Modifier,
-    categoryWithProgressModel: CategoryWithProgressModel,
+    subjectWithProgressModel: SubjectWithProgressModel,
     onClick: () -> Unit
 ) {
-    val category = categoryWithProgressModel.category
-    val progress = categoryWithProgressModel.progress
+    val category = subjectWithProgressModel.subject
+    val progress = subjectWithProgressModel.progress
     val bgColor = category.bgColor?.let { Color(category.bgColor.toColorInt()) } ?: Color.White
 
     Column(
@@ -138,7 +138,7 @@ fun HomeRecentItemCard(
             modifier = Modifier.fillMaxWidth(),
         ) {
             AsyncImage(
-                model = categoryWithProgressModel.category.imageUrl,
+                model = subjectWithProgressModel.subject.imageUrl,
                 placeholder = painterResource(R.drawable.image_placeholder),
                 error = painterResource(R.drawable.image_placeholder),
                 contentDescription = null,
@@ -156,16 +156,16 @@ fun HomeRecentItemCard(
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = category.categoryName,
+                    text = category.name,
                     maxLines = 1,
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = if (progress.levelsPlayed == 1) {
-                        "${progress.levelsPlayed} Level Completed"
+                    text = if (progress.chaptersCompleted == 1) {
+                        "${progress.chaptersCompleted} Level Completed"
                     } else {
-                        "${progress.levelsPlayed} Levels Completed"
+                        "${progress.chaptersCompleted} Levels Completed"
                     },
                     style = MaterialTheme.typography.labelMedium,
                     color = SecondaryText,

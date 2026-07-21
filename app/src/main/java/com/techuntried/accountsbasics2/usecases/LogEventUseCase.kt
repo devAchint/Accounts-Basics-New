@@ -11,10 +11,16 @@ import kotlinx.serialization.json.put
 import javax.inject.Inject
 
 sealed interface LogEventType {
-    data class LevelStart(val categoryId: Int, val levelId: Int) : LogEventType
-    data class LevelComplete(
-        val categoryId: Int,
-        val levelId: Int,
+    data class LearnChapterStart(val subjectId: Int, val chapterId: Int) : LogEventType
+    data class LearnChapterComplete(
+        val subjectId: Int,
+        val chapterId: Int,
+    ) : LogEventType
+
+    data class PracticeChapterStart(val subjectId: Int, val chapterId: Int) : LogEventType
+    data class PracticeChapterComplete(
+        val subjectId: Int,
+        val chapterId: Int,
         val answeredCount: Int,
         val totalQuestions: Int
     ) : LogEventType
@@ -30,8 +36,10 @@ sealed interface LogEventType {
 
 fun LogEventType.eventName(): String {
     return when (this) {
-        is LogEventType.LevelComplete -> "category_complete"
-        is LogEventType.LevelStart -> "category_start"
+        is LogEventType.LearnChapterStart->"learn_chapter_start"
+        is LogEventType.LearnChapterComplete->"learn_chapter_complete"
+        is LogEventType.PracticeChapterComplete -> "practice_chapter_complete"
+        is LogEventType.PracticeChapterStart -> "practice_chapter_start"
         is LogEventType.ScreenVisit -> "screen_view"
         is LogEventType.FeatureError -> "feature_error"
         is LogEventType.AdFailedToShow -> "ad_failed_to_show"
@@ -43,22 +51,31 @@ fun LogEventType.eventName(): String {
 
 fun LogEventType.payload(): JsonObject {
     return when (this) {
-        is LogEventType.LevelComplete -> buildJsonObject {
-            put("categoryId", categoryId)
-            put("levelId", levelId)
+        is LogEventType.LearnChapterStart -> buildJsonObject {
+            put("subjectId", subjectId)
+            put("chapterId", chapterId)
+        }
+
+        is LogEventType.LearnChapterComplete -> buildJsonObject {
+            put("subjectId", subjectId)
+            put("chapterId", chapterId)
+        }
+        is LogEventType.PracticeChapterComplete -> buildJsonObject {
+            put("subjectId", subjectId)
+            put("chapterId", chapterId)
             put("answeredCount", answeredCount)
             put("totalQuestions", totalQuestions)
         }
 
-        is LogEventType.LevelStart -> buildJsonObject {
-            put("categoryId", categoryId)
-            put("levelId", levelId)
+        is LogEventType.PracticeChapterStart -> buildJsonObject {
+            put("subjectId", subjectId)
+            put("chapterId", chapterId)
         }
 
         is LogEventType.ScreenVisit -> buildJsonObject {
             put("screenName", screenName)
         }
-        
+
 
         is LogEventType.FeatureError -> buildJsonObject {
             put("featureName", featureName)
@@ -79,6 +96,7 @@ fun LogEventType.payload(): JsonObject {
         is LogEventType.AdImpression -> buildJsonObject {
             put("adType", adType)
         }
+        
     }
 }
 

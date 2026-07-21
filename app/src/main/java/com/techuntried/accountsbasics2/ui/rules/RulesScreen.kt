@@ -22,7 +22,7 @@ import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.commons.ToolbarAction
 import com.techuntried.accountsbasics2.ui.dialog.CommonInformationDialog
-import com.techuntried.accountsbasics2.ui.navigation.GameArgs
+import com.techuntried.accountsbasics2.ui.navigation.QuestionsArgs
 import com.techuntried.accountsbasics2.ui.navigation.RuleArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
@@ -33,7 +33,7 @@ fun RulesScreenRoot(
     modifier: Modifier = Modifier,
     args: RuleArgs,
     onBackClick: () -> Unit,
-    navigateToGame: (args: GameArgs) -> Unit,
+    navigateToQuestions: (args: QuestionsArgs) -> Unit,
 ) {
     val viewModel: RulesViewModel = hiltViewModel()
     val rulesUiState = viewModel.rulesScreenUiState.collectAsStateWithLifecycle().value
@@ -42,19 +42,19 @@ fun RulesScreenRoot(
 
     RulesScreen(
         rulesScreenUiState = rulesUiState,
-        levelId = args.levelId,
+        levelId = args.chapterId,
         onBackClick = onBackClick,
         updateTimer = viewModel::updateTimer,
         refresh = { viewModel.refresh() },
         updateRuleIsFirstTime = viewModel::updateIsRuleFirstTime,
         onStart = {
             if (rulesUiState is RulesScreenUiState.Success) {
-                val args = GameArgs(
-                    categoryId = args.categoryId,
-                    levelId = args.levelId,
+                val args = QuestionsArgs(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
                     timerCount = rulesUiState.timerCount
                 )
-                navigateToGame(args)
+                navigateToQuestions(args)
             }
         }
     )
