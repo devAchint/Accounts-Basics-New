@@ -1,7 +1,6 @@
 package com.techuntried.accountsbasics2.ui.home
 
 import android.util.Log
-import androidx.compose.ui.text.font.FontVariation.grade
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techuntried.accountsbasics2.BuildConfig
@@ -17,7 +16,6 @@ import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
 import com.techuntried.accountsbasics2.utils.ApiResult
-import com.techuntried.accountsbasics2.utils.Grade
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -133,7 +129,6 @@ class HomeViewModel @Inject constructor(
 
                 is ApiResult.Success -> {
                     HomeUiState.Success(
-                        userGrade = null,
                         sectionCategories = buildSections(result.data),
                         lastPlayedCategory = lastPlayed
                     )

@@ -49,7 +49,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
-import com.techuntried.accountsbasics2.domain.model.level.LevelState
+import com.techuntried.accountsbasics2.domain.model.level.ChapterState
 import com.techuntried.accountsbasics2.ui.commons.CoinsSheet
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
@@ -307,15 +307,15 @@ fun ChapterCard(
     onClick: () -> Unit
 ) {
     val circleIndicator =
-        when (level.levelState) {
-            LevelState.Completed -> AppIcons.CompletedLevelIndicator
-            LevelState.Locked -> AppIcons.LockedLevelIndicator
+        when (level.chapterState) {
+            ChapterState.Completed -> AppIcons.CompletedLevelIndicator
+            ChapterState.Locked -> AppIcons.LockedLevelIndicator
             else -> AppIcons.CurrentLevelIndicator
         }
     val circleColor =
-        when (level.levelState) {
-            LevelState.Completed -> CompletedLevelColor
-            LevelState.Locked -> LockedLevelColor
+        when (level.chapterState) {
+            ChapterState.Completed -> CompletedLevelColor
+            ChapterState.Locked -> LockedLevelColor
             else -> CurrentLevelColor
         }
 
@@ -327,7 +327,7 @@ fun ChapterCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (level.levelState == LevelState.Locked) {
+            if (level.chapterState == ChapterState.Locked) {
                 VerticalDashedLine(
                     modifier = Modifier
                         .width(2.dp)
@@ -347,7 +347,7 @@ fun ChapterCard(
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(if (level.levelState == LevelState.Completed) Color.White else Color.Transparent)
+                    .background(if (level.chapterState == ChapterState.Completed) Color.White else Color.Transparent)
             ) {
                 Icon(
                     painter = painterResource(circleIndicator),
@@ -357,7 +357,7 @@ fun ChapterCard(
                         .size(24.dp)
                 )
             }
-            if (level.levelState == LevelState.Completed) {
+            if (level.chapterState == ChapterState.Completed) {
                 val bottomLineColor = CompletedLevelColor
                 Box(
                     modifier = Modifier
@@ -424,7 +424,7 @@ fun ChapterCard(
                     )
                 }
             }
-            if (level.levelState == LevelState.Locked) {
+            if (level.chapterState == ChapterState.Locked) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

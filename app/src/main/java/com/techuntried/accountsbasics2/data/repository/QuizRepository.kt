@@ -137,7 +137,7 @@ class QuizRepository @Inject constructor(
     }
 
     suspend fun fetchRemoteQuestions(categoryId: Int, levelId: Int) =
-        networkRepository.fetchQuestionsByLevel(categoryId = categoryId, levelId = levelId)
+        networkRepository.fetchQuestionsByChapter(categoryId = categoryId, levelId = levelId)
 
     suspend fun questionsNeedsUpdate(): Boolean {
         val localDate = dataStoreRepository.getQuestionLastUpdatedDate() ?: return true

@@ -33,17 +33,17 @@ import com.techuntried.accountsbasics2.ui.theme.SecondaryText
 @Composable
 fun StartScreenRoot(
     modifier: Modifier = Modifier,
-    openChooseGrade:()->Unit
+    openNotificationPermission:()->Unit
 ) {
     StartScreen(
-        openChooseGrade = openChooseGrade
+        openNotificationPermission = openNotificationPermission
     )
 }
 
 
 @Composable
 fun StartScreen(
-    openChooseGrade:()->Unit
+    openNotificationPermission:()->Unit
 ) {
     val context = LocalContext.current
     Column(
@@ -92,7 +92,7 @@ fun StartScreen(
             CommonButton(
                 text = "Get Started",
             ) {
-                openChooseGrade()
+                openNotificationPermission()
             }
             Spacer(modifier = Modifier.height(12.dp))
 

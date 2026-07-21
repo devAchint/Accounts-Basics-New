@@ -31,7 +31,7 @@ interface NetworkRepository {
     suspend fun fetchChaptersBySubject(subjectId: Int): ApiResult<FetchChaptersResponse>
     suspend fun fetchChapterDetails(subjectId: Int, chapterId:Int): ApiResult<FetchChapterResponse>
 
-    suspend fun fetchQuestionsByLevel(
+    suspend fun fetchQuestionsByChapter(
         categoryId: Int,
         levelId: Int
     ): ApiResult<FetchQuestionsResponse>

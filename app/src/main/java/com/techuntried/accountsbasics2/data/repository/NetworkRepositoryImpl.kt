@@ -18,7 +18,6 @@ import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
 import com.techuntried.accountsbasics2.domain.model.content.FetchQuestionsResponse
-import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
 import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
@@ -155,7 +154,7 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchQuestionsByLevel(
+    override suspend fun fetchQuestionsByChapter(
         categoryId: Int,
         levelId: Int
     ): ApiResult<FetchQuestionsResponse> {

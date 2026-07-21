@@ -45,9 +45,6 @@ fun NavGraph(
 
         composable<Routes.HomeScreenRoute> {
             HomeScreenRoot(
-                openChooseGrade = {
-
-                },
                 openLevels = { levelArgs ->
                     navController.navigate(
                         levelArgs.toLevelScreenRoute()
@@ -69,9 +66,6 @@ fun NavGraph(
                 onBack = {
                     navController.navigateUp()
                 },
-                openChooseGrade = {
-
-                },
                 openFeedback = {
                     navController.navigate(Routes.FeedbackScreenRoute)
                 }
@@ -81,7 +75,7 @@ fun NavGraph(
 
         composable<Routes.StartScreenRoute> {
             StartScreenRoot(
-                openChooseGrade = {
+                openNotificationPermission = {
                     navController.navigate(Routes.NotificationPermissionScreenRoute)
                 }
             )

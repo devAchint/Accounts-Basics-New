@@ -12,11 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,7 +42,6 @@ import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.utils.AppIcons
 import com.techuntried.accountsbasics2.utils.AppShapes
-import com.techuntried.accountsbasics2.utils.Grade
 import com.techuntried.accountsbasics2.utils.debouncedClickable
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
@@ -126,12 +120,6 @@ fun ExploreScreen(
                         .weight(1f),
                     onClick = { openSearchData("") }
                 )
-
-                MultiGradeSelector(
-                    selectedGrades = exploreUiState.selectedGrades,
-                    onSelectionChange = updateGrades,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
             }
         }
 
@@ -207,93 +195,6 @@ private fun DemoSearchBar(
                     color = InputHintColor,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MultiGradeSelector(
-    selectedGrades: Set<Int>,
-    onSelectionChange: (Set<Int>) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-    val allGrades = Grade.entries
-
-    Box(modifier) {
-
-        Icon(
-            painter = painterResource(AppIcons.Filter),
-            contentDescription = "Filter Grades",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .border(1.dp, BorderColor, CircleShape)
-                .clickable { isExpanded = true }
-                .padding(12.dp)
-        )
-
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
-            modifier = Modifier.background(Color.White)
-        ) {
-
-            // 🔹 ALL toggle
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        "All",
-                        color = MainText,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                },
-                onClick = {
-                    onSelectionChange(emptySet())
-                },
-                trailingIcon = {
-                    if (selectedGrades.isEmpty()) {
-                        Icon(
-                            painter = painterResource(AppIcons.Check),
-                            contentDescription = null,
-                            tint = MainText
-                        )
-                    }
-                }
-            )
-
-            HorizontalDivider(color = BorderColor)
-
-            // 🔹 Individual grades
-            allGrades.map { it.gradeNumber }.forEach { grade ->
-                val isSelected = grade in selectedGrades
-
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            "Grade $grade",
-                            color = MainText,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    },
-                    onClick = {
-                        val updated = selectedGrades.toMutableSet()
-                        if (isSelected) updated.remove(grade)
-                        else updated.add(grade)
-                        onSelectionChange(updated)
-                    },
-                    trailingIcon = {
-                        if (isSelected) {
-                            Icon(
-                                painter = painterResource(AppIcons.Check),
-                                contentDescription = null,
-                                tint = MainText
-                            )
-                        }
-                    }
                 )
             }
         }

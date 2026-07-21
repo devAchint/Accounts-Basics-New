@@ -39,14 +39,12 @@ import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.ui.theme.ProgressColor
 import com.techuntried.accountsbasics2.ui.theme.ProgressTrackColor
 import com.techuntried.accountsbasics2.ui.theme.SecondaryText
-import com.techuntried.accountsbasics2.utils.Grade
 import com.techuntried.accountsbasics2.utils.Spacer
 import com.techuntried.accountsbasics2.utils.debouncedClickable
 
 @Composable
 fun HomeContent(
     homeUiState: HomeUiState.Success,
-    openChooseGrade: () -> Unit,
     onQuizCategoryClick: (categoryId: Int, categoryName: String, showTopic: Boolean) -> Unit,
     onSectionMoreClick: (section: String) -> Unit,
     onSuggestClick: () -> Unit
@@ -59,11 +57,11 @@ fun HomeContent(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
-        item(span = { GridItemSpan(2) }) {
-            YourGradeCard(
-                grade = homeUiState.userGrade ?: Grade.GRADE_5, onClick = openChooseGrade
-            )
-        }
+//        item(span = { GridItemSpan(2) }) {
+//            YourGradeCard(
+//                grade = homeUiState.userGrade ?: Grade.GRADE_5, onClick = {}
+//            )
+//        }
 
         if (homeUiState.lastPlayedCategory != null) {
             item(span = { GridItemSpan(2) }) {

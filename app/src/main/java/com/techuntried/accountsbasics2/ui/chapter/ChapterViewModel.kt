@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
-import com.techuntried.accountsbasics2.domain.model.level.LevelState
+import com.techuntried.accountsbasics2.domain.model.level.ChapterState
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
 import com.techuntried.accountsbasics2.ui.navigation.Routes
 import com.techuntried.accountsbasics2.usecases.GetChaptersUseCase
@@ -63,7 +63,7 @@ class ChapterViewModel @Inject constructor(
     }
 
     private fun fetchData() {
-        fetchLevels(args.categoryId)
+        fetchChapters(args.categoryId)
     }
 
     fun refreshData() {
@@ -71,7 +71,7 @@ class ChapterViewModel @Inject constructor(
     }
 
 
-    private fun fetchLevels(categoryId: Int) {
+    private fun fetchChapters(categoryId: Int) {
         viewModelScope.launch {
             _chapterUiState.value = ChapterUiState.Loading
             try {
@@ -84,19 +84,19 @@ class ChapterViewModel @Inject constructor(
                     }
 
                     is ApiResult.Success -> {
-                        val levelsCompleted =
+                        val chaptersCompleted =
                             roomRepository.getLevelsCompleted(categoryId)
-                        val unlockLevelCoins = dataStoreRepository.fetchUnlockLevelCoinsCost()
-                        val levels = response.data.mapIndexed { index, level ->
-                            level.copy(
-                                levelState = getLevelState(level.chapterId, levelsCompleted),
+                        val unlockChapterCoins = dataStoreRepository.fetchUnlockLevelCoinsCost()
+                        val chapters = response.data.mapIndexed { index, chapter ->
+                            chapter.copy(
+                                chapterState = getChapterState(chapter.chapterId, chaptersCompleted),
                                 isLast = index == response.data.size - 1
                             )
                         }
                         _chapterUiState.value = ChapterUiState.Success(
-                            gameLevels = levels,
-                            levelsCompleted = levelsCompleted,
-                            unlockCoinsCost = unlockLevelCoins
+                            gameLevels = chapters,
+                            levelsCompleted = chaptersCompleted,
+                            unlockCoinsCost = unlockChapterCoins
                         )
                     }
                 }
@@ -111,14 +111,14 @@ class ChapterViewModel @Inject constructor(
         }
     }
 
-    private fun getLevelState(levelId: Int, completedLevels: Int): LevelState {
+    private fun getChapterState(levelId: Int, completedLevels: Int): ChapterState {
         val c = 0..completedLevels
         return if (c.contains(levelId)) {
-            LevelState.Completed
+            ChapterState.Completed
         } else if (levelId == completedLevels + 1) {
-            LevelState.Unlocked
+            ChapterState.Unlocked
         } else {
-            LevelState.Locked //change to Locked before publishing
+            ChapterState.Unlocked //change to Locked before publishing
         }
     }
 

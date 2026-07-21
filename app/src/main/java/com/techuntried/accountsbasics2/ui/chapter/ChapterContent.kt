@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.techuntried.accountsbasics2.ads.BannerAdCard
-import com.techuntried.accountsbasics2.domain.model.level.LevelState
+import com.techuntried.accountsbasics2.domain.model.level.ChapterState
 import com.techuntried.accountsbasics2.ui.home.SuggestionTip
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import kotlinx.coroutines.launch
@@ -41,11 +41,11 @@ fun ChapterContent(
 
     val targetIndex = remember(chapterUiState.gameLevels) {
         val unlocked = chapterUiState.gameLevels.indexOfLast {
-            it.levelState == LevelState.Unlocked
+            it.chapterState == ChapterState.Unlocked
         }
         if (unlocked != -1) unlocked
         else chapterUiState.gameLevels.indexOfLast {
-            it.levelState == LevelState.Completed
+            it.chapterState == ChapterState.Completed
         }
     }
 
@@ -128,7 +128,7 @@ fun ChapterContent(
                             isLast = index == levels.lastIndex,
                             index = index,
                             onClick = {
-                                if (level.levelState == LevelState.Locked) {
+                                if (level.chapterState == ChapterState.Locked) {
                                     val levelsUnlocked =
                                         chapterUiState.levelsCompleted + 1
                                     if (level.chapterId <= levelsUnlocked + 2) {

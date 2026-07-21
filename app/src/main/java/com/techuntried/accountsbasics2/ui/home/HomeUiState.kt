@@ -1,7 +1,6 @@
 package com.techuntried.accountsbasics2.ui.home
 
 import com.techuntried.accountsbasics2.domain.model.CategoryWithProgressModel
-import com.techuntried.accountsbasics2.utils.Grade
 
 sealed interface HomeUiState {
     val message: String?
@@ -20,7 +19,6 @@ sealed interface HomeUiState {
 
     data class Success(
         val sectionCategories: List<SectionCategoriesModel>? = null,
-        val userGrade: Grade? = null,
         val lastPlayedCategory: CategoryWithProgressModel? = null,
         val actionMessage: String? = null,
         override val message: String? = null,

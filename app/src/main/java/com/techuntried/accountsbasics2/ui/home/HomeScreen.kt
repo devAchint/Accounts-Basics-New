@@ -45,7 +45,6 @@ import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.CardColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.usecases.LogEventType
-import com.techuntried.accountsbasics2.utils.Grade
 import com.techuntried.accountsbasics2.utils.debouncedClickable
 import com.techuntried.accountsbasics2.utils.findActivity
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
@@ -55,7 +54,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreenRoot(
     modifier: Modifier = Modifier,
-    openChooseGrade: () -> Unit = {},
     openLevels: (LevelArgs) -> Unit,
     onMoreCategoriesClick: (section: String, grade: Int?) -> Unit
 ) {
@@ -123,11 +121,10 @@ fun HomeScreenRoot(
 //            viewModel.createHomeScreen()
         },
         onSectionMoreClick = { section ->
-            val currentGrade = (homeUiState as? HomeUiState.Success)?.userGrade?.gradeNumber
-            onMoreCategoriesClick(section, currentGrade)
+//            val currentGrade = (homeUiState as? HomeUiState.Success)?.userGrade?.gradeNumber
+//            onMoreCategoriesClick(section, currentGrade)
         },
         dismissAppUpdateCard = viewModel::dismissAppUpdateCard,
-        openChooseGrade = openChooseGrade,
         addCoins = viewModel::addCoins
     )
 }
@@ -140,7 +137,6 @@ fun HomeScreen(
     rewardedAdUnit: String?,
     username: String?,
     coins: Int,
-    openChooseGrade: () -> Unit = {},
     onQuizCategoryClick: (categoryId: Int, categoryName: String, showTopic: Boolean) -> Unit,
     onSectionMoreClick: (section: String) -> Unit,
     dismissAppUpdateCard: () -> Unit,
@@ -194,7 +190,6 @@ fun HomeScreen(
                 is HomeUiState.Success -> {
                     HomeContent(
                         homeUiState,
-                        openChooseGrade = openChooseGrade,
                         onQuizCategoryClick = onQuizCategoryClick,
                         onSectionMoreClick = onSectionMoreClick,
                         onSuggestClick = { suggestCategorySheetVisible = true },
@@ -317,26 +312,26 @@ fun QuizSectionCard(
     }
 }
 
-@Composable
-fun YourGradeCard(modifier: Modifier = Modifier, grade: Grade, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Your Grade",
-            maxLines = 1,
-            style = MaterialTheme.typography.titleMedium,
-            overflow = TextOverflow.Ellipsis,
-            color = MainText
-        )
-
-        ActionText(action = grade.gradeName, onClick = onClick)
-    }
-}
+//@Composable
+//fun YourGradeCard(modifier: Modifier = Modifier, grade: Grade, onClick: () -> Unit) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 16.dp),
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Text(
+//            text = "Your Grade",
+//            maxLines = 1,
+//            style = MaterialTheme.typography.titleMedium,
+//            overflow = TextOverflow.Ellipsis,
+//            color = MainText
+//        )
+//
+//        ActionText(action = grade.gradeName, onClick = onClick)
+//    }
+//}
 
 @Composable
 fun ActionText(modifier: Modifier = Modifier, action: String, onClick: () -> Unit) {

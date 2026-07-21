@@ -91,32 +91,6 @@ class DataStoreRepository @Inject constructor(private val dataStore: DataStore<P
             }
     }
 
-    //userCourse
-    suspend fun saveUserCourse(value: Int) {
-        try {
-            dataStore.edit { preferences ->
-                preferences[PreferenceKey.KEY_USER_COURSE] = value
-            }
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-        }
-    }
-
-    suspend fun getUserCourse(): Int? {
-        val preferences = dataStore.data.first()
-        return preferences[PreferenceKey.KEY_USER_COURSE]
-    }
-
-    fun getUserCourseFlow(): Flow<Int?> {
-        return dataStore.data
-            .map { preferences ->
-                preferences[PreferenceKey.KEY_USER_COURSE]
-            }.catch { e ->
-                if (e is CancellationException) throw e
-                emit(null)
-            }
-    }
-
     //user profile
 
     suspend fun getUserProfile(): UserModel? {
@@ -599,7 +573,6 @@ class DataStoreRepository @Inject constructor(private val dataStore: DataStore<P
                     haptic = preferences[PreferenceKey.KEY_APP_HAPTICS] ?: true,
                     showCorrect = preferences[PreferenceKey.KEY_SHOW_CORRECT] ?: true,
                     timer = preferences[PreferenceKey.KEY_APP_TIMER] ?: true,
-                    grade = preferences[PreferenceKey.KEY_USER_COURSE],
                     username = preferences[PreferenceKey.KEY_USERNAME]
                 )
             }
@@ -611,7 +584,6 @@ class DataStoreRepository @Inject constructor(private val dataStore: DataStore<P
                         haptic = true,
                         showCorrect = true,
                         timer = true,
-                        grade = null,
                         username = null
                     )
                 )
@@ -703,7 +675,6 @@ object PreferenceKey {
     val KEY_USERNAME = stringPreferencesKey("KEY_USERNAME")
     val KEY_STREAK = intPreferencesKey("KEY_STREAK")
     val KEY_IS_FIRST_TIME = booleanPreferencesKey("KEY_IS_FIRST_TIME")
-    val KEY_USER_COURSE = intPreferencesKey("KEY_USER_COURSE")
 
     val KEY_APP_TIMER = booleanPreferencesKey("KEY_APP_TIMER")
     val KEY_APP_SOUNDS = booleanPreferencesKey("KEY_APP_SOUNDS")

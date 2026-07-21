@@ -68,7 +68,6 @@ fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     openFeedback: () -> Unit = {},
-    openChooseGrade: () -> Unit = {}
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val settingsUiState = viewModel.settingsUiState.collectAsStateWithLifecycle().value
@@ -80,7 +79,6 @@ fun SettingsScreenRoot(
     SettingsScreen(
         settingsUiState = settingsUiState,
         onBack = onBack,
-        openChooseGrade = openChooseGrade,
         openFeedback = openFeedback,
         updatePreference = viewModel::updateUserPreference
     )
@@ -91,7 +89,6 @@ fun SettingsScreenRoot(
 fun SettingsScreen(
     settingsUiState: SettingsUiState,
     onBack: () -> Unit = {},
-    openChooseGrade: () -> Unit = {},
     openFeedback: () -> Unit = {},
     updatePreference: (PreferenceType) -> Unit
 ) {
@@ -107,13 +104,6 @@ fun SettingsScreen(
             onClick = {
                 usernameDialog = true
             }
-        ),
-        SettingItemUi(
-            title = stringResource(R.string.change_grade),
-            icon = AppIcons.Grade,
-            summary = "Grade ${settingsUiState.userGrade}",
-            isSummaryShown = settingsUiState.userGrade != null,
-            onClick = openChooseGrade
         )
     )
     val preferences = listOfNotNull(

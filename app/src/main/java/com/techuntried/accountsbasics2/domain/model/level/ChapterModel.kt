@@ -6,10 +6,10 @@ data class ChapterModel(
     val name: String,
     val module:Int,
     val type:String,
-    val levelState: LevelState = if (chapterId == 1) LevelState.Unlocked else LevelState.Locked,
+    val chapterState: ChapterState = if (chapterId == 1) ChapterState.Unlocked else ChapterState.Locked,
     val isLast: Boolean = false,
 )
 
-enum class LevelState {
+enum class ChapterState {
     Locked, Completed, Unlocked
 }

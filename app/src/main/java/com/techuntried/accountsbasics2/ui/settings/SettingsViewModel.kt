@@ -19,7 +19,6 @@ data class UserSettingsModel(
     val haptic: Boolean = true,
     val showCorrect: Boolean = true,
     val timer: Boolean = true,
-    val grade: Int? = null,
     val username: String? = null
 )
 
@@ -29,7 +28,6 @@ data class SettingsUiState(
     val isHapticEnabled: Boolean = false,
     val isShowCorrectEnabled: Boolean = false,
     val isTimerEnabled: Boolean = false,
-    val userGrade: Int? = null,
     val username: String? = null,
     val dataPreferencesVisible: Boolean = false
 )
@@ -58,7 +56,6 @@ class SettingsViewModel @Inject constructor(
                     isHapticEnabled = settings.haptic,
                     isShowCorrectEnabled = settings.showCorrect,
                     isTimerEnabled = settings.timer,
-                    userGrade = settings.grade,
                     username = settings.username,
                     dataPreferencesVisible = consentManager.privacyOptionsRequired()
                 )
