@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.ui.home
 
+import android.R.attr.category
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.common.collect.Multimaps.index
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.AppUpdateCard
 import com.techuntried.accountsbasics2.ui.commons.CoinsSheet
@@ -104,7 +106,7 @@ fun HomeScreenRoot(
     HomeScreen(
         homeUiState = homeUiState,
         appUpdateModel = appUpdateState,
-        rewardedAdUnit= rewardedAdUnit,
+        rewardedAdUnit = rewardedAdUnit,
         username = username,
         coins = coins,
         onQuizCategoryClick = { categoryId, categoryName, showTopic ->
@@ -142,7 +144,7 @@ fun HomeScreen(
     dismissAppUpdateCard: () -> Unit,
     refresh: () -> Unit,
     uploadSuggestion: (String) -> Unit,
-    addCoins:(Int)->Unit,
+    addCoins: (Int) -> Unit,
 ) {
     var suggestCategorySheetVisible by remember { mutableStateOf(false) }
     var showCoinsSheet by remember { mutableStateOf(false) }
@@ -233,8 +235,6 @@ fun HomeScreen(
 }
 
 
-
-
 @Composable
 fun QuizSectionCard(
     modifier: Modifier = Modifier,
@@ -242,12 +242,11 @@ fun QuizSectionCard(
     onQuizCategoryClick: (categoryId: Int, categoryName: String, showTopic: Boolean) -> Unit,
     onAllCategoriesClick: () -> Unit
 ) {
-    section.subjects.let { categories ->
-        Column(modifier = modifier) {
+    section.subjects.let { subjects ->
+        Column(modifier = modifier.padding(start = 16.dp, end = 16.dp)) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 12.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -256,7 +255,7 @@ fun QuizSectionCard(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MainText
                 )
-                if (categories.size > 4) {
+                if (subjects.size > 4) {
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
@@ -282,32 +281,43 @@ fun QuizSectionCard(
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            val rows = categories.take(4).chunked(2)
-            rows.forEachIndexed { index, rowItems ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    rowItems.forEach { category ->
-                        HomeSubjectItemCard(
-                            modifier = Modifier.weight(1f), subjectModel = category, onClick = {
-                                onQuizCategoryClick(
-                                    category.subjectId, category.name, category.showTopics
-                                )
-                            })
-                    }
 
-                    // Fill empty space if row has 1 item
-                    if (rowItems.size == 1) {
-                        Spacer(modifier = Modifier.weight(1f))
+            subjects.forEach { category ->
+                HomeSubjectItemCard(
+                    modifier = Modifier.fillMaxWidth(), subjectModel = category, onClick = {
+                        onQuizCategoryClick(
+                            category.subjectId, category.name, category.showTopics
+                        )
                     }
-                }
-                if (index != rowItems.lastIndex) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
+                )
             }
+//            val rows = subjects.take(4).chunked(2)
+//            rows.forEachIndexed { index, rowItems ->
+////                Row(
+////                    modifier = Modifier
+////                        .fillMaxWidth()
+////                        .padding(horizontal = 16.dp),
+////                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+////                ) {
+//                    rowItems.forEach { category ->
+//                        HomeSubjectItemCard(
+//                            modifier = Modifier.fillMaxWidth(), subjectModel = category, onClick = {
+//                                onQuizCategoryClick(
+//                                    category.subjectId, category.name, category.showTopics
+//                                )
+//                            }
+//                        )
+//                    }
+//
+//                    // Fill empty space if row has 1 item
+////                    if (rowItems.size == 1) {
+////                        Spacer(modifier = Modifier.weight(1f))
+////                    }
+////                }
+////                if (index != rowItems.lastIndex) {
+////                    Spacer(modifier = Modifier.height(10.dp))
+////                }
+//            }
         }
     }
 }

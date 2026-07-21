@@ -80,7 +80,6 @@ fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
     args: ChapterArgs,
     navigateToRules: (RuleArgs) -> Unit,
-    navigateToLearn: (chapterId:Int) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -116,11 +115,11 @@ fun ChaptersScreenRoot(
         coins = coinsState,
         bannerAdUnit = bannerAdUnit,
         rewardedAdUnit = rewardedAdUnit,
-        openLearn = navigateToLearn,
-        openRules = { levelId ->
+        openRules = { levelId, isPracticeType ->
             val ruleArgs = RuleArgs(
                 subjectId = args.subjectId,
-                chapterId = levelId
+                chapterId = levelId,
+                isPracticeType = isPracticeType
             )
             navigateToRules(ruleArgs)
         },
@@ -141,9 +140,8 @@ private fun ChaptersScreen(
     rewardedAdUnit: String?,
     bannerAdUnit: String?,
     onAction: (ChapterActions) -> Unit,
-    openRules: (levelId: Int) -> Unit = {},
-    openLearn: (chapterId:Int) -> Unit,
-    logEvent:(LogEventType)->Unit,
+    openRules: (chapterId: Int, isPracticeType: Boolean) -> Unit,
+    logEvent: (LogEventType) -> Unit,
     onBack: () -> Unit
 ) {
     var showLevelLockedDialog by remember { mutableStateOf(false) }
@@ -198,6 +196,7 @@ private fun ChaptersScreen(
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
+
                 ChapterUiState.Loading -> {
                     CommonCircularProgress(
                         modifier = Modifier
@@ -205,6 +204,7 @@ private fun ChaptersScreen(
                             .align(Alignment.Center),
                     )
                 }
+
                 is ChapterUiState.Success -> {
                     if (chapterUiState.isEmpty()) {
                         ErrorMessageView(
@@ -223,7 +223,6 @@ private fun ChaptersScreen(
                             showTopics = showTopics,
                             bannerAdUnit = bannerAdUnit,
                             openRules = openRules,
-                            openLearn = openLearn,
                             showSuggestionSheet = { suggestionSheet = true },
                             showLevelLockedDialog = { showLevelLockedDialog = true },
                             logEvent = logEvent,
@@ -272,14 +271,14 @@ private fun ChaptersScreen(
         )
     }
 
-    (chapterUiState as? ChapterUiState.Success)?.chapterUnlocked?.let { levelId ->
+    (chapterUiState as? ChapterUiState.Success)?.chapterUnlocked?.let { chapter ->
         ChapterUnLockedDialog(
             onDismiss = {
                 onAction(ChapterActions.ClearChapterUnlocked)
             },
             play = {
                 onAction(ChapterActions.ClearChapterUnlocked)
-                openRules(levelId)
+                openRules(chapter.chapterId, chapter.type != "learn")
             }
         )
     }
@@ -301,7 +300,7 @@ private fun ChaptersScreen(
 fun ChapterCard(
     modifier: Modifier = Modifier,
     isFirst: Boolean = false,
-    index:Int,
+    index: Int,
     isLast: Boolean = false,
     level: ChapterModel,
     onClick: () -> Unit
@@ -394,7 +393,7 @@ fun ChapterCard(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                if (level.type=="learn") {
+                if (level.type == "learn") {
                     Text(
                         text = "Chapter ${index.plus(1)}",
                         maxLines = 1,

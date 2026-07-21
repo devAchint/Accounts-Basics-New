@@ -40,7 +40,7 @@ sealed class Routes {
     ) : Routes()
 
     @Serializable
-    data class RulesScreenRoute(val subjectId: Int, val chapterId: Int) : Routes()
+    data class RulesScreenRoute(val subjectId: Int, val chapterId: Int,val isPracticeType:Boolean) : Routes()
 
     @Serializable
     data class ChaptersScreenRoute(

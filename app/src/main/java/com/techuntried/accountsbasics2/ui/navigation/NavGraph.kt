@@ -101,14 +101,6 @@ fun NavGraph(
                 onBack = {
                     navController.navigateUp()
                 },
-                navigateToLearn = { chapterId ->
-                    navController.navigate(
-                        Routes.LearnScreenRoute(
-                            subjectId = args.subjectId,
-                            chapterId = chapterId
-                        )
-                    )
-                },
                 navigateToRules = { ruleArgs ->
                     navController.navigate(
                         ruleArgs.toRuleScreenRoute()
@@ -125,11 +117,20 @@ fun NavGraph(
                 onBackClick = {
                     navController.navigateUp()
                 },
-                navigateToQuestions = { questionArgs ->
-                    navController.navigate(questionArgs.toQuestionsScreenRoute()) {
-                        popUpTo<Routes.RulesScreenRoute> {
-                            inclusive = true
+                navigateToQuestionsOrLearn = { questionArgs ->
+                    if (args.isPracticeType) {
+                        navController.navigate(questionArgs.toQuestionsScreenRoute()) {
+                            popUpTo<Routes.RulesScreenRoute> {
+                                inclusive = true
+                            }
                         }
+                    } else {
+                        navController.navigate(
+                            Routes.LearnScreenRoute(
+                                subjectId = args.subjectId,
+                                chapterId = args.chapterId
+                            )
+                        )
                     }
                 }
             )

@@ -13,7 +13,8 @@ data class ScoreArgs(
 
 data class RuleArgs(
     val subjectId: Int,
-    val chapterId: Int
+    val chapterId: Int,
+    val isPracticeType:Boolean
 )
 
 data class QuestionsArgs(
@@ -70,6 +71,7 @@ fun Routes.RulesScreenRoute.toRuleArgs(): RuleArgs {
     return RuleArgs(
         subjectId = subjectId,
         chapterId = chapterId,
+        isPracticeType = isPracticeType
     )
 }
 
@@ -77,6 +79,7 @@ fun RuleArgs.toRuleScreenRoute(): Routes.RulesScreenRoute {
     return Routes.RulesScreenRoute(
         subjectId = subjectId,
         chapterId = chapterId,
+        isPracticeType = isPracticeType
     )
 }
 

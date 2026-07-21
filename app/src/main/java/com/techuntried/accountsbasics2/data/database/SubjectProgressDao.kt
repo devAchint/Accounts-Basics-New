@@ -28,11 +28,8 @@ interface SubjectProgressDao {
     @Query("SELECT * FROM subject_progress")
     suspend fun getAll(): List<SubjectProgressEntity>
 
-    @Query("SELECT * FROM subject_progress WHERE subjectId = :categoryId")
-    suspend fun getByCategoryId(categoryId: Int): SubjectProgressEntity?
-
-    @Query("SELECT EXISTS(SELECT 1 FROM subject_progress WHERE subjectId = :categoryId)")
-    suspend fun exists(categoryId: Int): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM subject_progress WHERE subjectId = :subjectId)")
+    suspend fun exists(subjectId: Int): Boolean
 
     /* -------------------- UPDATE (SINGLE SOURCE OF TRUTH) -------------------- */
 

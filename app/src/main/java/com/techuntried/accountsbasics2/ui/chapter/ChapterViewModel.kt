@@ -89,7 +89,10 @@ class ChapterViewModel @Inject constructor(
                         val unlockChapterCoins = dataStoreRepository.fetchUnlockLevelCoinsCost()
                         val chapters = response.data.mapIndexed { index, chapter ->
                             chapter.copy(
-                                chapterState = getChapterState(chapter.chapterId, chaptersCompleted),
+                                chapterState = getChapterState(
+                                    chapter.chapterId,
+                                    chaptersCompleted
+                                ),
                                 isLast = index == response.data.size - 1
                             )
                         }
@@ -136,18 +139,26 @@ class ChapterViewModel @Inject constructor(
         }
     }
 
-    private fun unlockLevel(levelId: Int, isAdWatched: Boolean) {
+    private fun unlockLevel(chapterId: Int, isAdWatched: Boolean) {
         viewModelScope.launch {
             if (isAdWatched) {
                 _chapterUiState.update {
-                    it.withActionLoading(false).updateSuccess { copy(chapterUnlocked = levelId) }
+                    it.withActionLoading(false).updateSuccess {
+                        val chapter = chapters.find { it.chapterId == chapterId }
+                        copy(chapterUnlocked = chapter)
+                    }
                 }
             } else {
                 val coins = coinsState.value
                 val unlockCost = dataStoreRepository.fetchUnlockLevelCoinsCost()
                 if (coins >= unlockCost) {
                     dataStoreRepository.useCoins(unlockCost)
-                    _chapterUiState.update { it.updateSuccess { copy(chapterUnlocked = levelId) } }
+                    _chapterUiState.update {
+                        it.updateSuccess {
+                            val chapter = chapters.find { it.chapterId == chapterId }
+                            copy(chapterUnlocked = chapter)
+                        }
+                    }
                 } else {
                     _chapterUiState.update { it.withMessage("Insufficient Coins") }
                 }

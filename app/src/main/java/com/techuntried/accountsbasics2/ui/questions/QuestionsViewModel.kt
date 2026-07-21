@@ -298,7 +298,7 @@ class GameViewModel @Inject constructor(
                 args.subjectId.let { id ->
                     viewModelScope.launch {
                         if (isCorrect) {
-                            roomRepository.updateCorrectAnswered(categoryId = id)
+                            roomRepository.updateCorrectAnswered(subjectId = id)
                         } else {
                             roomRepository.updateWrongAnswered(categoryId = id)
                         }

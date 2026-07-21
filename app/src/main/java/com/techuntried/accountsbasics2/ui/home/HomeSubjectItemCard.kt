@@ -45,7 +45,7 @@ fun HomeSubjectItemCard(
 
     ConstraintLayout(
         modifier = modifier
-            .height(200.dp)
+            .height(160.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
             .border(1.dp, BorderColor, RoundedCornerShape(12.dp))

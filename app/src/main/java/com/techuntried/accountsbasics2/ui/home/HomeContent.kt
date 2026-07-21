@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.ui.home
 
+import android.R.attr.category
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,10 +17,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,6 +44,7 @@ import com.techuntried.accountsbasics2.ui.theme.ProgressTrackColor
 import com.techuntried.accountsbasics2.ui.theme.SecondaryText
 import com.techuntried.accountsbasics2.utils.Spacer
 import com.techuntried.accountsbasics2.utils.debouncedClickable
+import kotlin.text.Typography.section
 
 @Composable
 fun HomeContent(
@@ -49,12 +53,10 @@ fun HomeContent(
     onSectionMoreClick: (section: String) -> Unit,
     onSuggestClick: () -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    LazyColumn (
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
 
 //        item(span = { GridItemSpan(2) }) {
@@ -64,10 +66,9 @@ fun HomeContent(
 //        }
 
         if (homeUiState.lastPlayedSubject != null) {
-            item(span = { GridItemSpan(2) }) {
+            item() {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -90,23 +91,32 @@ fun HomeContent(
             }
         }
         if (!homeUiState.sectionCategories.isNullOrEmpty()) {
-            items(homeUiState.sectionCategories, span = { GridItemSpan(2) }) {
-                QuizSectionCard(
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    section = it,
-                    onQuizCategoryClick = onQuizCategoryClick,
-                    onAllCategoriesClick = {
-                        onSectionMoreClick(it.title)
-                    }
-                )
+            homeUiState.sectionCategories.forEach {
+                item {
+                    Text(
+                        text = it.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MainText,
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
+                }
+                items(it.subjects){category->
+                    HomeSubjectItemCard(
+                        modifier = Modifier.fillMaxWidth(), subjectModel = category, onClick = {
+                            onQuizCategoryClick(
+                                category.subjectId, category.name, category.showTopics
+                            )
+                        }
+                    )
+                }
             }
         }
 
-        item(span = { GridItemSpan(2) }) {
+        item() {
             if (homeUiState.sectionCategories?.isNotEmpty() == true) {
                 SuggestionTip(
                     modifier = Modifier
-                        .padding(top = 16.dp),
+                        .padding(top = 28.dp),
                 ) {
                     onSuggestClick()
                 }

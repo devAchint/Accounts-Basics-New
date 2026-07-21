@@ -34,8 +34,8 @@ object NetworkModule {
                 json(json)
             }
             defaultRequest {
-                url(BuildConfig.BASE_URL)
-                header("api-token", BuildConfig.API_TOKEN)
+                url("https://unified.nihaura.com/")
+                header("api-token", "crLYI7EJ5PF82408bR3D9YSJkyLSr3Emq")
             }
         }
     }

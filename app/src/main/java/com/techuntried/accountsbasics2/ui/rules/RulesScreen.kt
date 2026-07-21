@@ -33,7 +33,7 @@ fun RulesScreenRoot(
     modifier: Modifier = Modifier,
     args: RuleArgs,
     onBackClick: () -> Unit,
-    navigateToQuestions: (args: QuestionsArgs) -> Unit,
+    navigateToQuestionsOrLearn: (args: QuestionsArgs) -> Unit,
 ) {
     val viewModel: RulesViewModel = hiltViewModel()
     val rulesUiState = viewModel.rulesScreenUiState.collectAsStateWithLifecycle().value
@@ -54,7 +54,7 @@ fun RulesScreenRoot(
                     chapterId = args.chapterId,
                     timerCount = rulesUiState.timerCount
                 )
-                navigateToQuestions(args)
+                navigateToQuestionsOrLearn(args)
             }
         }
     )

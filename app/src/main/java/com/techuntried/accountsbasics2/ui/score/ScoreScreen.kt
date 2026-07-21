@@ -139,7 +139,8 @@ fun ScoreScreenRoot(
             navigateToRule(
                 RuleArgs(
                     subjectId = args.subjectId,
-                    chapterId = args.chapterId + 1
+                    chapterId = args.chapterId + 1,
+                    isPracticeType = args.isPracticeType
                 )
             )
         },
@@ -147,7 +148,8 @@ fun ScoreScreenRoot(
             navigateToRule(
                 RuleArgs(
                     subjectId = args.subjectId,
-                    chapterId = args.chapterId
+                    chapterId = args.chapterId,
+                    isPracticeType = args.isPracticeType
                 )
             )
         },

@@ -30,8 +30,7 @@ fun ChapterContent(
     chapterUiState: ChapterUiState.Success,
     showTopics: Boolean,
     bannerAdUnit: String?,
-    openRules: (levelId: Int) -> Unit,
-    openLearn: (chapterId:Int) -> Unit,
+    openRules: (chapterId: Int, isPracticeType: Boolean) -> Unit,
     showSuggestionSheet: () -> Unit,
     showLevelLockedDialog: () -> Unit,
     logEvent: (LogEventType) -> Unit,
@@ -137,11 +136,7 @@ fun ChapterContent(
                                         showLevelLockedDialog()
                                     }
                                 } else {
-                                    if (chapter.type == "learn") {
-                                        openLearn(chapter.chapterId)
-                                    } else {
-                                        openRules(chapter.chapterId)
-                                    }
+                                    openRules(chapter.chapterId, chapter.type != "learn")
                                 }
                             }
                         )

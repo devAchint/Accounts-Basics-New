@@ -52,12 +52,12 @@ class RoomRepository @Inject constructor(
     }
 
 
-    suspend fun updateChaptersCompleted(categoryId: Int, chaptersCompleted: Int) {
+    suspend fun updateChaptersCompleted(subjectId: Int, chaptersCompleted: Int) {
         safeRoomCall {
-            val existingCompleted = subjectProgressDao.getChaptersCompleted(categoryId) ?: 0
+            val existingCompleted = subjectProgressDao.getChaptersCompleted(subjectId) ?: 0
             if (chaptersCompleted > existingCompleted) {
                 subjectProgressDao.updateChaptersCompleted(
-                    id = categoryId,
+                    id = subjectId,
                     chaptersCompleted = chaptersCompleted,
                     lastPlayedTime = System.currentTimeMillis()
                 )
@@ -65,10 +65,10 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    suspend fun updateCorrectAnswered(categoryId: Int) {
+    suspend fun updateCorrectAnswered(subjectId: Int) {
         safeRoomCall {
             subjectProgressDao.updateCorrectAnswered(
-                id = categoryId,
+                id = subjectId,
                 lastPlayedTime = System.currentTimeMillis()
             )
         }

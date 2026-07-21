@@ -15,7 +15,7 @@ sealed interface ChapterUiState {
         val chapters: List<ChapterModel>,
         val chaptersCompleted: Int,
         val unlockCoinsCost:Int,
-        val chapterUnlocked: Int? = null,
+        val chapterUnlocked: ChapterModel? = null,
         override val actionLoading: Boolean = false,
         override val message: String? = null,
     ) : ChapterUiState {
