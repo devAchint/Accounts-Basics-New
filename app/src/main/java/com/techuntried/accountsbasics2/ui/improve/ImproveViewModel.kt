@@ -5,16 +5,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadSuggestionWithLimitUseCase
 import com.techuntried.accountsbasics2.utils.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,6 +37,7 @@ class ImproveViewModel @Inject constructor(
 
     private val _improveUiState = MutableStateFlow<ImproveUiState>(ImproveUiState.Loading)
     val improveUiState = _improveUiState.asStateFlow()
+
 
     val coinsState: StateFlow<Int> = dataStoreRepository.fetchCoins()
         .catch { e ->
@@ -53,31 +59,30 @@ class ImproveViewModel @Inject constructor(
     }
 
     private fun fetchData() {
-        viewModelScope.launch {
-            _improveUiState.value = ImproveUiState.Loading
-            try {
-                when (val response = roomRepository.getWrongQuestions(null)) {
-                    is ApiResult.Error -> {
-                        Log.d("MYDEBUG", response.errorMessage)
-                        _improveUiState.value = ImproveUiState.Error(
-                            errorMessage = response.errorMessage
-                        )
+        _improveUiState.value = ImproveUiState.Loading
+        try {
+            roomRepository.getWrongQuestions(null)
+                .onEach {
+                    when (it) {
+                        is ApiResult.Error -> {
+                            Log.d("MYDEBUG", it.errorMessage)
+                            _improveUiState.value = ImproveUiState.Error(
+                                errorMessage = it.errorMessage
+                            )
+                        }
+
+                        is ApiResult.Success -> {
+                            _improveUiState.value = ImproveUiState.Success(
+                                wrongQuestions = it.data
+                            )
+                        }
                     }
-
-                    is ApiResult.Success -> {
-                        _improveUiState.value = ImproveUiState.Success(
-                            wrongQuestions = response.data
-                        )
-                    }
-                }
-
-            } catch (e: Exception) {
-                Log.d("MYDEBUG", "${e.message}")
-                _improveUiState.value = ImproveUiState.Error(
-                    errorMessage = e.message ?: "Unknown Error"
-                )
-            }
-
+                }.launchIn(viewModelScope)
+        } catch (e: Exception) {
+            Log.d("MYDEBUG", "${e.message}")
+            _improveUiState.value = ImproveUiState.Error(
+                errorMessage = e.message ?: "Unknown Error"
+            )
         }
     }
 

@@ -14,6 +14,7 @@ import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 import com.techuntried.accountsbasics2.utils.ApiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
@@ -38,14 +39,17 @@ class RoomRepository @Inject constructor(
 
     fun observeLatestPlayedCategory(): Flow<SubjectWithProgressEntity?> {
         return subjectDao.observeLatestPlayedCategory()
-            .catch {e ->
+            .catch { e ->
                 if (e is CancellationException) throw e
                 Log.e("Repo", "Error fetching latest category", e)
                 emit(null)
             }
     }
 
-    suspend fun fetchChapterDetailsBySubject(subjectId: Int, chapterId: Int): ApiResult<ChapterEntity> {
+    suspend fun fetchChapterDetailsBySubject(
+        subjectId: Int,
+        chapterId: Int
+    ): ApiResult<ChapterEntity> {
         return try {
             ApiResult.Success(chaptersDao.getChapterDetailBySubject(subjectId, chapterId))
         } catch (e: Exception) {
@@ -99,7 +103,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun observeUserStats(): Flow<List<SubjectProgressEntity>> {
-        return subjectProgressDao.observeAll().catch { e->
+        return subjectProgressDao.observeAll().catch { e ->
             if (e is CancellationException) throw e
             Log.e("Repo", "Error fetching stats", e)
             emit(emptyList())
@@ -112,25 +116,35 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteWrongQuestion(subjectId:Int,chapterId:Int,questionId:Int) {
+    suspend fun deleteWrongQuestion(subjectId: Int, chapterId: Int, questionId: Int) {
         safeRoomCall {
-            wrongQuestionDao.deleteWrongQuestion(subjectId,chapterId, questionId)
+            wrongQuestionDao.deleteWrongQuestion(subjectId, chapterId, questionId)
         }
     }
 
 
-    suspend fun getWrongQuestions(subjectId: Int?): ApiResult<List<WrongQuestionEntity>> {
-        return try {
-            val questions = if (subjectId != null) {
-                wrongQuestionDao.getWrongQuestionsBySubject(subjectId)
-            } else {
-                wrongQuestionDao.getWrongQuestions()
-            }
-            ApiResult.Success(questions)
-        } catch (e: Exception) {
-            Log.d("MYDEBUG", "${e.message}")
-            ApiResult.Error("Oops! Something went wrong while fetching wrong questions. Please try again.")
+    fun getWrongQuestions(
+        subjectId: Int?
+    ): Flow<ApiResult<List<WrongQuestionEntity>>> {
+
+        val flow = if (subjectId != null) {
+            wrongQuestionDao.getWrongQuestionsBySubject(subjectId)
+        } else {
+            wrongQuestionDao.getWrongQuestions()
         }
+
+        return flow
+            .map<List<WrongQuestionEntity>, ApiResult<List<WrongQuestionEntity>>> {
+                ApiResult.Success(it)
+            }
+            .catch { e ->
+                Log.d("MYDEBUG", e.message ?: "Unknown error")
+                emit(
+                    ApiResult.Error(
+                        "Oops! Something went wrong while fetching wrong questions. Please try again."
+                    )
+                )
+            }
     }
 
 }

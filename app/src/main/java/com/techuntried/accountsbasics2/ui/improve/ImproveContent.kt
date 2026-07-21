@@ -37,6 +37,7 @@ import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
 import com.techuntried.accountsbasics2.ui.theme.SecondaryText
 import com.techuntried.accountsbasics2.usecases.LogEventType
+import com.techuntried.accountsbasics2.utils.formatTimestamp
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -76,7 +77,8 @@ fun ImproveContent(
                     bottom = 60.dp
                 ),
                 state = listState,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 groupedLevels.forEach { (module, levels) ->
 
@@ -115,9 +117,7 @@ fun ImproveContent(
 
 @Composable
 fun WrongQuestionItem(questionNumber: Int, question: WrongQuestionEntity) {
-    val correctOptionColor = Color(0xFF22C55E)
     val wrongOptionColor = Color(0xFFEF4444)
-    val titleBgColor = wrongOptionColor
 
     Column(
         modifier = Modifier
@@ -141,8 +141,14 @@ fun WrongQuestionItem(questionNumber: Int, question: WrongQuestionEntity) {
                 style = MaterialTheme.typography.titleSmall.copy(fontSize = 13.sp),
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .background(titleBgColor)
+                    .background(wrongOptionColor)
                     .padding(horizontal = 8.dp, vertical = 2.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = formatTimestamp(question.answeredTimeInMillis),
+                style = MaterialTheme.typography.labelSmall,
+                color = SecondaryText
             )
         }
         Text(
@@ -153,8 +159,8 @@ fun WrongQuestionItem(questionNumber: Int, question: WrongQuestionEntity) {
         Text(
             text = buildAnnotatedString {
                 append("Your answer: ")
-                withStyle(style = SpanStyle(color = titleBgColor)) {
-                    append("")
+                withStyle(style = SpanStyle(color = wrongOptionColor)) {
+                    append(question.userAnswer)
                 }
             },
             color = SecondaryText,

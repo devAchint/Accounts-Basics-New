@@ -24,7 +24,6 @@ import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
 import com.techuntried.accountsbasics2.ui.questions.OptionType
 
 
-
 fun SubjectWithProgressEntity.asCategoryWithProgressModel(): SubjectWithProgressModel {
 
     val category = SubjectModel(
@@ -214,20 +213,26 @@ fun LearnContentEntity.asLearnContentModel(): LearnContentModel {
     )
 }
 
-fun GameOption.asOption(): Option{
+fun GameOption.asOption(): Option {
     return Option(
         id = optionId,
         text = optionText
     )
 }
 
-fun GameQuestionModel.asWrongQuestionEntity(subjectId:Int,chapterId:Int): WrongQuestionEntity{
+fun GameQuestionModel.asWrongQuestionEntity(
+    subjectId: Int,
+    chapterId: Int,
+    userAnswer: String?
+): WrongQuestionEntity {
     return WrongQuestionEntity(
         subjectId = subjectId,
         chapterId = chapterId,
         questionId = questionId,
         correctOptionId = correctOptionId,
         questionText = questionText,
-        options = options.map { it.asOption()}
+        options = options.map { it.asOption() },
+        answeredTimeInMillis = System.currentTimeMillis(),
+        userAnswer = userAnswer
     )
 }

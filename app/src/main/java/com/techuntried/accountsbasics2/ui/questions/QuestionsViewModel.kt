@@ -295,6 +295,9 @@ class GameViewModel @Inject constructor(
                 val activeState = _gameUiState.value as? GameUiState.ActiveGame ?: return@launch
 
                 val isCorrect = selectedOptionId == activeState.currentQuestion.correctOptionId
+                val selectedOption = activeState.currentQuestion.options.find {
+                    it.optionId == selectedOptionId
+                }
 
                 args.subjectId.let { id ->
                     viewModelScope.launch {
@@ -310,7 +313,8 @@ class GameViewModel @Inject constructor(
                             roomRepository.updateWrongQuestionAnswered(
                                 activeState.currentQuestion.asWrongQuestionEntity(
                                     subjectId = args.subjectId,
-                                    chapterId = args.chapterId
+                                    chapterId = args.chapterId,
+                                    userAnswer = selectedOption?.optionText
                                 )
                             )
                         }
@@ -319,9 +323,7 @@ class GameViewModel @Inject constructor(
                 val correctOption = activeState.currentQuestion.options.find {
                     it.optionId == activeState.currentQuestion.correctOptionId
                 }
-                val selectedOption = activeState.currentQuestion.options.find {
-                    it.optionId == selectedOptionId
-                }
+
                 _gameUiState.update { state ->
                     state.updateActiveGame {
                         copy(

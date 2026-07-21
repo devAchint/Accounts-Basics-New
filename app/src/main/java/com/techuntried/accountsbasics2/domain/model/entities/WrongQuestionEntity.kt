@@ -13,5 +13,7 @@ data class WrongQuestionEntity(
     val questionId: Int,
     val correctOptionId: Int,
     val questionText: String,
-    val options: List<Option>
+    val options: List<Option>,
+    val answeredTimeInMillis: Long,
+    val userAnswer: String?
 )

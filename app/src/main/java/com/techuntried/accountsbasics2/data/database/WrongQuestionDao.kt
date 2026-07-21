@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WrongQuestionDao {
@@ -23,10 +24,10 @@ interface WrongQuestionDao {
     suspend fun deleteWrongQuestions(subjectId: Int, chapterId: Int)
 
     @Query("SELECT * FROM wrong_questions")
-    suspend fun getWrongQuestions(): List<WrongQuestionEntity>
+    fun getWrongQuestions(): Flow<List<WrongQuestionEntity>>
 
     @Query("SELECT * FROM wrong_questions WHERE subjectId=:subjectId")
-    suspend fun getWrongQuestionsBySubject(subjectId: Int): List<WrongQuestionEntity>
+    fun getWrongQuestionsBySubject(subjectId: Int): Flow<List<WrongQuestionEntity>>
 
     @Transaction
     suspend fun clearAndInsertWrongQuestions(

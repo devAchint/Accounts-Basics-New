@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -48,6 +49,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.text.contains
@@ -256,6 +261,25 @@ fun Date.formatDate(): String {
     }
 }
 
+fun formatTimestamp(
+    timestamp: Long,
+    outputFormat: String = "dd MMM, yyyy"
+): String {
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val formatter = DateTimeFormatter.ofPattern(outputFormat)
+                .withZone(ZoneId.systemDefault())
+
+            formatter.format(Instant.ofEpochMilli(timestamp))
+        } else {
+            val formatter = SimpleDateFormat(outputFormat, Locale.getDefault())
+            formatter.format(Date(timestamp))
+        }
+    } catch (e: Exception) {
+        Log.d("MYDEBUG", e.message ?: "Unknown error")
+        "Invalid Date"
+    }
+}
 
 
 fun openNotificationSettings(context: Context) {
