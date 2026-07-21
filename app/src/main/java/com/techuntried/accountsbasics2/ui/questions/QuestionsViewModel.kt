@@ -48,23 +48,23 @@ fun GameQuestionModel.shuffleOptions(): GameQuestionModel {
     )
 }
 
-sealed interface GameEvent {
+sealed interface QuestionEvent {
 
-    data object StartOver : GameEvent
-    data object SplitOptions : GameEvent
-    data object AddTime : GameEvent
-    data object PauseGame : GameEvent
-    data object ResumeGame : GameEvent
-    data class CheckAnswer(val optionId: Int) : GameEvent
-    data object NextQuestion : GameEvent
-    data class TryAgain(val isAdWatched: Boolean) : GameEvent
-    data class ToggleSound(val value: Boolean) : GameEvent
-    data class ToggleShowCorrect(val value: Boolean) : GameEvent
-    data class ToggleHaptic(val value: Boolean) : GameEvent
+    data object StartOver : QuestionEvent
+    data object SplitOptions : QuestionEvent
+    data object AddTime : QuestionEvent
+    data object Pause : QuestionEvent
+    data object Resume : QuestionEvent
+    data class CheckAnswer(val optionId: Int) : QuestionEvent
+    data object NextQuestion : QuestionEvent
+    data class TryAgain(val isAdWatched: Boolean) : QuestionEvent
+    data class ToggleSound(val value: Boolean) : QuestionEvent
+    data class ToggleShowCorrect(val value: Boolean) : QuestionEvent
+    data class ToggleHaptic(val value: Boolean) : QuestionEvent
 }
 
 @HiltViewModel
-class GameViewModel @Inject constructor(
+class QuestionsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val dataStoreRepository: DataStoreRepository,
     private val getQuestionsUseCase: GetQuestionsUseCase,
@@ -123,31 +123,31 @@ class GameViewModel @Inject constructor(
         fetchCategoryGameData(args.subjectId, args.chapterId)
     }
 
-    fun onAction(action: GameEvent) {
+    fun onAction(action: QuestionEvent) {
         when (action) {
-            GameEvent.AddTime -> useAddTimePowerUp()
-            GameEvent.PauseGame -> pauseGame()
-            GameEvent.ResumeGame -> resumeGame()
-            GameEvent.SplitOptions -> useSplitPowerUp()
-            GameEvent.StartOver -> startOver()
-            is GameEvent.CheckAnswer -> checkAnswer(action.optionId)
-            GameEvent.NextQuestion -> nextQuestion()
-            is GameEvent.ToggleHaptic -> toggleHaptic(action.value)
-            is GameEvent.ToggleSound -> toggleSound(action.value)
-            is GameEvent.ToggleShowCorrect -> toggleShowCorrect(action.value)
-            is GameEvent.TryAgain -> tryAgain(action.isAdWatched)
+            QuestionEvent.AddTime -> useAddTimePowerUp()
+            QuestionEvent.Pause -> pauseGame()
+            QuestionEvent.Resume -> resumeGame()
+            QuestionEvent.SplitOptions -> useSplitPowerUp()
+            QuestionEvent.StartOver -> startOver()
+            is QuestionEvent.CheckAnswer -> checkAnswer(action.optionId)
+            QuestionEvent.NextQuestion -> nextQuestion()
+            is QuestionEvent.ToggleHaptic -> toggleHaptic(action.value)
+            is QuestionEvent.ToggleSound -> toggleSound(action.value)
+            is QuestionEvent.ToggleShowCorrect -> toggleShowCorrect(action.value)
+            is QuestionEvent.TryAgain -> tryAgain(action.isAdWatched)
         }
     }
 
-    private fun fetchCategoryGameData(categoryId: Int, levelId: Int) {
+    private fun fetchCategoryGameData(subjectId: Int, chapterId: Int) {
         viewModelScope.launch {
             try {
                 val isSoundEnabled = dataStoreRepository.isSoundsEnabled()
                 val isShowCorrectEnabled = dataStoreRepository.isShowCorrectEnabled()
                 val isHapticEnabled = dataStoreRepository.isHapticEnabled()
                 val response = getQuestionsUseCase(
-                    categoryId,
-                    levelId
+                    subjectId,
+                    chapterId
                 )
                 when (response) {
                     is ApiResult.Error -> {
@@ -158,9 +158,9 @@ class GameViewModel @Inject constructor(
                         val shuffledQuestions = response.data.shuffled().map { it.asGameQuestion() }
                         if (shuffledQuestions.isNotEmpty()) {
                             gameQuestions = shuffledQuestions
-                            this@GameViewModel.isSoundEnabled = isSoundEnabled
-                            this@GameViewModel.isHapticEnabled = isHapticEnabled
-                            this@GameViewModel.isShowCorrectEnabled = isShowCorrectEnabled
+                            this@QuestionsViewModel.isSoundEnabled = isSoundEnabled
+                            this@QuestionsViewModel.isHapticEnabled = isHapticEnabled
+                            this@QuestionsViewModel.isShowCorrectEnabled = isShowCorrectEnabled
                             startGame(3)
                         } else {
                             _gameUiState.value = GameUiState.Error("No Question Found")
@@ -475,7 +475,7 @@ class GameViewModel @Inject constructor(
     private fun toggleSound(value: Boolean) {
         viewModelScope.launch {
             dataStoreRepository.setSoundEnabled(value)
-            this@GameViewModel.isSoundEnabled = value
+            this@QuestionsViewModel.isSoundEnabled = value
             _gameUiState.update { it.updateActiveGame { copy(isSoundEnabled = value) } }
         }
     }
@@ -483,7 +483,7 @@ class GameViewModel @Inject constructor(
     private fun toggleShowCorrect(value: Boolean) {
         viewModelScope.launch {
             dataStoreRepository.setShowCorrect(value)
-            this@GameViewModel.isShowCorrectEnabled = value
+            this@QuestionsViewModel.isShowCorrectEnabled = value
             _gameUiState.update { it.updateActiveGame { copy(isShowCorrectEnabled = value) } }
         }
     }
@@ -491,7 +491,7 @@ class GameViewModel @Inject constructor(
     private fun toggleHaptic(value: Boolean) {
         viewModelScope.launch {
             dataStoreRepository.setHapticEnabled(value)
-            this@GameViewModel.isHapticEnabled = value
+            this@QuestionsViewModel.isHapticEnabled = value
             _gameUiState.update { it.updateActiveGame { copy(isHapticEnabled = value) } }
         }
     }

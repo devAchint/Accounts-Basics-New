@@ -81,7 +81,7 @@ fun ActiveGameContent(
     splitCost:Int,
     addTimeCost:Int,
     timerCount: Int?,
-    onAction: (event: GameEvent) -> Unit,
+    onAction: (event: QuestionEvent) -> Unit,
     reportQuestion: (reason: String, details: String?) -> Unit,
     gameUiState: GameUiState.ActiveGame
 ) {
@@ -109,7 +109,7 @@ fun ActiveGameContent(
             CorrectAnswerDialog(
                 onNext = {
                     triggerHaptic()
-                    onAction(GameEvent.NextQuestion)
+                    onAction(QuestionEvent.NextQuestion)
                 },
                 adUnit = nativeAdUnit,
                 logEvent = logEvent
@@ -125,11 +125,11 @@ fun ActiveGameContent(
                 logEvent = logEvent,
                 onTryAgain = {
                     triggerHaptic()
-                    onAction(GameEvent.TryAgain(it))
+                    onAction(QuestionEvent.TryAgain(it))
                 },
                 onNext = {
                     triggerHaptic()
-                    onAction(GameEvent.NextQuestion)
+                    onAction(QuestionEvent.NextQuestion)
                 }
             )
         }
@@ -142,11 +142,11 @@ fun ActiveGameContent(
                 logEvent = logEvent,
                 onTryAgain = {
                     triggerHaptic()
-                    onAction(GameEvent.TryAgain(it))
+                    onAction(QuestionEvent.TryAgain(it))
                 },
                 onNext = {
                     triggerHaptic()
-                    onAction(GameEvent.NextQuestion)
+                    onAction(QuestionEvent.NextQuestion)
                 }
             )
         }
@@ -273,7 +273,7 @@ fun ActiveGameContent(
                             ),
                             onClick = {
                                 triggerHaptic()
-                                onAction(GameEvent.CheckAnswer(option.optionId))
+                                onAction(QuestionEvent.CheckAnswer(option.optionId))
                             }
                         )
                     }
@@ -288,11 +288,11 @@ fun ActiveGameContent(
             },
             split = {
                 triggerHaptic()
-                onAction(GameEvent.SplitOptions)
+                onAction(QuestionEvent.SplitOptions)
             },
             addTime = {
                 triggerHaptic()
-                onAction(GameEvent.AddTime)
+                onAction(QuestionEvent.AddTime)
             },
             share = {
                 triggerHaptic()
@@ -338,7 +338,7 @@ fun ActiveGameContent(
             },
             onConfirmRestart = {
                 triggerHaptic()
-                onAction(GameEvent.StartOver)
+                onAction(QuestionEvent.StartOver)
                 restartConfirmDialog = false
             }
         )
@@ -349,17 +349,17 @@ fun ActiveGameContent(
             hapticEnabled = gameUiState.isHapticEnabled,
             showCorrectEnabled = gameUiState.isShowCorrectEnabled,
             onShowCorrectToggle = {
-                onAction(GameEvent.ToggleShowCorrect(it))
+                onAction(QuestionEvent.ToggleShowCorrect(it))
             },
             onSoundToggle = {
-                onAction(GameEvent.ToggleSound(it))
+                onAction(QuestionEvent.ToggleSound(it))
             },
             onHapticToggle = {
-                onAction(GameEvent.ToggleHaptic(it))
+                onAction(QuestionEvent.ToggleHaptic(it))
             },
             onReportClick = {
                 reportQuestion = true
-                onAction(GameEvent.PauseGame)
+                onAction(QuestionEvent.Pause)
                 gameControls = false
             },
             onClose = {
@@ -370,12 +370,12 @@ fun ActiveGameContent(
     if (reportQuestion) {
         ReportQuestionSheet(
             onDismiss = {
-                onAction(GameEvent.ResumeGame)
+                onAction(QuestionEvent.Resume)
                 reportQuestion = false
             },
             onSubmit = { reason, details ->
                 reportQuestion(reason, details)
-                onAction(GameEvent.ResumeGame)
+                onAction(QuestionEvent.Resume)
                 reportQuestion = false
             }
         )

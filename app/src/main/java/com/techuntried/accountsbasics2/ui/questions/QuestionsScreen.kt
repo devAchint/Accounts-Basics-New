@@ -85,7 +85,7 @@ fun QuestionsScreenRoot(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val haptic = LocalHapticFeedback.current
-    val viewModel: GameViewModel = hiltViewModel()
+    val viewModel: QuestionsViewModel = hiltViewModel()
     val gameUiState = viewModel.gameUiState.collectAsStateWithLifecycle().value
     val coinsState = viewModel.coinsState.collectAsStateWithLifecycle().value
     val globalConfigState = viewModel.globalConfigState.collectAsStateWithLifecycle().value
@@ -211,12 +211,12 @@ fun QuestionsScreenRoot(
         ResumeGameDialog(
             onStartOver = {
                 triggerHaptic()
-                viewModel.onAction(GameEvent.StartOver)
+                viewModel.onAction(QuestionEvent.StartOver)
                 resumeDialog = false
             },
             onResume = {
                 triggerHaptic()
-                viewModel.onAction(GameEvent.ResumeGame)
+                viewModel.onAction(QuestionEvent.Resume)
                 resumeDialog = false
             }
         )
@@ -237,7 +237,7 @@ private fun QuestionsScreen(
     rewardedAdUnit: String?,
     logEvent: (LogEventType) -> Unit,
     timerCount: Int?,
-    onAction: (event: GameEvent) -> Unit,
+    onAction: (event: QuestionEvent) -> Unit,
     endGame: () -> Unit,
     onBack: () -> Unit = {},
     refresh: () -> Unit,

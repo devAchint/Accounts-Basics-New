@@ -12,8 +12,8 @@ class GetQuestionsUseCase @Inject constructor(
     private val repository: QuizRepository,
     private val networkMonitor: NetworkMonitor
 ) {
-    suspend operator fun invoke(categoryId: Int, levelId: Int): ApiResult<List<QuestionModel>> {
-        val localResult = repository.getLocalQuestions(categoryId, levelId)
+    suspend operator fun invoke(subjectId: Int, chapterId: Int): ApiResult<List<QuestionModel>> {
+        val localResult = repository.getLocalQuestions(subjectId, chapterId)
         val hasLocalData = localResult is ApiResult.Success && localResult.data.isNotEmpty()
         val isOnline = networkMonitor.isConnected()
 
@@ -28,11 +28,11 @@ class GetQuestionsUseCase @Inject constructor(
         if (shouldAttemptSync) {
             try {
                 if (!hasLocalData || repository.questionsNeedsUpdate()) {
-                    val remoteResponse = repository.fetchRemoteQuestions(categoryId, levelId)
+                    val remoteResponse = repository.fetchRemoteQuestions(subjectId, chapterId)
 
                     if (remoteResponse is ApiResult.Success && remoteResponse.data.status) {
                         val entities = remoteResponse.data.questions.map { it.asQuestionEntity() }
-                        repository.saveQuestions(categoryId, levelId, entities)
+                        repository.saveQuestions(subjectId, chapterId, entities)
                         repository.markQuestionsUpdated()
                         return ApiResult.Success(entities.map { it.asQuestionModel() })
                     }

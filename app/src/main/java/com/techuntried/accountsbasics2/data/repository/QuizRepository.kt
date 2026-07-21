@@ -5,12 +5,10 @@ import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
 import com.techuntried.accountsbasics2.data.database.LearnContentDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
-import com.techuntried.accountsbasics2.data.database.WrongQuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
-import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
 import java.text.SimpleDateFormat
@@ -126,22 +124,22 @@ class QuizRepository @Inject constructor(
     }
 
     //Questions
-    suspend fun getLocalQuestions(categoryId: Int, levelId: Int): ApiResult<List<QuestionEntity>> {
+    suspend fun getLocalQuestions(subjectId: Int, chapterId: Int): ApiResult<List<QuestionEntity>> {
         return try {
-            ApiResult.Success(questionDao.getQuestions(categoryId, levelId))
+            ApiResult.Success(questionDao.getQuestions(subjectId, chapterId))
         } catch (e: Exception) {
             Log.d("MYDEBUG", "${e.message}")
             ApiResult.Error("Oops! Something went wrong while fetching questions. Please try again.")
         }
     }
 
-    suspend fun saveQuestions(categoryId: Int, levelId: Int, questions: List<QuestionEntity>) {
-        questionDao.clearAndInsertQuestions(categoryId, levelId, questions)
+    suspend fun saveQuestions(subjectId: Int, chapterId: Int, questions: List<QuestionEntity>) {
+        questionDao.clearAndInsertQuestions(subjectId, chapterId, questions)
         dataStoreRepository.saveQuestionLastUpdatedDate(currentDate())
     }
 
-    suspend fun fetchRemoteQuestions(categoryId: Int, levelId: Int) =
-        networkRepository.fetchQuestionsByChapter(categoryId = categoryId, levelId = levelId)
+    suspend fun fetchRemoteQuestions(subjectId: Int, chapterId: Int) =
+        networkRepository.fetchQuestionsByChapter(subjectId = subjectId, chapterId = chapterId)
 
     suspend fun questionsNeedsUpdate(): Boolean {
         val localDate = dataStoreRepository.getQuestionLastUpdatedDate() ?: return true

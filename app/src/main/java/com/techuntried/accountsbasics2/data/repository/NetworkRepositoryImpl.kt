@@ -155,22 +155,11 @@ class NetworkRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchQuestionsByChapter(
-        categoryId: Int,
-        levelId: Int
+        subjectId: Int,
+        chapterId: Int
     ): ApiResult<FetchQuestionsResponse> {
-
-        val text = context.assets
-            .open("questions.json")
-            .bufferedReader()
-            .use { it.readText() }
-        val courses = json.decodeFromString<List<QuestionApiResponse>>(text)
-        Log.d("MYDEBUG", "courses $courses")
-
-        val response = FetchQuestionsResponse(questions = courses, status = true, message = "fsdfss")
-        return ApiResult.Success(response)
-
         return getApiResponse {
-            client.get("api/questionsByLevel/category/$categoryId/level/$levelId")
+            client.get("api/questionsByChapter/$subjectId/$chapterId")
                 .body<FetchQuestionsResponse>()
         }
     }
@@ -179,20 +168,6 @@ class NetworkRepositoryImpl @Inject constructor(
         subjectId: Int,
         chapterId: Int
     ): ApiResult<FetchLearnContentResponse> {
-//        val json = Json {
-//            ignoreUnknownKeys = true
-//            classDiscriminator = "type"
-//        }
-//        val text = context.assets
-//            .open("learnContent.json")
-//            .bufferedReader()
-//            .use { it.readText() }
-//        val courses = json.decodeFromString<List<LearnContentApiResponse>>(text)
-//        Log.d("MYDEBUG", "courses $courses")
-//
-//        val response = FetchLearnContentResponse(questions = courses, status = true, message = "fsdfss")
-//        return ApiResult.Success(response)
-
         return getApiResponse {
             client.get("api/learnContentByChapter/$subjectId/$chapterId")
                 .body<FetchLearnContentResponse>()

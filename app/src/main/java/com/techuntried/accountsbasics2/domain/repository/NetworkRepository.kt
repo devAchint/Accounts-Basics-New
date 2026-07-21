@@ -11,7 +11,6 @@ import com.techuntried.accountsbasics2.domain.model.appUpdate.FetchAppUpdateInfo
 import com.techuntried.accountsbasics2.domain.model.content.FetchLearnContentResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectsResponse
 import com.techuntried.accountsbasics2.domain.model.subjects.FetchSubjectResponse
-import com.techuntried.accountsbasics2.domain.model.course.FetchCoursesResponse
 import com.techuntried.accountsbasics2.domain.model.feedback.UploadFeedbackRequest
 import com.techuntried.accountsbasics2.domain.model.level.FetchChapterResponse
 import com.techuntried.accountsbasics2.domain.model.level.FetchChaptersResponse
@@ -32,8 +31,8 @@ interface NetworkRepository {
     suspend fun fetchChapterDetails(subjectId: Int, chapterId:Int): ApiResult<FetchChapterResponse>
 
     suspend fun fetchQuestionsByChapter(
-        categoryId: Int,
-        levelId: Int
+        subjectId: Int,
+        chapterId: Int
     ): ApiResult<FetchQuestionsResponse>
 
     suspend fun fetchLearnContent(
