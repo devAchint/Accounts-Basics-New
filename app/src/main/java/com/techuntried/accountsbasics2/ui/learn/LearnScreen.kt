@@ -11,31 +11,30 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.dynamic.IFragmentWrapper
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.dialog.CommonInformationDialog
-import com.techuntried.accountsbasics2.ui.sheets.SuggestionSheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.utils.AppIcons
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
+import kotlinx.coroutines.launch
 
 @Composable
 fun LearnScreenRoot(
     modifier: Modifier = Modifier,
+    onFinish: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val viewModel: LearnViewModel = hiltViewModel()
@@ -50,6 +49,8 @@ fun LearnScreenRoot(
 
     LearnScreen(
         learnUiState = learnUiState,
+        onFinish = onFinish,
+        onBackClick = onBackClick
     )
 }
 
@@ -57,30 +58,19 @@ fun LearnScreenRoot(
 @Composable
 fun LearnScreen(
     learnUiState: LearnUiState,
+    onFinish: () -> Unit,
+    onBackClick: () -> Unit
 ) {
-    var showLevelLockedDialog by remember { mutableStateOf(false) }
-    var levelLockedSheet by remember { mutableStateOf<Int?>(null) }
-    var suggestionSheet by remember { mutableStateOf<Boolean>(false) }
-
-
-    var showCoinsSheet by remember { mutableStateOf(false) }
-
-    if (showCoinsSheet) {
-//        CoinsSheet(
-//            balance = coins,
-//            onDismiss = { showCoinsSheet = false },
-//            rewardedAdUnit = rewardedAdUnit,
-//            onAddCoins = {
-//                onAction(LevelActions.AddCoin(50))
-//            }
-//        )
-    }
-
-    val questionsSize = (learnUiState as? LearnUiState.Success )?.content?.size ?: 0
+    val learnPagesSize = (learnUiState as? LearnUiState.Success)?.content?.size ?: 0
 
     val pagerState = rememberPagerState {
-        questionsSize
+        learnPagesSize
     }
+
+    val title =
+        (learnUiState as? LearnUiState.Success)?.content?.get(pagerState.currentPage)?.title ?: ""
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -89,15 +79,19 @@ fun LearnScreen(
     ) {
         // Top Toolbar
         CommonToolbar(
-            title = "",
-            isBalance = true,
-            balance = 5,
+            title = title,
+            isBalance = false,
             isNavigationIcon = true,
             navigationIcon = AppIcons.Back,
-            onNavigationClick = {  },
-            onBalanceClick = {
-                showCoinsSheet = true
-            }
+            onNavigationClick = {
+                if (pagerState.currentPage == 0) {
+                    onBackClick()
+                } else {
+                    scope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                    }
+                }
+            },
         )
         Box(
             modifier = Modifier
@@ -113,10 +107,11 @@ fun LearnScreen(
                         actionButton = "Try Again",
                         action = {
 //                            onAction(LevelActions.Refresh)
-                                 },
+                        },
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
+
                 LearnUiState.Loading -> {
                     CommonCircularProgress(
                         modifier = Modifier
@@ -124,6 +119,7 @@ fun LearnScreen(
                             .align(Alignment.Center),
                     )
                 }
+
                 is LearnUiState.Success -> {
                     if (learnUiState.content.isEmpty()) {
                         ErrorMessageView(
@@ -137,8 +133,17 @@ fun LearnScreen(
                             }
                         )
                     } else {
-                        HorizontalPager(state =pagerState ) {page->
-                            LearnContentPage(learnUiState.content[page])
+                        HorizontalPager(state = pagerState) { currentPage ->
+                            LearnContentPage(
+                                question = learnUiState.content[currentPage],
+                                isLast = learnPagesSize - 1 == currentPage,
+                                onFinishClicked = onFinish,
+                                onContinueClicked = {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(page = currentPage + 1)
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -151,28 +156,6 @@ fun LearnScreen(
                 )
             }
         }
-    }
-
-    if (showLevelLockedDialog) {
-        CommonInformationDialog(
-            title = stringResource(R.string.level_locked),
-            description = stringResource(R.string.locked_description),
-            buttonText = stringResource(R.string.ok),
-            onDismiss = {
-                showLevelLockedDialog = false
-            }
-        )
-    }
-
-    if (suggestionSheet) {
-        SuggestionSheet(
-            onDismiss = {
-                suggestionSheet = false
-            }, onSubmit = {
-//                onAction(LevelActions.UploadSuggestion("Level Suggestion: $categoryName - $it"))
-                suggestionSheet = false
-            }
-        )
     }
 }
 

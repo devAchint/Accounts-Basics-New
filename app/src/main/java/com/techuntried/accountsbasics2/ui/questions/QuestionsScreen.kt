@@ -138,6 +138,7 @@ fun QuestionsScreenRoot(
                         correctAnswers = gameUiState.correctAnswers,
                         totalQuestions = gameUiState.totalQuestions,
                         questionReview = viewModel.questionReviewList,
+                        isPracticeType = true
                     )
                 )
             }
@@ -175,6 +176,7 @@ fun QuestionsScreenRoot(
                         correctAnswers = gameUiState.correctAnswers,
                         totalQuestions = gameUiState.totalQuestions,
                         questionReview = viewModel.questionReviewList,
+                        isPracticeType = true
                     )
                 )
             }

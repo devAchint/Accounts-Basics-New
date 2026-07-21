@@ -80,7 +80,7 @@ fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
     args: ChapterArgs,
     navigateToRules: (RuleArgs) -> Unit,
-    navigateToLearn: () -> Unit,
+    navigateToLearn: (chapterId:Int) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -142,7 +142,7 @@ private fun ChaptersScreen(
     bannerAdUnit: String?,
     onAction: (ChapterActions) -> Unit,
     openRules: (levelId: Int) -> Unit = {},
-    openLearn: () -> Unit,
+    openLearn: (chapterId:Int) -> Unit,
     logEvent:(LogEventType)->Unit,
     onBack: () -> Unit
 ) {

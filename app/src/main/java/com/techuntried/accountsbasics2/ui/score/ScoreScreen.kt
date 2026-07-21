@@ -123,6 +123,7 @@ fun ScoreScreenRoot(
         nativeAdUnit = nativeAdUnit,
         rewardedAdUnit = rewardedAdUnit,
         logEvent = viewModel::logEvent,
+        isPracticeType = args.isPracticeType,
         onAction = { action ->
             val finalAction =
                 if (action is ScoreActions.SubmitLevelRating) {
@@ -160,6 +161,7 @@ fun ScoreScreen(
     scoreScreenUiState: ScoreScreenUiState,
     nativeAdUnit: String? = null,
     rewardedAdUnit: String? = null,
+    isPracticeType:Boolean,
     coins: Int?,
     logEvent: (LogEventType) -> Unit,
     onAction: (ScoreActions) -> Unit = {},
@@ -237,6 +239,7 @@ fun ScoreScreen(
                     ScoreContent(
                         scoreScreenUiState = scoreScreenUiState,
                         isCategory = true,
+                        isPracticeType =isPracticeType ,
                         nativeAdUnit = nativeAdUnit,
                         showQuestionReviewSheet = { questionsReviewSheetVisibility = true },
                         onAction = onAction,

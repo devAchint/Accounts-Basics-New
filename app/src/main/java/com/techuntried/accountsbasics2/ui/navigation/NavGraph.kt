@@ -101,8 +101,13 @@ fun NavGraph(
                 onBack = {
                     navController.navigateUp()
                 },
-                navigateToLearn = {
-                    navController.navigate(Routes.LearnScreenRoute)
+                navigateToLearn = { chapterId ->
+                    navController.navigate(
+                        Routes.LearnScreenRoute(
+                            subjectId = args.subjectId,
+                            chapterId = chapterId
+                        )
+                    )
                 },
                 navigateToRules = { ruleArgs ->
                     navController.navigate(
@@ -174,12 +179,6 @@ fun NavGraph(
             )
         }
 
-
-
-
-
-
-
         composable<Routes.FeedbackScreenRoute> {
             FeedbackScreenRoot(
                 onBackClick = {
@@ -248,7 +247,27 @@ fun NavGraph(
 
 
         composable<Routes.LearnScreenRoute> {
-            LearnScreenRoot()
+            val args = it.toRoute<Routes.LearnScreenRoute>()
+            LearnScreenRoot(
+                onBackClick = {
+                    navController.navigateUp()
+                },
+                onFinish = {
+                    val scoreArgs = ScoreArgs(
+                        subjectId = args.subjectId,
+                        chapterId = args.chapterId,
+                        isPracticeType = false,
+                        correctAnswers = 0,
+                        totalQuestions = 0,
+                        questionReview = emptyList()
+                    )
+                    navController.navigate(scoreArgs.toScoreScreenRoute()) {
+                        popUpTo(Routes.HomeScreenRoute) {
+                            inclusive = false
+                        }
+                    }
+                }
+            )
         }
     }
 }

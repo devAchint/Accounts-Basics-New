@@ -33,6 +33,7 @@ sealed class Routes {
     data class ScoreScreenRoute(
         val subjectId: Int,
         val chapterId: Int,
+        val isPracticeType: Boolean,
         val correctAnswers: Int,
         val totalQuestions: Int,
         val questionReview: List<QuestionReviewModel>
@@ -62,8 +63,10 @@ sealed class Routes {
 
     @Serializable
     data class SectionCategoriesScreenRoute(val section: String, val grades: List<Int>?) : Routes()
+
     @Serializable
-    object LearnScreenRoute: Routes()
+    data class LearnScreenRoute(val subjectId: Int, val chapterId: Int) : Routes()
+
 }
 
 

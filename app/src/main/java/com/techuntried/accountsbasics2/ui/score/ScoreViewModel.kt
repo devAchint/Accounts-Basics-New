@@ -41,7 +41,7 @@ data class ScoreModel(
     val title: String,
     val description: String,
     val isWon: Boolean,
-    val isLastLevel: Boolean,
+    val isLastChapter: Boolean,
     val coinsEarned: Int,
     val accuracy: Int
 )
@@ -100,7 +100,7 @@ class ScoreViewModel @Inject constructor(
 
 
     fun fetchData() {
-        calculateResult(correctAnswered, subjectId, chapterId,review)
+        calculateResult(correctAnswered, subjectId, chapterId, review)
     }
 
     fun refreshData() {
@@ -128,32 +128,47 @@ class ScoreViewModel @Inject constructor(
                     val chapter = chapterResult.data
                     val subjectName = subjectResult.data.name
                     val section = subjectResult.data.section
-                    val totalLevels = subjectResult.data.chapters
+                    val totalChapters = subjectResult.data.chapters
+                    val chapterName = chapter.name
 
                     val totalQuestions = 0 //chapter.questions
-                    val chapterName = chapter.name
 
                     // 🔹 BUSINESS LOGIC
                     val minimumScore = (totalQuestions * 60) / 100
                     val isWon = correctAnswers >= minimumScore
                     val coinsEarned = if (isWon) correctAnswers * rewardCoins else 0
 
-                    val attempted = review.size
-                    val accuracy =
-                        if (attempted > 0)
-                            ((correctAnswers.toDouble() / attempted) * 100).toInt()
-                        else 0
+                    val score = if (scoreArgs.isPracticeType) {
 
-                    val score = ScoreModel(
-                        title = subjectName,
-                        isWon = isWon,
-                        isLastLevel = totalLevels == chapterId,
-                        description = chapterName,
-                        totalQuestions = totalQuestions,
-                        correct = correctAnswers,
-                        coinsEarned = coinsEarned,
-                        accuracy = accuracy
-                    )
+
+                        val attempted = review.size
+                        val accuracy =
+                            if (attempted > 0)
+                                ((correctAnswers.toDouble() / attempted) * 100).toInt()
+                            else 0
+
+                        ScoreModel(
+                            title = subjectName,
+                            isWon = isWon,
+                            isLastChapter = totalChapters == chapterId,
+                            description = chapterName,
+                            totalQuestions = totalQuestions,
+                            correct = correctAnswers,
+                            coinsEarned = coinsEarned,
+                            accuracy = accuracy
+                        )
+                    } else {
+                        ScoreModel(
+                            title = subjectName,
+                            isWon = true,
+                            isLastChapter = totalChapters == chapterId,
+                            description = chapterName,
+                            totalQuestions = 0,
+                            correct = 0,
+                            coinsEarned = 0,
+                            accuracy = 0
+                        )
+                    }
 
                     // 🔹 UPDATE UI ONCE
                     _scoreScreenUiState.value = ScoreScreenUiState.Success(
@@ -191,7 +206,7 @@ class ScoreViewModel @Inject constructor(
         supervisorScope {
             if (isWon) {
                 launch {
-                    roomRepository.updateLevelsCompleted(subjectId, chapterId)
+                    roomRepository.updateChaptersCompleted(subjectId, chapterId)
                 }
             }
             launch {
@@ -210,21 +225,29 @@ class ScoreViewModel @Inject constructor(
     }
 
 
-
     fun updateAnalytics(
         subjectId: Int,
         chapterId: Int,
         answeredCount: Int,
         totalQuestions: Int,
     ) {
-        logEvent(
-            LogEventType.PracticeChapterComplete(
-                subjectId = subjectId,
-                chapterId = chapterId,
-                answeredCount = answeredCount,
-                totalQuestions = totalQuestions
+        if (scoreArgs.isPracticeType) {
+            logEvent(
+                LogEventType.PracticeChapterComplete(
+                    subjectId = subjectId,
+                    chapterId = chapterId,
+                    answeredCount = answeredCount,
+                    totalQuestions = totalQuestions
+                )
             )
-        )
+        } else {
+            logEvent(
+                LogEventType.LearnChapterComplete(
+                    subjectId = subjectId,
+                    chapterId = chapterId,
+                )
+            )
+        }
     }
 
     private suspend fun checkScoreRatingEnabled() {
@@ -236,7 +259,7 @@ class ScoreViewModel @Inject constructor(
                         ?.sumOf { it.chaptersCompleted }
                         ?: 0) > 5
                 _scoreScreenUiState.update {
-                    it.updateSuccess { copy(scoreRatingEnabled = !isScoreRatingDismissed && enoughLevelsPlayed ) }
+                    it.updateSuccess { copy(scoreRatingEnabled = !isScoreRatingDismissed && enoughLevelsPlayed) }
                 }
             }
         } catch (e: Exception) {

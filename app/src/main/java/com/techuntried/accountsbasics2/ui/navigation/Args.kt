@@ -5,6 +5,7 @@ import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewMode
 data class ScoreArgs(
     val subjectId: Int,
     val chapterId: Int,
+    val isPracticeType:Boolean,
     val correctAnswers: Int,
     val totalQuestions: Int,
     val questionReview: List<QuestionReviewModel>
@@ -49,7 +50,8 @@ fun Routes.ScoreScreenRoute.toScoreArgs(): ScoreArgs {
         chapterId = chapterId,
         correctAnswers = correctAnswers,
         totalQuestions = totalQuestions,
-        questionReview = questionReview
+        questionReview = questionReview,
+        isPracticeType = isPracticeType
     )
 }
 
@@ -59,7 +61,8 @@ fun ScoreArgs.toScoreScreenRoute(): Routes.ScoreScreenRoute {
         chapterId = chapterId,
         correctAnswers = correctAnswers,
         totalQuestions = totalQuestions,
-        questionReview = questionReview
+        questionReview = questionReview,
+        isPracticeType = isPracticeType
     )
 }
 

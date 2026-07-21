@@ -63,6 +63,7 @@ fun ScoreContent(
     modifier: Modifier = Modifier,
     scoreScreenUiState: ScoreScreenUiState.Success,
     isCategory: Boolean,
+    isPracticeType: Boolean,
     nativeAdUnit: String?,
     showQuestionReviewSheet: () -> Unit,
     logEvent: (LogEventType) -> Unit,
@@ -119,16 +120,18 @@ fun ScoreContent(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            ScoreMetricsCard(
-                correct = scoreScreenUiState.score.correct,
-                total = scoreScreenUiState.score.totalQuestions,
-                accuracy = scoreScreenUiState.score.accuracy,
-                coins = scoreScreenUiState.score.coinsEarned,
-                attempted = scoreScreenUiState.review.size
-            )
+            if (isPracticeType) {
+                ScoreMetricsCard(
+                    correct = scoreScreenUiState.score.correct,
+                    total = scoreScreenUiState.score.totalQuestions,
+                    accuracy = scoreScreenUiState.score.accuracy,
+                    coins = scoreScreenUiState.score.coinsEarned,
+                    attempted = scoreScreenUiState.review.size
+                )
+            }
 
             nativeAdUnit?.let {
-                NativeAdViewSmall (
+                NativeAdViewSmall(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),
@@ -137,7 +140,7 @@ fun ScoreContent(
                 )
             }
 
-            if (scoreScreenUiState.review.isNotEmpty() && isCategory) {
+            if (scoreScreenUiState.review.isNotEmpty() && isCategory && isPracticeType) {
                 Spacer(modifier = Modifier.height(20.dp))
                 QuestionReviewCard { showQuestionReviewSheet() }
             }
@@ -182,7 +185,7 @@ fun ScoreContent(
 
         ) {
             val buttonTextId = when (scoreScreenUiState.score.isWon) {
-                true -> if (scoreScreenUiState.score.isLastLevel) R.string.home else R.string.next_level
+                true -> if (scoreScreenUiState.score.isLastChapter) R.string.home else R.string.next_level
                 false -> R.string.try_again
             }
             CommonButton(
@@ -191,7 +194,7 @@ fun ScoreContent(
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
                     when (scoreScreenUiState.score.isWon) {
-                        true -> if (scoreScreenUiState.score.isLastLevel) onBack() else playNext()
+                        true -> if (scoreScreenUiState.score.isLastChapter) onBack() else playNext()
                         false -> playAgain()
                     }
                 }

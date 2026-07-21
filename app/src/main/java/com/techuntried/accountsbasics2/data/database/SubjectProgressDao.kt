@@ -23,7 +23,7 @@ interface SubjectProgressDao {
     fun observeAll(): Flow<List<SubjectProgressEntity>>
 
     @Query("SELECT chaptersCompleted FROM subject_progress WHERE subjectId=:id")
-    suspend fun getLevelsCompleted(id: Int): Int?
+    suspend fun getChaptersCompleted(id: Int): Int?
 
     @Query("SELECT * FROM subject_progress")
     suspend fun getAll(): List<SubjectProgressEntity>
@@ -39,8 +39,8 @@ interface SubjectProgressDao {
     @Update
     suspend fun update(progress: SubjectProgressEntity)
 
-    @Query("UPDATE subject_progress SET chaptersCompleted=:levelsCompleted, lastPlayedTime=:lastPlayedTime WHERE subjectId=:id")
-    suspend fun updateLevelsCompleted(id: Int, levelsCompleted: Int, lastPlayedTime: Long)
+    @Query("UPDATE subject_progress SET chaptersCompleted=:chaptersCompleted, lastPlayedTime=:lastPlayedTime WHERE subjectId=:id")
+    suspend fun updateChaptersCompleted(id: Int, chaptersCompleted: Int, lastPlayedTime: Long)
 
     @Query("UPDATE subject_progress SET correctAnswered=correctAnswered+1,lastPlayedTime=:lastPlayedTime WHERE subjectId=:id")
     suspend fun updateCorrectAnswered(id: Int, lastPlayedTime: Long)

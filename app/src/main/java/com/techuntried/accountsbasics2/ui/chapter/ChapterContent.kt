@@ -31,7 +31,7 @@ fun ChapterContent(
     showTopics: Boolean,
     bannerAdUnit: String?,
     openRules: (levelId: Int) -> Unit,
-    openLearn: () -> Unit,
+    openLearn: (chapterId:Int) -> Unit,
     showSuggestionSheet: () -> Unit,
     showLevelLockedDialog: () -> Unit,
     logEvent: (LogEventType) -> Unit,
@@ -121,26 +121,26 @@ fun ChapterContent(
                         )
                     }
 
-                    itemsIndexed(levels) { index, level ->
+                    itemsIndexed(levels) { index, chapter ->
                         ChapterCard(
-                            level = level,
+                            level = chapter,
                             isFirst = index == 0,
                             isLast = index == levels.lastIndex,
                             index = index,
                             onClick = {
-                                if (level.chapterState == ChapterState.Locked) {
+                                if (chapter.chapterState == ChapterState.Locked) {
                                     val levelsUnlocked =
                                         chapterUiState.chaptersCompleted + 1
-                                    if (level.chapterId <= levelsUnlocked + 2) {
-                                        showLevelLockedSheet(level.chapterId)
+                                    if (chapter.chapterId <= levelsUnlocked + 2) {
+                                        showLevelLockedSheet(chapter.chapterId)
                                     } else {
                                         showLevelLockedDialog()
                                     }
                                 } else {
-                                    if (level.type == "learn") {
-                                        openLearn()
+                                    if (chapter.type == "learn") {
+                                        openLearn(chapter.chapterId)
                                     } else {
-                                        openRules(level.chapterId)
+                                        openRules(chapter.chapterId)
                                     }
                                 }
                             }
