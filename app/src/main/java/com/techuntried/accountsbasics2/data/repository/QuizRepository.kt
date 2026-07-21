@@ -5,10 +5,12 @@ import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
 import com.techuntried.accountsbasics2.data.database.LearnContentDao
 import com.techuntried.accountsbasics2.data.database.QuestionDao
+import com.techuntried.accountsbasics2.data.database.WrongQuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
+import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 import com.techuntried.accountsbasics2.domain.repository.NetworkRepository
 import com.techuntried.accountsbasics2.utils.ApiResult
 import java.text.SimpleDateFormat
@@ -25,7 +27,7 @@ class QuizRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val chaptersDao: ChaptersDao,
     private val questionDao: QuestionDao,
-    private val learnContentDao: LearnContentDao
+    private val learnContentDao: LearnContentDao,
 ) {
 
     private var isCategoriesUpdatedInSession: Boolean = false
@@ -36,9 +38,11 @@ class QuizRepository @Inject constructor(
     fun markCategoriesUpdated() {
         isCategoriesUpdatedInSession = true
     }
+
     fun markLevelsUpdatedForCategory(categoryId: Int) {
         verifiedLevelsCategories.add(categoryId)
     }
+
     fun markQuestionsUpdated() {
         isQuestionsUpdatedInSession = true
     }
@@ -49,9 +53,9 @@ class QuizRepository @Inject constructor(
 
     suspend fun getLocalSubjects(course: Int?): ApiResult<List<SubjectEntity>> {
         return try {
-            val categories = if (course==null){
+            val categories = if (course == null) {
                 subjectDao.getSubjects()
-            }else{
+            } else {
                 subjectDao.getSubjectsByGrades(course)
             }
             ApiResult.Success(categories)
@@ -149,7 +153,10 @@ class QuizRepository @Inject constructor(
     }
 
     //LearnContent
-    suspend fun getLocalLearnContent(subjectId: Int, chapterId: Int): ApiResult<List<LearnContentEntity>> {
+    suspend fun getLocalLearnContent(
+        subjectId: Int,
+        chapterId: Int
+    ): ApiResult<List<LearnContentEntity>> {
         return try {
             ApiResult.Success(learnContentDao.getContent(subjectId, chapterId))
         } catch (e: Exception) {
@@ -158,7 +165,11 @@ class QuizRepository @Inject constructor(
         }
     }
 
-    suspend fun saveLearnContent(subjectId: Int, chapterId: Int, questions: List<LearnContentEntity>) {
+    suspend fun saveLearnContent(
+        subjectId: Int,
+        chapterId: Int,
+        questions: List<LearnContentEntity>
+    ) {
         learnContentDao.clearAndInsertContent(subjectId, chapterId, questions)
         dataStoreRepository.saveQuestionLastUpdatedDate(currentDate())
     }
@@ -171,5 +182,7 @@ class QuizRepository @Inject constructor(
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         return sdf.format(Date())
     }
+
+
 }
 

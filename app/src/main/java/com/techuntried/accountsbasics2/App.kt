@@ -46,6 +46,12 @@ fun App(modifier: Modifier = Modifier, isFirstTime: Boolean) {
             route = Routes.HomeScreenRoute
         ),
         BottomBarItem(
+            title = "Improve",
+            selectedIcon = AppIcons.Search,
+            unSelectedIcon = AppIcons.Search,
+            route = Routes.ImproveScreenRoute
+        ),
+        BottomBarItem(
             title = "Explore",
             selectedIcon = AppIcons.Search,
             unSelectedIcon = AppIcons.Search,

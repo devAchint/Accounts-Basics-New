@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.data.mappers
 
+import ads_mobile_sdk.id
 import com.techuntried.accountsbasics2.domain.model.SubjectProgressModel
 import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
@@ -16,6 +17,7 @@ import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.model.content.Option
 import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
+import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
@@ -209,5 +211,23 @@ fun LearnContentEntity.asLearnContentModel(): LearnContentModel {
         page = page,
         title = title,
         content = content
+    )
+}
+
+fun GameOption.asOption(): Option{
+    return Option(
+        id = optionId,
+        text = optionText
+    )
+}
+
+fun GameQuestionModel.asWrongQuestionEntity(subjectId:Int,chapterId:Int): WrongQuestionEntity{
+    return WrongQuestionEntity(
+        subjectId = subjectId,
+        chapterId = chapterId,
+        questionId = questionId,
+        correctOptionId = correctOptionId,
+        questionText = questionText,
+        options = options.map { it.asOption()}
     )
 }

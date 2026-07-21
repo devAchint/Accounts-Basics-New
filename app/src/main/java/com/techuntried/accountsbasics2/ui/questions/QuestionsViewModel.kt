@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.data.mappers.asGameQuestion
+import com.techuntried.accountsbasics2.data.mappers.asWrongQuestionEntity
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.GameEconomy
@@ -56,7 +57,7 @@ sealed interface GameEvent {
     data object ResumeGame : GameEvent
     data class CheckAnswer(val optionId: Int) : GameEvent
     data object NextQuestion : GameEvent
-    data class TryAgain(val isAdWatched: Boolean) :GameEvent
+    data class TryAgain(val isAdWatched: Boolean) : GameEvent
     data class ToggleSound(val value: Boolean) : GameEvent
     data class ToggleShowCorrect(val value: Boolean) : GameEvent
     data class ToggleHaptic(val value: Boolean) : GameEvent
@@ -299,8 +300,19 @@ class GameViewModel @Inject constructor(
                     viewModelScope.launch {
                         if (isCorrect) {
                             roomRepository.updateCorrectAnswered(subjectId = id)
+                            roomRepository.deleteWrongQuestion(
+                                subjectId = args.subjectId,
+                                chapterId = args.chapterId,
+                                questionId = activeState.currentQuestion.questionId
+                            )
                         } else {
                             roomRepository.updateWrongAnswered(categoryId = id)
+                            roomRepository.updateWrongQuestionAnswered(
+                                activeState.currentQuestion.asWrongQuestionEntity(
+                                    subjectId = args.subjectId,
+                                    chapterId = args.chapterId
+                                )
+                            )
                         }
                     }
                 }
@@ -371,7 +383,7 @@ class GameViewModel @Inject constructor(
                     }
                 }
                 resetQuestionTimer(extra = 5)
-            }else {
+            } else {
                 val tryAgainCost = gameEconomy.value.tryAgainCoins
 
                 if (tryAgainCost <= coinsState.value) {

@@ -1,13 +1,16 @@
 package com.techuntried.accountsbasics2.data.repository
 
+import ads_mobile_sdk.qu
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.SubjectProgressDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
+import com.techuntried.accountsbasics2.data.database.WrongQuestionDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
+import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 import com.techuntried.accountsbasics2.utils.ApiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -19,7 +22,8 @@ import kotlin.coroutines.cancellation.CancellationException
 class RoomRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val chaptersDao: ChaptersDao,
-    private val subjectProgressDao: SubjectProgressDao
+    private val subjectProgressDao: SubjectProgressDao,
+    private val wrongQuestionDao: WrongQuestionDao
 ) {
 
     suspend fun fetchSubjectById(categoryId: Int): ApiResult<SubjectEntity> {
@@ -99,6 +103,33 @@ class RoomRepository @Inject constructor(
             if (e is CancellationException) throw e
             Log.e("Repo", "Error fetching stats", e)
             emit(emptyList())
+        }
+    }
+
+    suspend fun updateWrongQuestionAnswered(question: WrongQuestionEntity) {
+        safeRoomCall {
+            wrongQuestionDao.insertWrongQuestion(question)
+        }
+    }
+
+    suspend fun deleteWrongQuestion(subjectId:Int,chapterId:Int,questionId:Int) {
+        safeRoomCall {
+            wrongQuestionDao.deleteWrongQuestion(subjectId,chapterId, questionId)
+        }
+    }
+
+
+    suspend fun getWrongQuestions(subjectId: Int?): ApiResult<List<WrongQuestionEntity>> {
+        return try {
+            val questions = if (subjectId != null) {
+                wrongQuestionDao.getWrongQuestionsBySubject(subjectId)
+            } else {
+                wrongQuestionDao.getWrongQuestions()
+            }
+            ApiResult.Success(questions)
+        } catch (e: Exception) {
+            Log.d("MYDEBUG", "${e.message}")
+            ApiResult.Error("Oops! Something went wrong while fetching wrong questions. Please try again.")
         }
     }
 

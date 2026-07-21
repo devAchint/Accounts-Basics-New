@@ -8,6 +8,7 @@ import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEnti
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
 import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
 import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
+import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
 
 @Database(
     entities = [
@@ -15,7 +16,8 @@ import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
         ChapterEntity::class,
         QuestionEntity::class,
         SubjectProgressEntity::class,
-        LearnContentEntity::class
+        LearnContentEntity::class,
+        WrongQuestionEntity::class,
     ],
     version = 1
 )
@@ -27,4 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao
 
     abstract fun learnContentDao(): LearnContentDao
+
+    abstract fun wrongQuestionDao(): WrongQuestionDao
 }

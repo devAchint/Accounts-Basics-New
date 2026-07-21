@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "301ad7c3161ec1915ef371f1507dd377",
+    "identityHash": "f544a1b6cf5d9435e3595e21078cbc0c",
     "entities": [
       {
         "tableName": "subjects",
@@ -280,11 +280,61 @@
             "contentId"
           ]
         }
+      },
+      {
+        "tableName": "wrong_questions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctOptionId` INTEGER NOT NULL, `questionText` TEXT NOT NULL, `options` TEXT NOT NULL, PRIMARY KEY(`subjectId`, `chapterId`, `questionId`))",
+        "fields": [
+          {
+            "fieldPath": "subjectId",
+            "columnName": "subjectId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterId",
+            "columnName": "chapterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionId",
+            "columnName": "questionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correctOptionId",
+            "columnName": "correctOptionId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "questionText",
+            "columnName": "questionText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "options",
+            "columnName": "options",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "subjectId",
+            "chapterId",
+            "questionId"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '301ad7c3161ec1915ef371f1507dd377')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f544a1b6cf5d9435e3595e21078cbc0c')"
     ]
   }
 }

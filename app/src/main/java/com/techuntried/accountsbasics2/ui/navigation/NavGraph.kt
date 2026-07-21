@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.ui.navigation
 
+import com.techuntried.accountsbasics2.ui.improve.ImproveScreenRoot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -269,6 +270,11 @@ fun NavGraph(
                     }
                 }
             )
+        }
+
+
+        composable<Routes.ImproveScreenRoute> {
+            ImproveScreenRoot()
         }
     }
 }
