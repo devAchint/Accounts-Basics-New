@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
 import com.techuntried.accountsbasics2.ui.chapter.ChaptersScreenRoot
-import com.techuntried.accountsbasics2.ui.explore.ExploreScreenRoot
 import com.techuntried.accountsbasics2.ui.feedback.FeedbackScreenRoot
 import com.techuntried.accountsbasics2.ui.questions.QuestionsScreenRoot
 import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
@@ -18,7 +17,6 @@ import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPer
 import com.techuntried.accountsbasics2.ui.progress.ProgressScreenRoot
 import com.techuntried.accountsbasics2.ui.rules.RulesScreenRoot
 import com.techuntried.accountsbasics2.ui.score.ScoreScreenRoot
-import com.techuntried.accountsbasics2.ui.searchData.SearchDataScreenRoot
 import com.techuntried.accountsbasics2.ui.sectionCategories.SectionCategoriesScreenRoot
 import com.techuntried.accountsbasics2.ui.settings.SettingsScreenRoot
 import com.techuntried.accountsbasics2.ui.start.StartScreenRoot
@@ -198,40 +196,6 @@ fun NavGraph(
                 }
             )
         }
-
-
-        composable<Routes.ExploreScreenRoute> {
-            ExploreScreenRoot(
-                openGameLevel = { levelArgs ->
-                    navController.navigate(levelArgs.toLevelScreenRoute())
-                },
-                openSearchData = {
-                    navController.navigate(Routes.SearchDataScreenRoute)
-                },
-                onMoreCategoriesClick = { section, grades ->
-                    navController.navigate(
-                        Routes.SectionCategoriesScreenRoute(
-                            section = section,
-                            grades = grades
-                        )
-                    )
-                }
-            )
-        }
-
-
-        composable<Routes.SearchDataScreenRoute> {
-            SearchDataScreenRoot(
-                onBack = {
-                    navController.navigateUp()
-                },
-                openGameLevel = {
-                    navController.navigate(it.toLevelScreenRoute())
-                }
-            )
-        }
-
-
 
 
         composable<Routes.SectionCategoriesScreenRoute> {

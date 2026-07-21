@@ -287,7 +287,7 @@ private fun <T> AnimatedContentTransitionScope<NavBackStackEntry>.shouldShowTran
 ): T {
     val noAnimationRoutes = listOf(
         Routes.HomeScreenRoute::class,
-        Routes.ExploreScreenRoute::class,
+        Routes.ImproveScreenRoute::class,
         Routes.ProgressScreenRoute::class,
         Routes.SettingsScreenRoute::class,
     )

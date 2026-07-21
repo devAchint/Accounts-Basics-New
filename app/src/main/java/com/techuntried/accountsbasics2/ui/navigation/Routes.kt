@@ -60,12 +60,6 @@ sealed class Routes {
     data object ProgressScreenRoute : Routes()
 
     @Serializable
-    object ExploreScreenRoute : Routes()
-
-    @Serializable
-    object SearchDataScreenRoute : Routes()
-
-    @Serializable
     data class SectionCategoriesScreenRoute(val section: String, val grades: List<Int>?) : Routes()
 
     @Serializable
