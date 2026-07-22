@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.data.mappers.asGameQuestion
-import com.techuntried.accountsbasics2.data.mappers.asWrongQuestionEntity
+import com.techuntried.accountsbasics2.data.mappers.asMistakeEntity
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.GameEconomy
@@ -303,18 +303,22 @@ class QuestionsViewModel @Inject constructor(
                     viewModelScope.launch {
                         if (isCorrect) {
                             roomRepository.updateCorrectAnswered(subjectId = id)
-                            roomRepository.deleteWrongQuestion(
-                                subjectId = args.subjectId,
-                                chapterId = args.chapterId,
-                                questionId = activeState.currentQuestion.questionId
+                            roomRepository.updateMistake(
+                                activeState.currentQuestion.asMistakeEntity(
+                                    subjectId = args.subjectId,
+                                    chapterId = args.chapterId,
+                                    userAnswer = selectedOption?.optionText,
+                                    fixed = true
+                                )
                             )
                         } else {
                             roomRepository.updateWrongAnswered(categoryId = id)
-                            roomRepository.updateWrongQuestionAnswered(
-                                activeState.currentQuestion.asWrongQuestionEntity(
+                            roomRepository.insertMistake(
+                                activeState.currentQuestion.asMistakeEntity(
                                     subjectId = args.subjectId,
                                     chapterId = args.chapterId,
-                                    userAnswer = selectedOption?.optionText
+                                    userAnswer = selectedOption?.optionText,
+                                    fixed = false
                                 )
                             )
                         }

@@ -4,10 +4,10 @@ import androidx.room.Entity
 import com.techuntried.accountsbasics2.domain.model.content.Option
 
 @Entity(
-    tableName = "wrong_questions",
+    tableName = "mistakes",
     primaryKeys = ["subjectId", "chapterId", "questionId"]
 )
-data class WrongQuestionEntity(
+data class MistakeEntity(
     val subjectId: Int,
     val chapterId: Int,
     val questionId: Int,
@@ -15,5 +15,7 @@ data class WrongQuestionEntity(
     val questionText: String,
     val options: List<Option>,
     val answeredTimeInMillis: Long,
-    val userAnswer: String?
+    val explanation:String,
+    val userAnswer: String?,
+    val fixed: Boolean
 )

@@ -1,6 +1,5 @@
 package com.techuntried.accountsbasics2.data.mappers
 
-import ads_mobile_sdk.id
 import com.techuntried.accountsbasics2.domain.model.SubjectProgressModel
 import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
@@ -17,11 +16,13 @@ import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
 import com.techuntried.accountsbasics2.domain.model.content.Option
 import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
 import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
-import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
+import com.techuntried.accountsbasics2.domain.model.entities.MistakeEntity
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
 import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
+import com.techuntried.accountsbasics2.ui.improve.MistakeItem
 import com.techuntried.accountsbasics2.ui.questions.OptionType
+import com.techuntried.accountsbasics2.utils.formatTimestamp
 
 
 fun SubjectWithProgressEntity.asCategoryWithProgressModel(): SubjectWithProgressModel {
@@ -159,7 +160,8 @@ fun QuestionApiResponse.asQuestionEntity(): QuestionEntity {
         options = options,
         correctOptionId = correctOptionId,
         chapterId = chapterId,
-        subjectId = subjectId
+        subjectId = subjectId,
+        explanation = explanation
     )
 }
 
@@ -170,7 +172,8 @@ fun QuestionEntity.asQuestionModel(): QuestionModel {
         options = options.map { it.asGameOption() },
         correctOptionId = correctOptionId,
         chapterId = chapterId,
-        subjectId = subjectId
+        subjectId = subjectId,
+        explanation = explanation
     )
 }
 
@@ -187,7 +190,8 @@ fun QuestionModel.asGameQuestion(): GameQuestionModel {
         correctOptionId = correctOptionId,
         options = options,
         questionId = questionId,
-        questionText = questionText
+        questionText = questionText,
+        explanation = explanation
     )
 }
 
@@ -220,12 +224,13 @@ fun GameOption.asOption(): Option {
     )
 }
 
-fun GameQuestionModel.asWrongQuestionEntity(
+fun GameQuestionModel.asMistakeEntity(
     subjectId: Int,
     chapterId: Int,
-    userAnswer: String?
-): WrongQuestionEntity {
-    return WrongQuestionEntity(
+    userAnswer: String?,
+    fixed: Boolean
+): MistakeEntity {
+    return MistakeEntity(
         subjectId = subjectId,
         chapterId = chapterId,
         questionId = questionId,
@@ -233,6 +238,24 @@ fun GameQuestionModel.asWrongQuestionEntity(
         questionText = questionText,
         options = options.map { it.asOption() },
         answeredTimeInMillis = System.currentTimeMillis(),
-        userAnswer = userAnswer
+        userAnswer = userAnswer,
+        explanation = explanation,
+        fixed = fixed,
+    )
+}
+
+fun MistakeEntity.asMistakeItem(id:Int,subject: String): MistakeItem{
+    return MistakeItem(
+        id=id,
+        subjectId = subjectId,
+        chapterId = chapterId,
+        questionId = questionId,
+        subject = subject,
+        date = formatTimestamp(answeredTimeInMillis),
+        questionText = questionText,
+        yourAnswer = userAnswer,
+        correctAnswer = "",
+        explanation = explanation,
+        isFixed = fixed
     )
 }

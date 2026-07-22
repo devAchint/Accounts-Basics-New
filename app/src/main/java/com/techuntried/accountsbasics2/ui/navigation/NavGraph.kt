@@ -238,7 +238,14 @@ fun NavGraph(
 
 
         composable<Routes.ImproveScreenRoute> {
-            ImproveScreenRoot()
+            ImproveScreenRoot(
+                practiceAll = {
+
+                },
+                practiceQuestion = {subjectId, chapterId, questionId ->
+
+                }
+            )
         }
     }
 }

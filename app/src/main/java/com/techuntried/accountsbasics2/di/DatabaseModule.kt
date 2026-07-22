@@ -42,7 +42,7 @@ class DatabaseModule {
     fun providesLearnContentDao(db: AppDatabase) = db.learnContentDao()
 
     @Provides
-    fun providesWrongQuestionDao(db: AppDatabase) = db.wrongQuestionDao()
+    fun providesMistakeDao(db: AppDatabase) = db.mistakeDao()
 
     @Provides
     @Singleton

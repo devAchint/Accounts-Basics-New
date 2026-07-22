@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bed6a7994b148c03f0f9d7709a9ab6f8",
+    "identityHash": "36725e931c66c3a38f0c8defe8d1cf70",
     "entities": [
       {
         "tableName": "subjects",
@@ -141,7 +141,7 @@
       },
       {
         "tableName": "questions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctOptionId` INTEGER NOT NULL, `questionText` TEXT NOT NULL, `options` TEXT NOT NULL, PRIMARY KEY(`subjectId`, `chapterId`, `questionId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctOptionId` INTEGER NOT NULL, `questionText` TEXT NOT NULL, `options` TEXT NOT NULL, `explanation` TEXT NOT NULL, PRIMARY KEY(`subjectId`, `chapterId`, `questionId`))",
         "fields": [
           {
             "fieldPath": "subjectId",
@@ -176,6 +176,12 @@
           {
             "fieldPath": "options",
             "columnName": "options",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -282,8 +288,8 @@
         }
       },
       {
-        "tableName": "wrong_questions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctOptionId` INTEGER NOT NULL, `questionText` TEXT NOT NULL, `options` TEXT NOT NULL, `answeredTimeInMillis` INTEGER NOT NULL, `userAnswer` TEXT, PRIMARY KEY(`subjectId`, `chapterId`, `questionId`))",
+        "tableName": "mistakes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`subjectId` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctOptionId` INTEGER NOT NULL, `questionText` TEXT NOT NULL, `options` TEXT NOT NULL, `answeredTimeInMillis` INTEGER NOT NULL, `explanation` TEXT NOT NULL, `userAnswer` TEXT, `fixed` INTEGER NOT NULL, PRIMARY KEY(`subjectId`, `chapterId`, `questionId`))",
         "fields": [
           {
             "fieldPath": "subjectId",
@@ -328,9 +334,21 @@
             "notNull": true
           },
           {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "userAnswer",
             "columnName": "userAnswer",
             "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fixed",
+            "columnName": "fixed",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -345,7 +363,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bed6a7994b148c03f0f9d7709a9ab6f8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '36725e931c66c3a38f0c8defe8d1cf70')"
     ]
   }
 }

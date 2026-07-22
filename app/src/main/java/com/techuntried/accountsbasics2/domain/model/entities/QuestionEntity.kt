@@ -13,5 +13,6 @@ data class QuestionEntity(
     val questionId: Int,
     val correctOptionId: Int,
     val questionText: String,
-    val options: List<Option>
+    val options: List<Option>,
+    val explanation: String
 )

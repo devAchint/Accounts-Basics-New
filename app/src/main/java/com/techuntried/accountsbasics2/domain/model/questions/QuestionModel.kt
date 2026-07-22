@@ -9,7 +9,8 @@ data class QuestionModel(
     val correctOptionId: Int,
     val options: List<GameOption>,
     val questionId: Int,
-    val questionText: String
+    val questionText: String,
+    val explanation: String
 )
 
 data class GameOption(
@@ -22,5 +23,6 @@ data class GameQuestionModel(
     val correctOptionId: Int,
     val options: List<GameOption>,
     val questionId: Int,
-    val questionText: String
+    val questionText: String,
+    val explanation: String
 )

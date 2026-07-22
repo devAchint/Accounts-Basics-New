@@ -1,16 +1,15 @@
 package com.techuntried.accountsbasics2.data.repository
 
-import ads_mobile_sdk.qu
 import android.util.Log
 import com.techuntried.accountsbasics2.data.database.SubjectDao
 import com.techuntried.accountsbasics2.data.database.SubjectProgressDao
 import com.techuntried.accountsbasics2.data.database.ChaptersDao
-import com.techuntried.accountsbasics2.data.database.WrongQuestionDao
+import com.techuntried.accountsbasics2.data.database.MistakeDao
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
-import com.techuntried.accountsbasics2.domain.model.entities.WrongQuestionEntity
+import com.techuntried.accountsbasics2.domain.model.entities.MistakeEntity
 import com.techuntried.accountsbasics2.utils.ApiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,7 +23,7 @@ class RoomRepository @Inject constructor(
     private val subjectDao: SubjectDao,
     private val chaptersDao: ChaptersDao,
     private val subjectProgressDao: SubjectProgressDao,
-    private val wrongQuestionDao: WrongQuestionDao
+    private val mistakeDao: MistakeDao
 ) {
 
     suspend fun fetchSubjectById(categoryId: Int): ApiResult<SubjectEntity> {
@@ -110,31 +109,37 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    suspend fun updateWrongQuestionAnswered(question: WrongQuestionEntity) {
+    suspend fun updateMistake(question: MistakeEntity) {
         safeRoomCall {
-            wrongQuestionDao.insertWrongQuestion(question)
+            mistakeDao.updateMistake(question)
+        }
+    }
+    
+    suspend fun insertMistake(question: MistakeEntity) {
+        safeRoomCall {
+            mistakeDao.insertMistake(question)
         }
     }
 
-    suspend fun deleteWrongQuestion(subjectId: Int, chapterId: Int, questionId: Int) {
+    suspend fun deleteMistake(subjectId: Int, chapterId: Int, questionId: Int) {
         safeRoomCall {
-            wrongQuestionDao.deleteWrongQuestion(subjectId, chapterId, questionId)
+            mistakeDao.deleteMistake(subjectId, chapterId, questionId)
         }
     }
 
 
-    fun getWrongQuestions(
+    fun getMistakes(
         subjectId: Int?
-    ): Flow<ApiResult<List<WrongQuestionEntity>>> {
+    ): Flow<ApiResult<List<MistakeEntity>>> {
 
         val flow = if (subjectId != null) {
-            wrongQuestionDao.getWrongQuestionsBySubject(subjectId)
+            mistakeDao.getMistakesBySubject(subjectId)
         } else {
-            wrongQuestionDao.getWrongQuestions()
+            mistakeDao.getMistakes()
         }
 
         return flow
-            .map<List<WrongQuestionEntity>, ApiResult<List<WrongQuestionEntity>>> {
+            .map<List<MistakeEntity>, ApiResult<List<MistakeEntity>>> {
                 ApiResult.Success(it)
             }
             .catch { e ->
