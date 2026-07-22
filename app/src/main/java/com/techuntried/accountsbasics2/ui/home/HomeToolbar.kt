@@ -5,12 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +29,7 @@ fun HomeToolbar(
     val subtitleOptions = listOf(
         "What would you like to play?",
         "Ready for a quick quiz?",
-        "Pick a topic and let's begin!",
+        "Pick a subject and let's begin!",
         "Boost your knowledge today!",
         "What challenge are you up for?",
         "Choose a category to get started!",
@@ -45,38 +40,37 @@ fun HomeToolbar(
     val randomSubtitle = rememberSaveable { subtitleOptions.random() }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(BackgroundColor)
-            .padding(horizontal = 10.dp, vertical = 8.dp), // ⭐ add this
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 6.dp, end = 16.dp)
                 .weight(1f)
+                .padding(end = 12.dp)
         ) {
             AnimatedVisibility(
                 visible = username != null,
-                enter = slideInVertically(
-                    initialOffsetY = { fullHeight -> fullHeight }
-                ) + fadeIn(),
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                 exit = fadeOut()
             ) {
                 Column {
                     Text(
-                        text = "Hi ${username}!",
+                        text = "Hi ${username ?: "Learner"}!",
                         color = MainText,
-                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.headlineMedium,
-                        maxLines = 1
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = randomSubtitle,
                         color = SecondaryText,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1
                     )
                 }
             }
@@ -89,16 +83,12 @@ fun HomeToolbar(
                     maxLines = 1
                 )
             }
-
         }
 
         BalanceLayout(
             onClick = showCoinsSheet,
             balance = coins,
-            modifier = Modifier
-                .padding(end = 6.dp)
-                .align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically)
         )
-
     }
 }

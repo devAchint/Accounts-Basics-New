@@ -1,28 +1,13 @@
 package com.techuntried.accountsbasics2.ui.home
 
-import android.R.attr.category
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,21 +15,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import coil.compose.AsyncImage
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.ui.commons.CommonButton
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
-import com.techuntried.accountsbasics2.ui.theme.ProgressColor
 import com.techuntried.accountsbasics2.ui.theme.ProgressTrackColor
 import com.techuntried.accountsbasics2.ui.theme.SecondaryText
-import com.techuntried.accountsbasics2.utils.Spacer
 import com.techuntried.accountsbasics2.utils.debouncedClickable
-import kotlin.text.Typography.section
 
 @Composable
 fun HomeContent(
@@ -53,58 +43,28 @@ fun HomeContent(
     onSectionMoreClick: (section: String) -> Unit,
     onSuggestClick: () -> Unit
 ) {
-    LazyColumn (
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(bottom = 40.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-
-//        item(span = { GridItemSpan(2) }) {
-//            YourGradeCard(
-//                grade = homeUiState.userGrade ?: Grade.GRADE_5, onClick = {}
-//            )
-//        }
-
+        // Continue Learning Card
         if (homeUiState.lastPlayedSubject != null) {
-            item() {
+            item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ) {
-                    Text(
-                        text = "Continue Learning",
-                        maxLines = 1,
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
-                    Spacer(10.dp)
+                    SectionHeaderTitle(title = "Continue Learning")
+                    Spacer(modifier = Modifier.height(10.dp))
                     HomeRecentItemCard(
-                        subjectWithProgressModel = homeUiState.lastPlayedSubject
-                    ) {
-                        onQuizCategoryClick(
-                            homeUiState.lastPlayedSubject.subject.subjectId,
-                            homeUiState.lastPlayedSubject.subject.name,
-                            homeUiState.lastPlayedSubject.subject.showTopics
-                        )
-                    }
-                }
-
-            }
-        }
-        if (!homeUiState.sectionCategories.isNullOrEmpty()) {
-            homeUiState.sectionCategories.forEach {
-                item {
-                    Text(
-                        text = it.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MainText,
-                        modifier = Modifier.padding(top = 12.dp)
-                    )
-                }
-                items(it.subjects){category->
-                    HomeSubjectItemCard(
-                        modifier = Modifier.fillMaxWidth(), subjectModel = category, onClick = {
+                        subjectWithProgressModel = homeUiState.lastPlayedSubject,
+                        onClick = {
                             onQuizCategoryClick(
-                                category.subjectId, category.name, category.showTopics
+                                homeUiState.lastPlayedSubject.subject.subjectId,
+                                homeUiState.lastPlayedSubject.subject.name,
+                                homeUiState.lastPlayedSubject.subject.showTopics
                             )
                         }
                     )
@@ -112,7 +72,37 @@ fun HomeContent(
             }
         }
 
-        item() {
+        // Subject Sections
+        if (!homeUiState.sectionCategories.isNullOrEmpty()) {
+            homeUiState.sectionCategories.forEachIndexed { index, section ->
+                item {
+                    SectionHeaderWithLink(
+                        title = section.title,
+                        onSeeAllClick = { onSectionMoreClick(section.title) }
+                    )
+                }
+
+                items(section.subjects) { subject ->
+                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        HomeSubjectItemCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            subjectModel = subject,
+                            onClick = {
+                                onQuizCategoryClick(
+                                    subject.subjectId,
+                                    subject.name,
+                                    subject.showTopics
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        // Bottom Suggestion Tip
+        item {
+            Spacer(modifier = Modifier.height(10.dp))
             if (homeUiState.sectionCategories?.isNotEmpty() == true) {
                 SuggestionTip(
                     modifier = Modifier
@@ -126,6 +116,35 @@ fun HomeContent(
 }
 
 @Composable
+private fun SectionHeaderTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineSmall,
+        color = MainText
+    )
+}
+
+@Composable
+private fun SectionHeaderWithLink(
+    title: String,
+    onSeeAllClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MainText
+        )
+    }
+}
+
+@Composable
 fun HomeRecentItemCard(
     modifier: Modifier = Modifier,
     subjectWithProgressModel: SubjectWithProgressModel,
@@ -133,93 +152,165 @@ fun HomeRecentItemCard(
 ) {
     val category = subjectWithProgressModel.subject
     val progress = subjectWithProgressModel.progress
-    val bgColor = category.bgColor?.let { Color(category.bgColor.toColorInt()) } ?: Color.White
+    val bgColor = try {
+        category.bgColor?.let { Color(category.bgColor.toColorInt()) } ?: Color.White
+    } catch (e: Exception) {
+        Color.White
+    }
 
-    Column(
+    val isMastered = progress.progressPercentage >= 100f
+
+    Box(
         modifier = modifier
-            .height(IntrinsicSize.Min)
-            .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, BorderColor, RoundedCornerShape(12.dp))
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
             .background(Color.White)
+            .border(1.5.dp, BorderColor, RoundedCornerShape(22.dp))
             .debouncedClickable { onClick() }
-            .padding(12.dp)) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            AsyncImage(
-                model = subjectWithProgressModel.subject.imageUrl,
-                placeholder = painterResource(R.drawable.image_placeholder),
-                error = painterResource(R.drawable.image_placeholder),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(bgColor)
-                    .padding(10.dp)
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
+            .padding(18.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    text = category.name,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = if (progress.chaptersCompleted == 1) {
-                        "${progress.chaptersCompleted} Level Completed"
+                // Subject Icon Box
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(bgColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = category.imageUrl,
+                        placeholder = painterResource(R.drawable.image_placeholder),
+                        error = painterResource(R.drawable.image_placeholder),
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = category.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MainText,
+                        maxLines = 2
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "${progress.chaptersCompleted} of ${category.chapters} levels completed",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = SecondaryText
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    // Chip
+                    if (isMastered) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color(0xFFECFDF5))
+                                .padding(horizontal = 9.dp, vertical = 3.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Canvas(modifier = Modifier.size(10.dp)) {
+                                    val path = Path().apply {
+                                        moveTo(size.width * 0.2f, size.height * 0.5f)
+                                        lineTo(size.width * 0.45f, size.height * 0.75f)
+                                        lineTo(size.width * 0.85f, size.height * 0.25f)
+                                    }
+                                    drawPath(
+                                        path = path,
+                                        color = Color(0xFF16A34A),
+                                        style = Stroke(
+                                            width = 2.dp.toPx(),
+                                            cap = StrokeCap.Round
+                                        )
+                                    )
+                                }
+                                Text(
+                                    text = "Mastered",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF16A34A)
+                                )
+                            }
+                        }
                     } else {
-                        "${progress.chaptersCompleted} Levels Completed"
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = SecondaryText,
-                    maxLines = 1
-                )
-                Spacer(4.dp)
-                Text(
-                    text = "Grade ${category.course}",
-                    color = SecondaryText,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color(0xFFEFF6FF))
+                                .padding(horizontal = 9.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "In Progress",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF2563EB)
+                            )
+                        }
+                    }
+                }
             }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(14.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(ProgressTrackColor) // Track
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Progress Bar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(
-                            (progress.progressPercentage / 100f).coerceIn(0f, 1f)
-                        )
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(ProgressColor)
+                        .weight(1f)
+                        .height(9.dp)
+                        .clip(CircleShape)
+                        .background(ProgressTrackColor)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(
+                                (progress.progressPercentage / 100f).coerceIn(0f, 1f)
+                            )
+                            .clip(CircleShape)
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(Color(0xFF22C55E), Color(0xFF16A34A))
+                                )
+                            )
+                    )
+                }
+
+                Text(
+                    text = "${progress.progressPercentage.toInt()}%",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MainText
                 )
             }
-            Spacer(8.dp)
-            Text(
-                text = "${progress.progressPercentage.toInt()}%",
-                maxLines = 1,
-                color = MainText,
-                style = MaterialTheme.typography.titleSmall
-            )
-        }
 
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Resume Button
+
+            CommonButton(
+                text = if (isMastered) "Review ${category.name}" else "Resume Quiz",
+                shape = RoundedCornerShape(12.dp),
+                backgroundColor = Color(0xFF111214),
+                contentColor = Color.White
+            ){
+                onClick()
+            }
+        }
     }
 }
