@@ -52,8 +52,6 @@ import com.techuntried.accountsbasics2.ui.commons.CommonButton
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
-import com.techuntried.accountsbasics2.ui.navigation.RuleArgs
-import com.techuntried.accountsbasics2.ui.navigation.ScoreArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
 import com.techuntried.accountsbasics2.ui.theme.MainText
@@ -63,14 +61,45 @@ import com.techuntried.accountsbasics2.utils.captureScreenshot
 import com.techuntried.accountsbasics2.utils.findActivity
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
+import com.techuntried.accountsbasics2.utils.levelRatingTextBuilder
 import com.techuntried.accountsbasics2.utils.saveScreenshotToInternalStorage
 import com.techuntried.accountsbasics2.utils.shareScreenshot
+import com.techuntried.accountsbasics2.utils.subjectAndChapter
+
+sealed interface ScoreTarget {
+    data class Learn(
+        val subjectId: Int,
+        val chapterId: Int,
+    ) : ScoreTarget
+
+    data class Subject(
+        val subjectId: Int,
+        val chapterId: Int,
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val questionReview: List<QuestionReviewModel>
+    ) : ScoreTarget
+
+    data class PracticeQuestion(
+        val subjectId: Int,
+        val chapterId: Int,
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val questionReview: List<QuestionReviewModel>
+    ) : ScoreTarget
+
+    data class PracticeAllQuestions(
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val questionReview: List<QuestionReviewModel>
+    ) : ScoreTarget
+}
 
 @Composable
 fun ScoreScreenRoot(
     modifier: Modifier = Modifier,
-    args: ScoreArgs,
-    navigateToRule: (ruleArgs: RuleArgs) -> Unit,
+    scoreTarget: ScoreTarget,
+    navigateToRule: (subjectId: Int, chapterId: Int) -> Unit,
     onBackPress: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -98,6 +127,10 @@ fun ScoreScreenRoot(
         }
     }
 
+    LaunchedEffect(scoreTarget) {
+        viewModel.initialize(scoreTarget)
+    }
+
     LaunchedEffect(Unit) {
         if (showInterstitial) {
             (context.findActivity())?.let { activity ->
@@ -112,7 +145,7 @@ fun ScoreScreenRoot(
                     )
                 }
             }
-        }else{
+        } else {
             config.recordInterstitialShown()
         }
     }
@@ -123,12 +156,12 @@ fun ScoreScreenRoot(
         nativeAdUnit = nativeAdUnit,
         rewardedAdUnit = rewardedAdUnit,
         logEvent = viewModel::logEvent,
-        isPracticeType = args.isPracticeType,
+        scoreTarget = scoreTarget,
         onAction = { action ->
             val finalAction =
                 if (action is ScoreActions.SubmitLevelRating) {
                     action.copy(
-                        ratingText = "Category ${args.subjectId} Level ${args.chapterId}\n${action.ratingText}"
+                        ratingText = scoreTarget.levelRatingTextBuilder(action.ratingText)
                     )
                 } else {
                     action
@@ -136,22 +169,14 @@ fun ScoreScreenRoot(
             viewModel.onAction(finalAction)
         },
         playNextLevel = {
-            navigateToRule(
-                RuleArgs(
-                    subjectId = args.subjectId,
-                    chapterId = args.chapterId + 1,
-                    isPracticeType = args.isPracticeType
-                )
-            )
+            scoreTarget.subjectAndChapter()?.let { (subjectId, chapterId) ->
+                navigateToRule(subjectId, chapterId + 1)
+            }
         },
         playAgain = {
-            navigateToRule(
-                RuleArgs(
-                    subjectId = args.subjectId,
-                    chapterId = args.chapterId,
-                    isPracticeType = args.isPracticeType
-                )
-            )
+            scoreTarget.subjectAndChapter()?.let { (subjectId, chapterId) ->
+                navigateToRule(subjectId, chapterId)
+            }
         },
         onBackPress = onBackPress,
     )
@@ -163,7 +188,7 @@ fun ScoreScreen(
     scoreScreenUiState: ScoreScreenUiState,
     nativeAdUnit: String? = null,
     rewardedAdUnit: String? = null,
-    isPracticeType:Boolean,
+    scoreTarget: ScoreTarget,
     coins: Int?,
     logEvent: (LogEventType) -> Unit,
     onAction: (ScoreActions) -> Unit = {},
@@ -225,7 +250,7 @@ fun ScoreScreen(
                         errorTitle = getErrorMessageTitle(scoreScreenUiState.message),
                         description = getErrorMessageDescription(scoreScreenUiState.message),
                         actionButton = "Try Again",
-                        action = { onAction(ScoreActions.Refresh) }
+                        action = { onAction(ScoreActions.Refresh(scoreTarget)) }
                     )
                 }
 
@@ -241,8 +266,8 @@ fun ScoreScreen(
                     ScoreContent(
                         scoreScreenUiState = scoreScreenUiState,
                         isCategory = true,
-                        isPracticeType =isPracticeType ,
                         nativeAdUnit = nativeAdUnit,
+                        scoreTarget = scoreTarget,
                         showQuestionReviewSheet = { questionsReviewSheetVisibility = true },
                         onAction = onAction,
                         playAgain = playAgain,
@@ -295,7 +320,6 @@ fun ScoreScreen(
         )
     }
 }
-
 
 
 @Composable

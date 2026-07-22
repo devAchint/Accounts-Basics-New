@@ -63,7 +63,7 @@ fun ScoreContent(
     modifier: Modifier = Modifier,
     scoreScreenUiState: ScoreScreenUiState.Success,
     isCategory: Boolean,
-    isPracticeType: Boolean,
+    scoreTarget: ScoreTarget,
     nativeAdUnit: String?,
     showQuestionReviewSheet: () -> Unit,
     logEvent: (LogEventType) -> Unit,
@@ -120,7 +120,7 @@ fun ScoreContent(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            if (isPracticeType) {
+            if (scoreTarget !is ScoreTarget.Learn) {
                 ScoreMetricsCard(
                     correct = scoreScreenUiState.score.correct,
                     total = scoreScreenUiState.score.totalQuestions,
@@ -140,7 +140,7 @@ fun ScoreContent(
                 )
             }
 
-            if (scoreScreenUiState.review.isNotEmpty() && isCategory && isPracticeType) {
+            if (scoreScreenUiState.review.isNotEmpty() && isCategory && scoreTarget !is ScoreTarget.Learn) {
                 Spacer(modifier = Modifier.height(20.dp))
                 QuestionReviewCard { showQuestionReviewSheet() }
             }

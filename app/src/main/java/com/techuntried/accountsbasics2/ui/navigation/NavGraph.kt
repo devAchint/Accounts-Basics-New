@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.ui.navigation
 
+import ads_mobile_sdk.su
 import com.techuntried.accountsbasics2.ui.improve.ImproveScreenRoot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,8 +16,10 @@ import com.techuntried.accountsbasics2.ui.home.HomeScreenRoot
 import com.techuntried.accountsbasics2.ui.learn.LearnScreenRoot
 import com.techuntried.accountsbasics2.ui.notificationPermission.NotificationPermissionScreenRoot
 import com.techuntried.accountsbasics2.ui.progress.ProgressScreenRoot
+import com.techuntried.accountsbasics2.ui.questions.QuestionsTarget
 import com.techuntried.accountsbasics2.ui.rules.RulesScreenRoot
 import com.techuntried.accountsbasics2.ui.score.ScoreScreenRoot
+import com.techuntried.accountsbasics2.ui.score.ScoreTarget
 import com.techuntried.accountsbasics2.ui.sectionCategories.SectionCategoriesScreenRoot
 import com.techuntried.accountsbasics2.ui.settings.SettingsScreenRoot
 import com.techuntried.accountsbasics2.ui.start.StartScreenRoot
@@ -100,9 +103,9 @@ fun NavGraph(
                 onBack = {
                     navController.navigateUp()
                 },
-                navigateToRules = { ruleArgs ->
+                navigateToRules = { chapterId ->
                     navController.navigate(
-                        ruleArgs.toRuleScreenRoute()
+                        Routes.RulesScreenRoute(subjectId = args.subjectId,chapterId)
                     )
                 }
             )
@@ -110,42 +113,107 @@ fun NavGraph(
 
         composable<Routes.RulesScreenRoute> {
             val args = it.toRoute<Routes.RulesScreenRoute>()
-            val ruleArgs = args.toRuleArgs()
             RulesScreenRoot(
-                args = ruleArgs,
                 onBackClick = {
                     navController.navigateUp()
                 },
-                navigateToQuestionsOrLearn = { questionArgs ->
-                    if (args.isPracticeType) {
-                        navController.navigate(questionArgs.toQuestionsScreenRoute()) {
-                            popUpTo<Routes.RulesScreenRoute> {
-                                inclusive = true
-                            }
-                        }
-                    } else {
+                navigateToQuestionsOrLearn = { timerCount,isLearnType ->
+                    if (isLearnType) {
                         navController.navigate(
                             Routes.LearnScreenRoute(
                                 subjectId = args.subjectId,
                                 chapterId = args.chapterId
                             )
                         )
+                    } else {
+                        val subjectQuestionRoute = Routes.SubjectQuestionsScreenRoute(
+                            subjectId = args.subjectId,
+                            chapterId = args.chapterId,
+                            timerCount = timerCount
+                        )
+                        navController.navigate(subjectQuestionRoute) {
+                            popUpTo<Routes.RulesScreenRoute> {
+                                inclusive = true
+                            }
+                        }
                     }
                 }
             )
         }
 
 
-        composable<Routes.QuestionsScreenRoute> {
-            val args = it.toRoute<Routes.QuestionsScreenRoute>()
-            val questionsArgs = args.toQuestionArgs()
+        composable<Routes.SubjectQuestionsScreenRoute> {
+            val args = it.toRoute<Routes.SubjectQuestionsScreenRoute>()
             QuestionsScreenRoot(
-                args = questionsArgs,
+                questionsTarget = QuestionsTarget.Subject(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
+                    timerCount = args.timerCount
+                ),
                 onBack = {
                     navController.navigateUp()
                 },
-                navigateToScore = { scoreArgs ->
-                    navController.navigate(scoreArgs.toScoreScreenRoute()) {
+                timerCount = args.timerCount,
+                navigateToScore = { correctAnswers, totalQuestions, questionsReview ->
+                    val subjectScoreRoute = Routes.SubjectScoreScreenRoute(
+                        subjectId = args.subjectId,
+                        chapterId = args.chapterId,
+                        correctAnswers = correctAnswers,
+                        totalQuestions = totalQuestions,
+                        questionReview = questionsReview
+                    )
+                    navController.navigate(subjectScoreRoute) {
+                        popUpTo(Routes.HomeScreenRoute) {
+                            inclusive = false
+                        }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.PracticeQuestionScreenRoute> {
+            val args = it.toRoute<Routes.PracticeQuestionScreenRoute>()
+            QuestionsScreenRoot(
+                questionsTarget = QuestionsTarget.PracticeQuestion(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
+                    questionId = args.questionId
+                ),
+                timerCount = null,
+                onBack = {
+                    navController.navigateUp()
+                },
+                navigateToScore = { correctAnswers, totalQuestions, questionsReview ->
+                    val practiceScoreRoute = Routes.PracticeScoreScreenRoute(
+                        subjectId = args.subjectId,
+                        chapterId = args.chapterId,
+                        correctAnswers = correctAnswers,
+                        totalQuestions = totalQuestions,
+                        questionReview = questionsReview
+                    )
+                    navController.navigate(practiceScoreRoute) {
+                        popUpTo(Routes.HomeScreenRoute) {
+                            inclusive = false
+                        }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.PracticeAllQuestionsScreenRoute> {
+            QuestionsScreenRoot(
+                questionsTarget = QuestionsTarget.PracticeAllQuestions,
+                onBack = {
+                    navController.navigateUp()
+                },
+                timerCount = null,
+                navigateToScore = { correctAnswers, totalQuestions, questionsReview ->
+                    val practiceAllScoreRoute = Routes.PracticeAllScoreScreenRoute(
+                        correctAnswers = correctAnswers,
+                        totalQuestions = totalQuestions,
+                        questionReview = questionsReview
+                    )
+                    navController.navigate(practiceAllScoreRoute) {
                         popUpTo(Routes.HomeScreenRoute) {
                             inclusive = false
                         }
@@ -155,24 +223,89 @@ fun NavGraph(
         }
 
 
-        composable<Routes.ScoreScreenRoute>(
+        composable<Routes.SubjectScoreScreenRoute>(
             typeMap = mapOf(
                 typeOf<List<QuestionReviewModel>>() to serializableType<List<QuestionReviewModel>>()
             )
         ) {
-            val args = it.toRoute<Routes.ScoreScreenRoute>()
-            val scoreArgs = args.toScoreArgs()
+            val args = it.toRoute<Routes.SubjectScoreScreenRoute>()
             ScoreScreenRoot(
-                args = scoreArgs,
-                navigateToRule = { ruleArgs ->
-                    navController.navigate(
-                        ruleArgs.toRuleScreenRoute()
-                    ) {
-                        popUpTo<Routes.ScoreScreenRoute> {
+                scoreTarget = ScoreTarget.Subject(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
+                    correctAnswers = args.correctAnswers,
+                    totalQuestions = args.totalQuestions,
+                    questionReview = args.questionReview
+                ),
+                navigateToRule = { subjectId,chapterId->
+                    val ruleScreenRoute = Routes.RulesScreenRoute(subjectId = subjectId, chapterId = chapterId)
+                    navController.navigate(ruleScreenRoute ) {
+                        popUpTo<Routes.SubjectScoreScreenRoute> {
                             inclusive = true
                         }
                     }
                 },
+                onBackPress = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<Routes.LearnScoreScreenRoute> {
+            val args = it.toRoute<Routes.LearnScoreScreenRoute>()
+            ScoreScreenRoot(
+                scoreTarget = ScoreTarget.Learn(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
+                ),
+                navigateToRule = { subjectId,chapterId->
+                    val ruleScreenRoute = Routes.RulesScreenRoute(subjectId = subjectId, chapterId = chapterId)
+                    navController.navigate(ruleScreenRoute) {
+                        popUpTo<Routes.LearnScoreScreenRoute> {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackPress = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<Routes.PracticeScoreScreenRoute>(
+            typeMap = mapOf(
+                typeOf<List<QuestionReviewModel>>() to serializableType<List<QuestionReviewModel>>()
+            )
+        ) {
+            val args = it.toRoute<Routes.PracticeScoreScreenRoute>()
+            ScoreScreenRoot(
+                scoreTarget = ScoreTarget.PracticeQuestion(
+                    subjectId = args.subjectId,
+                    chapterId = args.chapterId,
+                    correctAnswers = args.correctAnswers,
+                    totalQuestions = args.totalQuestions,
+                    questionReview = args.questionReview
+                ),
+                navigateToRule = { _,_->},
+                onBackPress = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<Routes.PracticeAllScoreScreenRoute>(
+            typeMap = mapOf(
+                typeOf<List<QuestionReviewModel>>() to serializableType<List<QuestionReviewModel>>()
+            )
+        ) {
+            val args = it.toRoute<Routes.PracticeAllScoreScreenRoute>()
+            ScoreScreenRoot(
+                scoreTarget = ScoreTarget.PracticeAllQuestions(
+                    correctAnswers = args.correctAnswers,
+                    totalQuestions = args.totalQuestions,
+                    questionReview = args.questionReview
+                ),
+                navigateToRule = { _,_->},
                 onBackPress = {
                     navController.navigateUp()
                 }
@@ -219,15 +352,11 @@ fun NavGraph(
                     navController.navigateUp()
                 },
                 onFinish = {
-                    val scoreArgs = ScoreArgs(
+                    val learnScoreRoute = Routes.LearnScoreScreenRoute(
                         subjectId = args.subjectId,
-                        chapterId = args.chapterId,
-                        isPracticeType = false,
-                        correctAnswers = 0,
-                        totalQuestions = 0,
-                        questionReview = emptyList()
+                        chapterId = args.chapterId
                     )
-                    navController.navigate(scoreArgs.toScoreScreenRoute()) {
+                    navController.navigate(learnScoreRoute) {
                         popUpTo(Routes.HomeScreenRoute) {
                             inclusive = false
                         }
@@ -240,10 +369,24 @@ fun NavGraph(
         composable<Routes.ImproveScreenRoute> {
             ImproveScreenRoot(
                 practiceAll = {
-
+                    val practiceAllQuestionsScreenRoute = Routes.PracticeAllQuestionsScreenRoute
+                    navController.navigate(practiceAllQuestionsScreenRoute) {
+                        popUpTo(Routes.ImproveScreenRoute) {
+                            inclusive = false
+                        }
+                    }
                 },
-                practiceQuestion = {subjectId, chapterId, questionId ->
-
+                practiceQuestion = { subjectId, chapterId, questionId ->
+                    val practiceQuestionScreenRoute = Routes.PracticeQuestionScreenRoute(
+                        subjectId = subjectId,
+                        chapterId = chapterId,
+                        questionId = questionId
+                    )
+                    navController.navigate(practiceQuestionScreenRoute) {
+                        popUpTo(Routes.ImproveScreenRoute) {
+                            inclusive = false
+                        }
+                    }
                 }
             )
         }

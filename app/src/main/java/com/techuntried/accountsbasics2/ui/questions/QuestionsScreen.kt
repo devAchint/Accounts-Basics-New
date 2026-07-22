@@ -55,11 +55,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.techuntried.accountsbasics2.R
 import com.techuntried.accountsbasics2.ads.NativeAdManager
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
+import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
 import com.techuntried.accountsbasics2.ui.commons.CommonCircularProgress
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.dialog.ResumeGameDialog
-import com.techuntried.accountsbasics2.ui.navigation.QuestionsArgs
-import com.techuntried.accountsbasics2.ui.navigation.ScoreArgs
 import com.techuntried.accountsbasics2.ui.sheets.ConfirmBackSheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
@@ -73,13 +72,30 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 import com.techuntried.accountsbasics2.utils.textColor
 
+sealed interface QuestionsTarget {
+    data class Subject(
+        val subjectId: Int,
+        val chapterId: Int,
+        val timerCount: Int?
+    ) : QuestionsTarget
+
+    data class PracticeQuestion(
+        val subjectId: Int,
+        val chapterId: Int,
+        val questionId: Int,
+    ) : QuestionsTarget
+
+    data object PracticeAllQuestions : QuestionsTarget
+}
+
 @Composable
 fun QuestionsScreenRoot(
     modifier: Modifier = Modifier,
-    args: QuestionsArgs,
+    questionsTarget: QuestionsTarget,
+    timerCount: Int?,
     onBack: () -> Unit = {},
     navigateToScore: (
-        scoreArgs: ScoreArgs
+        correctAnswers: Int, totalQuestions: Int, questionsReview: List<QuestionReviewModel>
     ) -> Unit,
 ) {
     val context = LocalContext.current
@@ -101,7 +117,8 @@ fun QuestionsScreenRoot(
         globalConfigState.testOrRealRewardedAdUnit()
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(questionsTarget) {
+        viewModel.initialize(questionsTarget)
         NativeAdManager.resetDialogShown()
         nativeAdUnit?.let {
             NativeAdManager.loadAd(nativeAdUnit, logEvent = viewModel::logEvent)
@@ -132,14 +149,9 @@ fun QuestionsScreenRoot(
         isGameCompleted?.let { gameCompleted ->
             if (gameCompleted) {
                 navigateToScore(
-                    ScoreArgs(
-                        subjectId = args.subjectId,
-                        chapterId = args.chapterId,
-                        correctAnswers = gameUiState.correctAnswers,
-                        totalQuestions = gameUiState.totalQuestions,
-                        questionReview = viewModel.questionReviewList,
-                        isPracticeType = true
-                    )
+                    gameUiState.correctAnswers,
+                    gameUiState.totalQuestions,
+                    viewModel.questionReviewList
                 )
             }
         }
@@ -161,23 +173,18 @@ fun QuestionsScreenRoot(
             )
         },
         refresh = {
-            viewModel.refresh()
+            viewModel.fetchQuestions(questionsTarget)
         },
         onBack = onBack,
         logEvent = viewModel::logEvent,
-        timerCount = args.timerCount,
+        timerCount = timerCount,
         endGame = {
             val activeGameState = gameUiState as? GameUiState.ActiveGame
             activeGameState?.let {
                 navigateToScore(
-                    ScoreArgs(
-                        subjectId = args.subjectId,
-                        chapterId = args.chapterId,
-                        correctAnswers = gameUiState.correctAnswers,
-                        totalQuestions = gameUiState.totalQuestions,
-                        questionReview = viewModel.questionReviewList,
-                        isPracticeType = true
-                    )
+                    gameUiState.correctAnswers,
+                    gameUiState.totalQuestions,
+                    viewModel.questionReviewList
                 )
             }
         }
@@ -230,9 +237,9 @@ private fun QuestionsScreen(
     modifier: Modifier = Modifier,
     gameUiState: GameUiState,
     coins: Int,
-    tryAgainCost:Int,
-    splitCost:Int,
-    addTimeCost:Int,
+    tryAgainCost: Int,
+    splitCost: Int,
+    addTimeCost: Int,
     nativeAdUnit: String?,
     rewardedAdUnit: String?,
     logEvent: (LogEventType) -> Unit,
@@ -321,10 +328,10 @@ fun PowerUpsRow(
     share: () -> Unit = {},
     splitEnabled: Boolean = true,
     addTimeEnabled: Boolean = true,
-    addTimeCost:Int,
-    splitCost:Int,
+    addTimeCost: Int,
+    splitCost: Int,
 
-) {
+    ) {
     val context = LocalContext.current
 
     Row(

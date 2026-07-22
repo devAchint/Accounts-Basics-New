@@ -52,7 +52,7 @@ inline fun ScoreScreenUiState.updateSuccess(
 }
 
 sealed interface ScoreActions {
-    data object Refresh : ScoreActions
+    data class Refresh(val scoreTarget: ScoreTarget) : ScoreActions
     data class AddCoins(val coins: Int) : ScoreActions
     data object DismissScoreRating : ScoreActions
     data object DismissLevelRating : ScoreActions

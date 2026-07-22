@@ -1,5 +1,6 @@
 package com.techuntried.accountsbasics2.utils
 
+import android.R.attr.action
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -45,6 +46,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 //import com.google.firebase.Firebase
 //import com.google.firebase.messaging.messaging
 import com.techuntried.accountsbasics2.ui.navigation.Routes
+import com.techuntried.accountsbasics2.ui.score.ScoreTarget
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -434,5 +436,24 @@ fun rememberDebouncedClick(
             lastClickTime = currentTime
             onClick()
         }
+    }
+}
+
+
+fun ScoreTarget.levelRatingTextBuilder(ratingText: String): String {
+    return when (this) {
+        is ScoreTarget.Learn -> "Subject $subjectId Level ${chapterId}\n${ratingText}"
+        is ScoreTarget.PracticeAllQuestions -> "Practice All \n${ratingText}"
+        is ScoreTarget.PracticeQuestion -> "Subject $subjectId Level ${chapterId}\n${ratingText}"
+        is ScoreTarget.Subject -> "Subject $subjectId Level ${chapterId}\n${ratingText}"
+    }
+}
+
+fun ScoreTarget.subjectAndChapter(): Pair<Int,Int>? {
+    return when (this) {
+        is ScoreTarget.Learn -> Pair(subjectId,chapterId)
+        is ScoreTarget.PracticeAllQuestions -> null
+        is ScoreTarget.PracticeQuestion -> null
+        is ScoreTarget.Subject ->  Pair(subjectId,chapterId)
     }
 }

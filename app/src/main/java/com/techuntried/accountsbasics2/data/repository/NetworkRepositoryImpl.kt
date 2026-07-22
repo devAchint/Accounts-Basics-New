@@ -164,6 +164,17 @@ class NetworkRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchSingleQuestion(
+        subjectId: Int,
+        chapterId: Int,
+        questionId: Int
+    ): ApiResult<FetchQuestionsResponse> {
+        return getApiResponse {
+            client.get("api/questionsByChapter/$subjectId/$chapterId")
+                .body<FetchQuestionsResponse>()
+        }
+    }
+
     override suspend fun fetchLearnContent(
         subjectId: Int,
         chapterId: Int

@@ -81,10 +81,10 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    suspend fun updateWrongAnswered(categoryId: Int) {
+    suspend fun updateWrongAnswered(subjectId: Int) {
         safeRoomCall {
             subjectProgressDao.updateWrongAnswered(
-                id = categoryId,
+                id = subjectId,
                 lastPlayedTime = System.currentTimeMillis()
             )
         }
@@ -114,7 +114,7 @@ class RoomRepository @Inject constructor(
             mistakeDao.updateMistake(question)
         }
     }
-    
+
     suspend fun insertMistake(question: MistakeEntity) {
         safeRoomCall {
             mistakeDao.insertMistake(question)
@@ -128,14 +128,14 @@ class RoomRepository @Inject constructor(
     }
 
 
-    fun getMistakes(
+    fun observeMistakes(
         subjectId: Int?
     ): Flow<ApiResult<List<MistakeEntity>>> {
 
         val flow = if (subjectId != null) {
-            mistakeDao.getMistakesBySubject(subjectId)
+            mistakeDao.observeMistakesBySubject(subjectId)
         } else {
-            mistakeDao.getMistakes()
+            mistakeDao.observeMistakes()
         }
 
         return flow
@@ -151,6 +151,24 @@ class RoomRepository @Inject constructor(
                 )
             }
     }
+
+    suspend fun getMistakes(
+        subjectId: Int?
+    ): ApiResult<List<MistakeEntity>> {
+        return try {
+            val mistakes = if (subjectId != null) {
+                mistakeDao.getMistakesBySubject(subjectId)
+            } else {
+                mistakeDao.getMistakes()
+            }
+            ApiResult.Success(mistakes)
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Log.d("MYDEBUG", "${e.message}")
+            ApiResult.Error("Oops! Something went wrong while fetching category. Please try again.")
+        }
+    }
+
 
 }
 

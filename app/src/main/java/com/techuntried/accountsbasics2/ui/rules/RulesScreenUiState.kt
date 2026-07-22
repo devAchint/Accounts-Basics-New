@@ -9,7 +9,9 @@ sealed interface RulesScreenUiState {
         val bgColor: String? = null,
         val iconUrl: String? = null,
         val timerCount: Int? = null,
-        val isRuleFirstTime: Boolean? = null
+        val isRuleFirstTime: Boolean? = null,
+        val isLearnType:Boolean,
+        val chapterId:Int
     ) : RulesScreenUiState
 }
 

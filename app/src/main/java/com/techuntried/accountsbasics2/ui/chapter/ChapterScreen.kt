@@ -58,7 +58,6 @@ import com.techuntried.accountsbasics2.ui.dialog.CommonInformationDialog
 import com.techuntried.accountsbasics2.ui.dialog.ChapterLockedDialog
 import com.techuntried.accountsbasics2.ui.dialog.ChapterUnLockedDialog
 import com.techuntried.accountsbasics2.ui.navigation.ChapterArgs
-import com.techuntried.accountsbasics2.ui.navigation.RuleArgs
 import com.techuntried.accountsbasics2.ui.sheets.SuggestionSheet
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.ui.theme.BorderColor
@@ -79,7 +78,7 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 fun ChaptersScreenRoot(
     modifier: Modifier = Modifier,
     args: ChapterArgs,
-    navigateToRules: (RuleArgs) -> Unit,
+    navigateToRules: (chapterId: Int) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -116,12 +115,7 @@ fun ChaptersScreenRoot(
         bannerAdUnit = bannerAdUnit,
         rewardedAdUnit = rewardedAdUnit,
         openRules = { levelId, isPracticeType ->
-            val ruleArgs = RuleArgs(
-                subjectId = args.subjectId,
-                chapterId = levelId,
-                isPracticeType = isPracticeType
-            )
-            navigateToRules(ruleArgs)
+            navigateToRules(levelId)
         },
         categoryName = args.subjectName,
         logEvent = viewModel::logEvent,

@@ -23,17 +23,48 @@ sealed class Routes {
     object StartScreenRoute : Routes()
 
     @Serializable
-    data class QuestionsScreenRoute(
+    data class SubjectQuestionsScreenRoute(
         val subjectId: Int,
         val chapterId: Int,
         val timerCount: Int?
     ) : Routes()
 
     @Serializable
-    data class ScoreScreenRoute(
+    data class PracticeQuestionScreenRoute(
         val subjectId: Int,
         val chapterId: Int,
-        val isPracticeType: Boolean,
+        val questionId: Int,
+    ) : Routes()
+
+    @Serializable
+    data object PracticeAllQuestionsScreenRoute : Routes()
+
+    @Serializable
+    data class LearnScoreScreenRoute(
+        val subjectId: Int,
+        val chapterId: Int,
+    ) : Routes()
+
+    @Serializable
+    data class SubjectScoreScreenRoute(
+        val subjectId: Int,
+        val chapterId: Int,
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val questionReview: List<QuestionReviewModel>
+    ) : Routes()
+
+    @Serializable
+    data class PracticeScoreScreenRoute(
+        val subjectId: Int,
+        val chapterId: Int,
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val questionReview: List<QuestionReviewModel>
+    ) : Routes()
+
+    @Serializable
+    data class PracticeAllScoreScreenRoute(
         val correctAnswers: Int,
         val totalQuestions: Int,
         val questionReview: List<QuestionReviewModel>
@@ -43,7 +74,6 @@ sealed class Routes {
     data class RulesScreenRoute(
         val subjectId: Int,
         val chapterId: Int,
-        val isPracticeType: Boolean
     ) : Routes()
 
     @Serializable

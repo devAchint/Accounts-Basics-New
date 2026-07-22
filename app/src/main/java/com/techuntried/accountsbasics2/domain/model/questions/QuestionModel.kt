@@ -18,11 +18,3 @@ data class GameOption(
     val optionText: String,
     val optionType: OptionType = OptionType.Unselected
 )
-
-data class GameQuestionModel(
-    val correctOptionId: Int,
-    val options: List<GameOption>,
-    val questionId: Int,
-    val questionText: String,
-    val explanation: String
-)

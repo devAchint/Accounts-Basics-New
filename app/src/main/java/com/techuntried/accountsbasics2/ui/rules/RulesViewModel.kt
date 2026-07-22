@@ -113,7 +113,9 @@ class RulesViewModel @Inject constructor(
                         iconUrl = subjectResult.data.imageUrl,
                         bgColor = subjectResult.data.bgColor,
                         timerCount = if (isTimer) 15 else null,
-                        isRuleFirstTime = isFirstTime
+                        isRuleFirstTime = isFirstTime,
+                        isLearnType = chapterResult.data.type=="learn",
+                        chapterId = chapterResult.data.chapterId
                     )
                 } else {
                     val errorMsg = when {

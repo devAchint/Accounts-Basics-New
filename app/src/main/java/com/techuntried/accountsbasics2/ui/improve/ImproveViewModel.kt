@@ -63,7 +63,7 @@ class ImproveViewModel @Inject constructor(
                     is ApiResult.Error -> emptyMap()
                 }
 
-                roomRepository.getMistakes(null)
+                roomRepository.observeMistakes(null)
                     .collect { result ->
                         when (result) {
                             is ApiResult.Success -> {

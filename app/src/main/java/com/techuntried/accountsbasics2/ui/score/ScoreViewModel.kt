@@ -2,16 +2,14 @@ package com.techuntried.accountsbasics2.ui.score
 
 
 import android.util.Log
+import android.util.StatsLog.logEvent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
-import com.techuntried.accountsbasics2.ui.navigation.Routes
-import com.techuntried.accountsbasics2.ui.navigation.serializableType
 import com.techuntried.accountsbasics2.usecases.GetSubjectDetailsUseCase
 import com.techuntried.accountsbasics2.usecases.GetChapterDetailsUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
@@ -32,7 +30,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
-import kotlin.reflect.typeOf
 
 
 data class ScoreModel(
@@ -59,17 +56,6 @@ class ScoreViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val scoreArgs = savedStateHandle.toRoute<Routes.ScoreScreenRoute>(
-        mapOf(
-            typeOf<List<QuestionReviewModel>>() to serializableType<List<QuestionReviewModel>>()
-        )
-    )
-
-    private var correctAnswered = scoreArgs.correctAnswers
-    private var subjectId = scoreArgs.subjectId
-    private var chapterId = scoreArgs.chapterId
-    private val totalQuestions = scoreArgs.totalQuestions
-    private var review = scoreArgs.questionReview
 
     private val _scoreScreenUiState =
         MutableStateFlow<ScoreScreenUiState>(ScoreScreenUiState.Loading)
@@ -88,27 +74,104 @@ class ScoreViewModel @Inject constructor(
 
     val config = globalConfigController.globalConfig
 
-    init {
-        fetchData()
-        updateAnalytics(
-            subjectId = subjectId,
-            chapterId = chapterId,
-            totalQuestions = totalQuestions,
-            answeredCount = review.size
-        )
+
+    fun initialize(target: ScoreTarget) {
+        fetchData(target)
+        updateAnalytics(target)
     }
 
+    fun fetchData(target: ScoreTarget) {
+        when (target) {
+            is ScoreTarget.Learn -> {
+                calculateLearnResult(target.subjectId, target.chapterId)
+            }
 
-    fun fetchData() {
-        calculateResult(correctAnswered, subjectId, chapterId, review)
+            is ScoreTarget.PracticeAllQuestions -> {
+                calculatePracticeAllResult(
+                    target.correctAnswers,
+                    target.questionReview
+                )
+            }
+
+            is ScoreTarget.PracticeQuestion -> {
+                calculateSubjectResult(
+                    target.correctAnswers,
+                    target.subjectId,
+                    target.chapterId,
+                    target.questionReview
+                )
+            }
+
+            is ScoreTarget.Subject -> {
+                calculateSubjectResult(
+                    target.correctAnswers,
+                    target.subjectId,
+                    target.chapterId,
+                    target.questionReview
+                )
+            }
+        }
     }
 
-    fun refreshData() {
-        fetchData()
+    private fun calculateLearnResult(
+        subjectId: Int,
+        chapterId: Int,
+    ) {
+        viewModelScope.launch {
+            _scoreScreenUiState.value = ScoreScreenUiState.Loading
+            try {
+                val subjectDeferred = async { getSubjectDetailsUseCase(subjectId) }
+                val chapterDeferred = async { getChapterDetailsUseCase(subjectId, chapterId) }
+
+                val subjectResult = subjectDeferred.await()
+                val chapterResult = chapterDeferred.await()
+
+                if (subjectResult is ApiResult.Success && chapterResult is ApiResult.Success) {
+                    val chapter = chapterResult.data
+                    val subjectName = subjectResult.data.name
+                    val section = subjectResult.data.section
+                    val totalChapters = subjectResult.data.chapters
+                    val chapterName = chapter.name
+
+                    val score = ScoreModel(
+                        title = subjectName,
+                        isWon = true,
+                        isLastChapter = totalChapters == chapterId,
+                        description = chapterName,
+                        totalQuestions = 0,
+                        correct = 0,
+                        coinsEarned = 0,
+                        accuracy = 0
+                    )
+
+
+                    // 🔹 UPDATE UI ONCE
+                    _scoreScreenUiState.value = ScoreScreenUiState.Success(
+                        score = score,
+                        review = emptyList(),
+                        levelRatingEnabled = config.value.levelRatingEnabled
+                    )
+
+                    // 🔹 SIDE EFFECTS (can be sequential or parallel)
+                    handlePostScoreActions(
+                        isWon = true,
+                        coinsEarned = 0,
+                        subjectId = subjectId,
+                        chapterId = chapterId,
+                        section = section,
+                    )
+                } else {
+                    _scoreScreenUiState.value =
+                        ScoreScreenUiState.Error(errorMessage = "Something went wrong")
+                }
+            } catch (e: Exception) {
+                _scoreScreenUiState.value =
+                    ScoreScreenUiState.Error(errorMessage = e.message ?: "Something went wrong")
+            }
+        }
     }
 
-
-    private fun calculateResult(
+    private fun calculateSubjectResult(
         correctAnswers: Int,
         subjectId: Int,
         chapterId: Int,
@@ -138,37 +201,24 @@ class ScoreViewModel @Inject constructor(
                     val isWon = correctAnswers >= minimumScore
                     val coinsEarned = if (isWon) correctAnswers * rewardCoins else 0
 
-                    val score = if (scoreArgs.isPracticeType) {
 
+                    val attempted = review.size
+                    val accuracy =
+                        if (attempted > 0)
+                            ((correctAnswers.toDouble() / attempted) * 100).toInt()
+                        else 0
 
-                        val attempted = review.size
-                        val accuracy =
-                            if (attempted > 0)
-                                ((correctAnswers.toDouble() / attempted) * 100).toInt()
-                            else 0
+                    val score = ScoreModel(
+                        title = subjectName,
+                        isWon = isWon,
+                        isLastChapter = totalChapters == chapterId,
+                        description = chapterName,
+                        totalQuestions = totalQuestions,
+                        correct = correctAnswers,
+                        coinsEarned = coinsEarned,
+                        accuracy = accuracy
+                    )
 
-                        ScoreModel(
-                            title = subjectName,
-                            isWon = isWon,
-                            isLastChapter = totalChapters == chapterId,
-                            description = chapterName,
-                            totalQuestions = totalQuestions,
-                            correct = correctAnswers,
-                            coinsEarned = coinsEarned,
-                            accuracy = accuracy
-                        )
-                    } else {
-                        ScoreModel(
-                            title = subjectName,
-                            isWon = true,
-                            isLastChapter = totalChapters == chapterId,
-                            description = chapterName,
-                            totalQuestions = 0,
-                            correct = 0,
-                            coinsEarned = 0,
-                            accuracy = 0
-                        )
-                    }
 
                     // 🔹 UPDATE UI ONCE
                     _scoreScreenUiState.value = ScoreScreenUiState.Success(
@@ -189,6 +239,64 @@ class ScoreViewModel @Inject constructor(
                     _scoreScreenUiState.value =
                         ScoreScreenUiState.Error(errorMessage = "Something went wrong")
                 }
+            } catch (e: Exception) {
+                _scoreScreenUiState.value =
+                    ScoreScreenUiState.Error(errorMessage = e.message ?: "Something went wrong")
+            }
+        }
+    }
+
+    private fun calculatePracticeAllResult(
+        correctAnswers: Int,
+        review: List<QuestionReviewModel>
+    ) {
+        viewModelScope.launch {
+            _scoreScreenUiState.value = ScoreScreenUiState.Loading
+            try {
+                val rewardCoins = dataStoreRepository.fetchCorrectAnswerCoins()
+
+                val totalQuestions = 0 //chapter.questions
+
+                // 🔹 BUSINESS LOGIC
+                val minimumScore = (totalQuestions * 60) / 100
+                val isWon = correctAnswers >= minimumScore
+                val coinsEarned = if (isWon) correctAnswers * rewardCoins else 0
+
+
+                val attempted = review.size
+                val accuracy =
+                    if (attempted > 0)
+                        ((correctAnswers.toDouble() / attempted) * 100).toInt()
+                    else 0
+
+                val score = ScoreModel(
+                    title = "Practice Questions",
+                    isWon = isWon,
+                    isLastChapter = true,
+                    description = "Practice Questions",
+                    totalQuestions = totalQuestions,
+                    correct = correctAnswers,
+                    coinsEarned = coinsEarned,
+                    accuracy = accuracy
+                )
+
+
+                // 🔹 UPDATE UI ONCE
+                _scoreScreenUiState.value = ScoreScreenUiState.Success(
+                    score = score,
+                    review = review,
+                    levelRatingEnabled = config.value.levelRatingEnabled
+                )
+
+                // 🔹 SIDE EFFECTS (can be sequential or parallel)
+                handlePostScoreActions(
+                    isWon = false,
+                    coinsEarned = coinsEarned,
+                    subjectId = 0,
+                    chapterId = 0,
+                    section = null,
+                )
+
             } catch (e: Exception) {
                 _scoreScreenUiState.value =
                     ScoreScreenUiState.Error(errorMessage = e.message ?: "Something went wrong")
@@ -226,27 +334,30 @@ class ScoreViewModel @Inject constructor(
 
 
     fun updateAnalytics(
-        subjectId: Int,
-        chapterId: Int,
-        answeredCount: Int,
-        totalQuestions: Int,
+        target: ScoreTarget
     ) {
-        if (scoreArgs.isPracticeType) {
-            logEvent(
-                LogEventType.PracticeChapterComplete(
-                    subjectId = subjectId,
-                    chapterId = chapterId,
-                    answeredCount = answeredCount,
-                    totalQuestions = totalQuestions
+        when (target) {
+            is ScoreTarget.Learn -> {
+                logEvent(
+                    LogEventType.LearnChapterComplete(
+                        subjectId = target.subjectId,
+                        chapterId = target.chapterId,
+                    )
                 )
-            )
-        } else {
-            logEvent(
-                LogEventType.LearnChapterComplete(
-                    subjectId = subjectId,
-                    chapterId = chapterId,
+            }
+
+            is ScoreTarget.PracticeAllQuestions -> {}
+            is ScoreTarget.PracticeQuestion -> {}
+            is ScoreTarget.Subject -> {
+                logEvent(
+                    LogEventType.PracticeChapterComplete(
+                        subjectId = target.subjectId,
+                        chapterId = target.chapterId,
+                        answeredCount = target.correctAnswers,
+                        totalQuestions = target.totalQuestions
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -271,7 +382,7 @@ class ScoreViewModel @Inject constructor(
         when (scoreAction) {
             ScoreActions.DismissLevelRating -> dismissLevelRating()
             ScoreActions.DismissScoreRating -> dismissScoreRating()
-            is ScoreActions.Refresh -> refreshData()
+            is ScoreActions.Refresh -> fetchData(scoreAction.scoreTarget)
             is ScoreActions.AddCoins -> addCoins(scoreAction.coins)
             is ScoreActions.SubmitLevelRating -> submitFeedback(scoreAction.ratingText)
             is ScoreActions.SubmitAppRating -> submitFeedback(scoreAction.ratingText)

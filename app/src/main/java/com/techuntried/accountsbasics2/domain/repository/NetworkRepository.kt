@@ -35,6 +35,10 @@ interface NetworkRepository {
         chapterId: Int
     ): ApiResult<FetchQuestionsResponse>
 
+    suspend fun fetchSingleQuestion(
+        subjectId: Int,chapterId:Int,questionId:Int
+    ): ApiResult<FetchQuestionsResponse>
+
     suspend fun fetchLearnContent(
         subjectId: Int,
         chapterId: Int

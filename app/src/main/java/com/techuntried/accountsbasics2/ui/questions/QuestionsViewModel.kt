@@ -4,17 +4,16 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.techuntried.accountsbasics2.data.mappers.asGameQuestion
 import com.techuntried.accountsbasics2.data.mappers.asMistakeEntity
+import com.techuntried.accountsbasics2.data.mappers.asQuestion
 import com.techuntried.accountsbasics2.data.repository.DataStoreRepository
 import com.techuntried.accountsbasics2.data.repository.RoomRepository
 import com.techuntried.accountsbasics2.domain.model.GameEconomy
-import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
+import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionReviewModel
 import com.techuntried.accountsbasics2.domain.repository.GlobalConfigController
-import com.techuntried.accountsbasics2.ui.navigation.Routes
 import com.techuntried.accountsbasics2.usecases.GetQuestionsUseCase
+import com.techuntried.accountsbasics2.usecases.GetSingleQuestionUseCase
 import com.techuntried.accountsbasics2.usecases.LogEventType
 import com.techuntried.accountsbasics2.usecases.LogEventUseCase
 import com.techuntried.accountsbasics2.usecases.UploadFeedbackUseCase
@@ -41,7 +40,7 @@ enum class AnswerState {
     Correct, Wrong, TimeUp
 }
 
-fun GameQuestionModel.shuffleOptions(): GameQuestionModel {
+fun QuestionModel.shuffleOptions(): QuestionModel {
     val shuffledOptions = options.shuffled()
     return copy(
         options = shuffledOptions
@@ -71,7 +70,8 @@ class QuestionsViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     private val globalConfigController: GlobalConfigController,
     private val uploadFeedbackUseCase: UploadFeedbackUseCase,
-    private val logEventUseCase: LogEventUseCase
+    private val logEventUseCase: LogEventUseCase,
+    private val getSingleQuestionUseCase: GetSingleQuestionUseCase
 ) :
     ViewModel() {
 
@@ -98,29 +98,42 @@ class QuestionsViewModel @Inject constructor(
 
     val globalConfigState = globalConfigController.globalConfig
 
-
-    private val args = savedStateHandle.toRoute<Routes.QuestionsScreenRoute>()
-
     private var quizStartTimerJob: Job? = null
     private var questionTimerJob: Job? = null
 
     private var questionTimerCount: Int? = 15
     var pause: Int? = null
 
-    private var gameQuestions = emptyList<GameQuestionModel>()
+    private var gameQuestions = emptyList<QuestionModel>()
     private var isSoundEnabled = true
     private var isHapticEnabled = true
     private var isShowCorrectEnabled = true
     var questionReviewList = mutableListOf<QuestionReviewModel>()
 
-    init {
-        questionTimerCount = args.timerCount
-        fetchCategoryGameData(args.subjectId, args.chapterId)
-        updateAnalytics(args.subjectId, args.chapterId)
+
+    fun initialize(questionsTarget: QuestionsTarget) {
+        fetchQuestions(questionsTarget)
+        updateAnalytics(questionsTarget)
     }
 
-    fun refresh() {
-        fetchCategoryGameData(args.subjectId, args.chapterId)
+
+    fun fetchQuestions(target: QuestionsTarget) {
+        when (target) {
+            QuestionsTarget.PracticeAllQuestions -> {
+                questionTimerCount = null
+                fetchPracticeAllQuestionsData(null)
+            }
+
+            is QuestionsTarget.PracticeQuestion -> {
+                questionTimerCount = null
+                fetchPracticeQuestionData(target.subjectId, target.chapterId, target.questionId)
+            }
+
+            is QuestionsTarget.Subject -> {
+                questionTimerCount = target.timerCount
+                fetchCategoryGameData(target.subjectId, target.chapterId)
+            }
+        }
     }
 
     fun onAction(action: QuestionEvent) {
@@ -155,7 +168,71 @@ class QuestionsViewModel @Inject constructor(
                     }
 
                     is ApiResult.Success -> {
-                        val shuffledQuestions = response.data.shuffled().map { it.asGameQuestion() }
+                        val shuffledQuestions = response.data.shuffled()
+                        if (shuffledQuestions.isNotEmpty()) {
+                            gameQuestions = shuffledQuestions
+                            this@QuestionsViewModel.isSoundEnabled = isSoundEnabled
+                            this@QuestionsViewModel.isHapticEnabled = isHapticEnabled
+                            this@QuestionsViewModel.isShowCorrectEnabled = isShowCorrectEnabled
+                            startGame(3)
+                        } else {
+                            _gameUiState.value = GameUiState.Error("No Question Found")
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                _gameUiState.value = GameUiState.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    private fun fetchPracticeAllQuestionsData(subjectId: Int?) {
+        viewModelScope.launch {
+            try {
+                val isSoundEnabled = dataStoreRepository.isSoundsEnabled()
+                val isShowCorrectEnabled = dataStoreRepository.isShowCorrectEnabled()
+                val isHapticEnabled = dataStoreRepository.isHapticEnabled()
+                val response = roomRepository.getMistakes(subjectId)
+                when (response) {
+                    is ApiResult.Error -> {
+                        _gameUiState.value = GameUiState.Error(response.errorMessage)
+                    }
+
+                    is ApiResult.Success -> {
+                        val shuffledQuestions = response.data.shuffled().map { it.asQuestion() }
+                        if (shuffledQuestions.isNotEmpty()) {
+                            gameQuestions = shuffledQuestions
+                            this@QuestionsViewModel.isSoundEnabled = isSoundEnabled
+                            this@QuestionsViewModel.isHapticEnabled = isHapticEnabled
+                            this@QuestionsViewModel.isShowCorrectEnabled = isShowCorrectEnabled
+                            startGame(3)
+                        } else {
+                            _gameUiState.value = GameUiState.Error("No Question Found")
+                        }
+                    }
+                }
+
+            } catch (e: Exception) {
+                _gameUiState.value = GameUiState.Error(e.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    private fun fetchPracticeQuestionData(subjectId: Int, chapterId: Int, questionId: Int) {
+        viewModelScope.launch {
+            try {
+                val isSoundEnabled = dataStoreRepository.isSoundsEnabled()
+                val isShowCorrectEnabled = dataStoreRepository.isShowCorrectEnabled()
+                val isHapticEnabled = dataStoreRepository.isHapticEnabled()
+                val response = getSingleQuestionUseCase(subjectId, chapterId, questionId)
+                when (response) {
+                    is ApiResult.Error -> {
+                        _gameUiState.value = GameUiState.Error(response.errorMessage)
+                    }
+
+                    is ApiResult.Success -> {
+                        val shuffledQuestions = response.data.shuffled()
                         if (shuffledQuestions.isNotEmpty()) {
                             gameQuestions = shuffledQuestions
                             this@QuestionsViewModel.isSoundEnabled = isSoundEnabled
@@ -299,31 +376,31 @@ class QuestionsViewModel @Inject constructor(
                     it.optionId == selectedOptionId
                 }
 
-                args.subjectId.let { id ->
-                    viewModelScope.launch {
-                        if (isCorrect) {
-                            roomRepository.updateCorrectAnswered(subjectId = id)
-                            roomRepository.updateMistake(
-                                activeState.currentQuestion.asMistakeEntity(
-                                    subjectId = args.subjectId,
-                                    chapterId = args.chapterId,
-                                    userAnswer = selectedOption?.optionText,
-                                    fixed = true
-                                )
+//                args.subjectId.let { id ->
+                viewModelScope.launch {
+                    if (isCorrect) {
+                        roomRepository.updateCorrectAnswered(subjectId = activeState.currentQuestion.subjectId)
+                        roomRepository.updateMistake(
+                            activeState.currentQuestion.asMistakeEntity(
+                                subjectId = activeState.currentQuestion.subjectId,
+                                chapterId = activeState.currentQuestion.chapterId,
+                                userAnswer = selectedOption?.optionText,
+                                fixed = true
                             )
-                        } else {
-                            roomRepository.updateWrongAnswered(categoryId = id)
-                            roomRepository.insertMistake(
-                                activeState.currentQuestion.asMistakeEntity(
-                                    subjectId = args.subjectId,
-                                    chapterId = args.chapterId,
-                                    userAnswer = selectedOption?.optionText,
-                                    fixed = false
-                                )
+                        )
+                    } else {
+                        roomRepository.updateWrongAnswered(subjectId = activeState.currentQuestion.subjectId)
+                        roomRepository.insertMistake(
+                            activeState.currentQuestion.asMistakeEntity(
+                                subjectId = activeState.currentQuestion.subjectId,
+                                chapterId = activeState.currentQuestion.chapterId,
+                                userAnswer = selectedOption?.optionText,
+                                fixed = false
                             )
-                        }
+                        )
                     }
                 }
+//                }
                 val correctOption = activeState.currentQuestion.options.find {
                     it.optionId == activeState.currentQuestion.correctOptionId
                 }
@@ -542,9 +619,9 @@ class QuestionsViewModel @Inject constructor(
         viewModelScope.launch {
             _gameUiState.update { it.withActionLoading(true) }
             val state = gameUiState.value as? GameUiState.ActiveGame ?: return@launch
-            val currentQuestion = state.currentQuestion.questionText
+            val currentQuestion = state.currentQuestion
             val comment =
-                "CategoryId ${args.subjectId}\nLevelId ${args.chapterId}\nQuestionId ${currentQuestion}\nReport :$reason\nDetails: $details"
+                "CategoryId ${currentQuestion.subjectId}\nLevelId ${currentQuestion.chapterId}\nQuestionId ${currentQuestion.questionText}\nReport :$reason\nDetails: $details"
 
             when (val response = uploadFeedbackUseCase(comment = comment)) {
                 is ApiResult.Error -> {
@@ -563,13 +640,20 @@ class QuestionsViewModel @Inject constructor(
     }
 
 
-    fun updateAnalytics(categoryId: Int, levelId: Int) {
-        logEvent(
-            LogEventType.PracticeChapterStart(
-                subjectId = categoryId,
-                chapterId = levelId
-            )
-        )
+    fun updateAnalytics(target: QuestionsTarget) {
+        when (target) {
+            QuestionsTarget.PracticeAllQuestions -> {}
+            is QuestionsTarget.PracticeQuestion -> {}
+            is QuestionsTarget.Subject -> {
+                logEvent(
+                    LogEventType.PracticeChapterStart(
+                        subjectId = target.subjectId,
+                        chapterId = target.chapterId
+                    )
+                )
+            }
+        }
+
     }
 
 

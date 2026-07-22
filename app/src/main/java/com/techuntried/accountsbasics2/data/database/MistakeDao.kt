@@ -28,10 +28,16 @@ interface MistakeDao {
     suspend fun deleteMistakes(subjectId: Int, chapterId: Int)
 
     @Query("SELECT * FROM mistakes")
-    fun getMistakes(): Flow<List<MistakeEntity>>
+    fun observeMistakes(): Flow<List<MistakeEntity>>
 
     @Query("SELECT * FROM mistakes WHERE subjectId=:subjectId")
-    fun getMistakesBySubject(subjectId: Int): Flow<List<MistakeEntity>>
+    fun observeMistakesBySubject(subjectId: Int): Flow<List<MistakeEntity>>
+
+    @Query("SELECT * FROM mistakes")
+    suspend fun getMistakes(): List<MistakeEntity>
+
+    @Query("SELECT * FROM mistakes WHERE subjectId=:subjectId")
+    suspend fun getMistakesBySubject(subjectId: Int): List<MistakeEntity>
 
     @Transaction
     suspend fun clearAndInsertMistakes(

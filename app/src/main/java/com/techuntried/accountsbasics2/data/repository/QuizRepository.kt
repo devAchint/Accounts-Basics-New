@@ -133,12 +133,24 @@ class QuizRepository @Inject constructor(
         }
     }
 
+    suspend fun getSingleLocalQuestion(subjectId: Int, chapterId: Int, questionId: Int): ApiResult<List<QuestionEntity>> {
+        return try {
+            ApiResult.Success(questionDao.getSingleQuestion(subjectId, chapterId,questionId))
+        } catch (e: Exception) {
+            Log.d("MYDEBUG", "${e.message}")
+            ApiResult.Error("Oops! Something went wrong while fetching questions. Please try again.")
+        }
+    }
+
     suspend fun saveQuestions(subjectId: Int, chapterId: Int, questions: List<QuestionEntity>) {
         questionDao.clearAndInsertQuestions(subjectId, chapterId, questions)
         dataStoreRepository.saveQuestionLastUpdatedDate(currentDate())
     }
 
     suspend fun fetchRemoteQuestions(subjectId: Int, chapterId: Int) =
+        networkRepository.fetchQuestionsByChapter(subjectId = subjectId, chapterId = chapterId)
+
+    suspend fun fetchSingleRemoteQuestions(subjectId: Int, chapterId: Int) =
         networkRepository.fetchQuestionsByChapter(subjectId = subjectId, chapterId = chapterId)
 
     suspend fun questionsNeedsUpdate(): Boolean {

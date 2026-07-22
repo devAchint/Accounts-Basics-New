@@ -1,7 +1,8 @@
 package com.techuntried.accountsbasics2.ui.questions
 
+import com.techuntried.accountsbasics2.domain.model.content.Option
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
-import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
+import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
 
 sealed interface GameUiState {
     // Global properties available in ALL states
@@ -35,7 +36,7 @@ sealed interface GameUiState {
     // 4️⃣ The actual interactive quiz
     data class ActiveGame(
         val currentQuestionIndex: Int,
-        val currentQuestion: GameQuestionModel,
+        val currentQuestion: QuestionModel,
         val correctAnswers: Int = 0,
         val totalQuestions: Int,
         val isGameCompleted: Boolean = false,

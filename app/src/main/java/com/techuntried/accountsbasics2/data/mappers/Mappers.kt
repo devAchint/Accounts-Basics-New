@@ -4,22 +4,21 @@ import com.techuntried.accountsbasics2.domain.model.SubjectProgressModel
 import com.techuntried.accountsbasics2.domain.model.SubjectWithProgressModel
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentApiResponse
 import com.techuntried.accountsbasics2.domain.model.content.LearnContentModel
-import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
-import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
+import com.techuntried.accountsbasics2.domain.model.content.Option
+import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
+import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
+import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
+import com.techuntried.accountsbasics2.domain.model.entities.MistakeEntity
+import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectProgressEntity
 import com.techuntried.accountsbasics2.domain.model.entities.SubjectWithProgressEntity
-import com.techuntried.accountsbasics2.domain.model.entities.ChapterEntity
-import com.techuntried.accountsbasics2.domain.model.entities.QuestionEntity
 import com.techuntried.accountsbasics2.domain.model.level.ChapterApiResponse
 import com.techuntried.accountsbasics2.domain.model.level.ChapterModel
-import com.techuntried.accountsbasics2.domain.model.content.Option
-import com.techuntried.accountsbasics2.domain.model.content.QuestionApiResponse
-import com.techuntried.accountsbasics2.domain.model.entities.LearnContentEntity
-import com.techuntried.accountsbasics2.domain.model.entities.MistakeEntity
 import com.techuntried.accountsbasics2.domain.model.questions.GameOption
-import com.techuntried.accountsbasics2.domain.model.questions.GameQuestionModel
 import com.techuntried.accountsbasics2.domain.model.questions.QuestionModel
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectApiResponse
+import com.techuntried.accountsbasics2.domain.model.subjects.SubjectModel
 import com.techuntried.accountsbasics2.ui.improve.MistakeItem
 import com.techuntried.accountsbasics2.ui.questions.OptionType
 import com.techuntried.accountsbasics2.utils.formatTimestamp
@@ -184,14 +183,26 @@ fun Option.asGameOption(): GameOption {
         optionType = OptionType.Unselected
     )
 }
+//
+//fun QuestionModel.asGameQuestion(): GameQuestionModel {
+//    return GameQuestionModel(
+//        correctOptionId = correctOptionId,
+//        options = options,
+//        questionId = questionId,
+//        questionText = questionText,
+//        explanation = explanation
+//    )
+//}
 
-fun QuestionModel.asGameQuestion(): GameQuestionModel {
-    return GameQuestionModel(
+fun MistakeEntity.asQuestion(): QuestionModel {
+    return QuestionModel(
         correctOptionId = correctOptionId,
-        options = options,
+        options = options.map { it.asGameOption() },
         questionId = questionId,
         questionText = questionText,
-        explanation = explanation
+        explanation = explanation,
+        subjectId = subjectId,
+        chapterId = chapterId,
     )
 }
 
@@ -224,7 +235,7 @@ fun GameOption.asOption(): Option {
     )
 }
 
-fun GameQuestionModel.asMistakeEntity(
+fun QuestionModel.asMistakeEntity(
     subjectId: Int,
     chapterId: Int,
     userAnswer: String?,

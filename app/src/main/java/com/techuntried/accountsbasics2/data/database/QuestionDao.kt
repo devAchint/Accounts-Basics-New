@@ -19,9 +19,20 @@ interface QuestionDao {
     @Query("SELECT * FROM questions WHERE subjectId=:subjectId AND chapterId=:chapterId")
     suspend fun getQuestions(subjectId: Int, chapterId: Int): List<QuestionEntity>
 
+    @Query("SELECT * FROM questions WHERE subjectId=:subjectId AND chapterId=:chapterId AND questionId=:questionId")
+    suspend fun getSingleQuestion(
+        subjectId: Int,
+        chapterId: Int,
+        questionId: Int
+    ): List<QuestionEntity>
+
     @Transaction
-    suspend fun clearAndInsertQuestions(subjectId: Int, chapterId:Int, questions: List<QuestionEntity>) {
-        deleteQuestions(subjectId,chapterId)
+    suspend fun clearAndInsertQuestions(
+        subjectId: Int,
+        chapterId: Int,
+        questions: List<QuestionEntity>
+    ) {
+        deleteQuestions(subjectId, chapterId)
         insertQuestions(questions)
     }
 }

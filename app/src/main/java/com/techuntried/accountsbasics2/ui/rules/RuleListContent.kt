@@ -50,7 +50,6 @@ import com.techuntried.accountsbasics2.ui.theme.SecondaryText
 fun RuleListContent(
     modifier: Modifier = Modifier,
     rulesScreenUiState: RulesScreenUiState.Success,
-    levelId:Int,
     onStart: () -> Unit
 ) {
     val firstRule = rulesScreenUiState.rules.firstOrNull()?.description
@@ -82,7 +81,7 @@ fun RuleListContent(
                 modifier = Modifier.align(Alignment.Start)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            RuleLevelUpgrade(level = levelId, upgradeText = firstRule ?: "")
+            RuleLevelUpgrade(level = rulesScreenUiState.chapterId, upgradeText = firstRule ?: "")
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Rules",

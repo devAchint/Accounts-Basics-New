@@ -22,8 +22,6 @@ import com.techuntried.accountsbasics2.ui.commons.CommonToolbar
 import com.techuntried.accountsbasics2.ui.commons.ErrorMessageView
 import com.techuntried.accountsbasics2.ui.commons.ToolbarAction
 import com.techuntried.accountsbasics2.ui.dialog.CommonInformationDialog
-import com.techuntried.accountsbasics2.ui.navigation.QuestionsArgs
-import com.techuntried.accountsbasics2.ui.navigation.RuleArgs
 import com.techuntried.accountsbasics2.ui.theme.BackgroundColor
 import com.techuntried.accountsbasics2.utils.getErrorMessageDescription
 import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
@@ -31,30 +29,22 @@ import com.techuntried.accountsbasics2.utils.getErrorMessageTitle
 @Composable
 fun RulesScreenRoot(
     modifier: Modifier = Modifier,
-    args: RuleArgs,
     onBackClick: () -> Unit,
-    navigateToQuestionsOrLearn: (args: QuestionsArgs) -> Unit,
+    navigateToQuestionsOrLearn: (timerCount: Int?,isLearnType:Boolean) -> Unit,
 ) {
     val viewModel: RulesViewModel = hiltViewModel()
     val rulesUiState = viewModel.rulesScreenUiState.collectAsStateWithLifecycle().value
 
 
-
     RulesScreen(
         rulesScreenUiState = rulesUiState,
-        levelId = args.chapterId,
         onBackClick = onBackClick,
         updateTimer = viewModel::updateTimer,
         refresh = { viewModel.refresh() },
         updateRuleIsFirstTime = viewModel::updateIsRuleFirstTime,
         onStart = {
             if (rulesUiState is RulesScreenUiState.Success) {
-                val args = QuestionsArgs(
-                    subjectId = args.subjectId,
-                    chapterId = args.chapterId,
-                    timerCount = rulesUiState.timerCount
-                )
-                navigateToQuestionsOrLearn(args)
+                navigateToQuestionsOrLearn(rulesUiState.timerCount,rulesUiState.isLearnType)
             }
         }
     )
@@ -64,7 +54,6 @@ fun RulesScreenRoot(
 @Composable
 private fun RulesScreen(
     rulesScreenUiState: RulesScreenUiState,
-    levelId: Int,
     refresh: () -> Unit,
     onBackClick: () -> Unit,
     onStart: () -> Unit,
@@ -126,7 +115,6 @@ private fun RulesScreen(
                 is RulesScreenUiState.Success -> {
                     RuleListContent(
                         rulesScreenUiState = rulesScreenUiState,
-                        levelId = levelId,
                         onStart = onStart
                     )
                 }
